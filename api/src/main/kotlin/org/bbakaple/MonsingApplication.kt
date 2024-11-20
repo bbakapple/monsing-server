@@ -1,4 +1,4 @@
-package org.bbakaple.monsing
+package org.bbakaple
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -6,6 +6,6 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class MonsingApplication
 
-fun main(args: Array<String>) {
-    runApplication<MonsingApplication>(*args)
+fun main() {
+    runApplication<MonsingApplication>()
 }
