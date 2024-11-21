@@ -3,7 +3,6 @@ package org.monsing.report
 import jakarta.persistence.*
 import org.monsing.BaseEntity
 import org.monsing.member.Member
-import java.net.URL
 
 @Entity
 class Report(
@@ -22,18 +21,6 @@ class Report(
 ) : BaseEntity() {
 }
 
-enum class ReportType {
-    INSULT,
-    SPAM,
-    SEXUAL
-}
 
-@Entity
-class ReportImage(
-    @ManyToOne
-    @JoinColumn(name = "report_id")
-    val report: Report,
 
-    val url: URL
-) : BaseEntity() {
-}
+

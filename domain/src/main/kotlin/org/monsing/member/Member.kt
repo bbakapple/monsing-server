@@ -13,29 +13,10 @@ class Member(
     val nickname: Nickname,
 
     @Enumerated(EnumType.STRING)
-    val gender: Gender,
+    val genderType: GenderType,
 
     @Column(name = "profile_image")
     val profileImage: URL
 ) : BaseEntity() {
 
-}
-
-@Embeddable
-class Nickname(
-    @Column(name = "nickname")
-    val value: String
-) {
-
-}
-
-enum class MemberType {
-    STUDENT,
-    TEACHER
-}
-
-enum class Gender {
-    MALE,
-    FEMALE,
-    OTHER
 }
