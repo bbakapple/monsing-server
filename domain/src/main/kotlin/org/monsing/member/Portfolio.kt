@@ -13,5 +13,4 @@ class Portfolio(
     val teacher: Teacher,
 
     val url: URL
-) : BaseEntity() {
-}
+) : BaseEntity()

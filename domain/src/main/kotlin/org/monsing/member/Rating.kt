@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import org.monsing.BaseEntity
 
 @Entity
-public class Rating(
+class Rating(
         @ManyToOne
         @JoinColumn(name = "review_id")
         val review: Review,

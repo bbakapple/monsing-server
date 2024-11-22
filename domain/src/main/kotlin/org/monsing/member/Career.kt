@@ -14,5 +14,4 @@ class Career(
     val period: String,
 
     val detail: String
-) : BaseEntity() {
-}
+) : BaseEntity()

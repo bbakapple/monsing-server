@@ -16,5 +16,4 @@ class FeedbackTicket(
     val student: Student,
 
     val amount: Int,
-) : BaseEntity() {
-}
+) : BaseEntity()
