@@ -31,10 +31,11 @@ class TokenManager(
             .payload
             .subject
     }
+
+    enum class TokenStatus {
+        VALID,
+        INVALID,
+        EXPIRED
+    }
 }
 
-enum class TokenStatus {
-    VALID,
-    INVALID,
-    EXPIRED
-}
