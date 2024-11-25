@@ -1,3 +1,3 @@
 package org.monsing.auth
 
-class ExpiredTokenException : RuntimeException()
+class ExpiredTokenException(s: String) : RuntimeException()
