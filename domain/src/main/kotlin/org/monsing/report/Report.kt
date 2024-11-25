@@ -1,6 +1,10 @@
 package org.monsing.report
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
 import org.monsing.member.Member
 
@@ -18,9 +22,4 @@ class Report(
     val reportType: ReportType,
 
     val detail: String
-) : BaseEntity() {
-}
-
-
-
-
+) : BaseEntity()

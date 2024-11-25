@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: 선생님 API
+  version: 1.0.0
+  description: 선생님 관련 API
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /teachers:
+    post:
+      summary: 선생님 계정 생성
+      security:
+        - BearerAuth: []
+      operationId: createTeacher
+      tags:
+        - Teacher
+      requestBody:
+        description: 선생님 계정 생성에 필요한 정보
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherCreateRequest'
+      responses:
+        '200':
+          description: 성공
+        '400':
+          description: 잘못된 요청
+
+    get:
+      summary: 선생님 목록 조회
+      operationId: readTeachers
+      tags:
+        - Teacher
+      parameters:
+        - name: last_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 페이징을 시작할 id
+      responses:
+        '200':
+          description: 선생님 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherResponse'
+        '400':
+          description: 잘못된 요청
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    TeacherCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 선생님 이름
+
+    TeacherResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 선생님 ID
+        name:
+          type: string
+          description: 선생님 이름
+        experience:
+          type: integer
+          description: 선생님 경력
+        profileImage:
+          type: string
+          description: 선생님 프로필 이미지 URL
+        summary:
+          type: string
+          description: 선생님 한줄 소개
+        favorite:
+          type: boolean
+          description: 즐겨찾기 여부
+        verified:
+          type: boolean
+          description: 선생님 인증 여부
+        rating:
+          type: number
+          description: 선생님 평점
+        reviewCount:
+          type: integer
+          description: 선생님 리뷰 수

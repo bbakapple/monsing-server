@@ -11,5 +11,4 @@ class Record(
     val student: Student,
 
     val url: URL
-) : BaseEntity() {
-}
+) : BaseEntity()

@@ -1,6 +1,10 @@
 package org.monsing.course
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
 import java.time.LocalTime
 
@@ -16,5 +20,4 @@ class CourseSchedule(
     val startTime: LocalTime,
 
     val isSold: Boolean
-) : BaseEntity() {
-}
+) : BaseEntity()

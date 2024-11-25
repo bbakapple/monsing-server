@@ -1,20 +1,11 @@
 package org.monsing.member
 
-import jakarta.persistence.*
+import jakarta.persistence.Entity
+import jakarta.persistence.OneToOne
 import org.monsing.BaseEntity
-import java.net.URL
 
 @Entity
 class Student(
     @OneToOne
     val member: Member
-) : BaseEntity() {
-}
-
-
-
-
-
-
-
-
+) : BaseEntity()

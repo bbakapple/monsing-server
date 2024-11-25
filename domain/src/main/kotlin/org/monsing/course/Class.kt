@@ -21,5 +21,4 @@ class Class(
 
     @Embedded
     val classNumber: ClassNumber
-) : BaseEntity() {
-}
+) : BaseEntity()

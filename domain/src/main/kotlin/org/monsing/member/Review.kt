@@ -13,8 +13,7 @@ class Review(
 
     @ManyToOne
     @JoinColumn(name = "writer_id")
-    private val writer: Student,
+    val writer: Student,
 
     val detail: String
-) : BaseEntity() {
-}
+) : BaseEntity()

@@ -7,6 +7,4 @@ import jakarta.persistence.Embeddable
 class RatingScore(
     @Column(name = "score")
     val value: Int
-) {
-
-}
+)

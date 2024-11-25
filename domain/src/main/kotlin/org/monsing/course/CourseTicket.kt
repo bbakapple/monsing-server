@@ -1,6 +1,10 @@
 package org.monsing.course
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
 import org.monsing.member.Teacher
 

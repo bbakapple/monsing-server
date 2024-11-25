@@ -7,5 +7,4 @@ import jakarta.persistence.Embeddable
 class Price(
     @Column(name = "price")
     val value: Int
-) {
-}
+)

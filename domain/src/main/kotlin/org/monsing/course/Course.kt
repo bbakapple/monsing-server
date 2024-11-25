@@ -16,5 +16,4 @@ class Course(
     @ManyToOne
     @JoinColumn(name = "student_id")
     val student: Student
-) : BaseEntity() {
-}
+) : BaseEntity()

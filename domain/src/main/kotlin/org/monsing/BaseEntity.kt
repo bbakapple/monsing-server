@@ -1,6 +1,5 @@
 package org.monsing
 
-
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -23,5 +22,4 @@ class BaseEntity(
 
     @LastModifiedDate
     val updatedDate: LocalDateTime = LocalDateTime.now()
-) {
-}
+)
