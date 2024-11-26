@@ -15,27 +15,16 @@ class TokenManager(
         .verifyWith(key)
         .build()
 
-    fun validateAccessToken(token: String): TokenStatus {
-        try {
-            parser.parseSignedClaims(token)
-        } catch (e: ExpiredJwtException) {
-            return TokenStatus.EXPIRED
-        } catch (e: Exception) {
-            return TokenStatus.INVALID
-        }
-        return TokenStatus.VALID
-    }
-
     fun getPayLoad(token: String): String {
-        return parser.parseSignedClaims(token)
-            .payload
-            .subject
-    }
-
-    enum class TokenStatus {
-        VALID,
-        INVALID,
-        EXPIRED
+        try {
+            return parser.parseSignedClaims(token)
+                .payload
+                .subject
+        } catch (e: ExpiredJwtException) {
+            throw ExpiredJwtException(e.header, e.claims, e.message)
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Invalid token")
+        }
     }
 }
 
