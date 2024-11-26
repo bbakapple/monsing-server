@@ -7,7 +7,7 @@ import java.net.URL
 @Entity
 class Member(
 
-    val indentifier: String,
+    val identifier: String,
 
     val oauthProviderType: OauthProviderType,
 
