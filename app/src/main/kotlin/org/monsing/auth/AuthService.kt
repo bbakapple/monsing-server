@@ -19,18 +19,34 @@ class AuthService(
 ) {
 
     fun login(oauthProviderType: OauthProviderType, oauthToken: String): TokenResponse {
-        val oauthInfo = oauthAdaptor.handle(oauthProviderType, oauthToken)
-        val member = memberRepository.findByIdentifierAndOauthProviderType(oauthInfo.id, oauthProviderType)
-            ?: memberRepository.save(
-                Member(
-                    identifier = oauthInfo.id,
-                    oauthProviderType = oauthProviderType,
-                    memberType = MemberType.STUDENT,
-                    nickname = Nickname("dd"),
-                    genderType = GenderType.OTHER,
-                    profileImage = URL("asd")
-                )
+        val oauthIdentifier = oauthAdaptor.handle(oauthProviderType, oauthToken)
+        val member = memberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
+            ?: throw IllegalArgumentException("Member not found")
+
+        val id = member.id ?: throw IllegalStateException("Member id must not be null")
+
+        return TokenResponse(
+            accessToken = tokenManager.createAccessToken(TokenPayload(id)),
+            refreshToken = tokenManager.createRefreshToken(id)
+        )
+    }
+
+    fun register(registerRequest: RegisterRequest): TokenResponse {
+        val oauthIdentifier = oauthAdaptor.handle(
+            OauthProviderType.valueOf(registerRequest.oauthProviderType),
+            registerRequest.oauthToken
+        )
+
+        val member = memberRepository.save(
+            Member(
+                identifier = oauthIdentifier.id,
+                oauthProviderType = OauthProviderType.valueOf(registerRequest.oauthProviderType),
+                memberType = MemberType.valueOf(registerRequest.memberType),
+                nickname = Nickname(registerRequest.nickname),
+                genderType = GenderType.valueOf(registerRequest.genderType),
+                profileImage = URL(registerRequest.profileImage)
             )
+        )
 
         val id = member.id ?: throw IllegalStateException("Member id must not be null")
 
