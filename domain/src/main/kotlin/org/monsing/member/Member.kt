@@ -1,6 +1,10 @@
 package org.monsing.member
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import org.monsing.BaseEntity
 import java.net.URL
 
@@ -17,6 +21,4 @@ class Member(
 
     @Column(name = "profile_image")
     val profileImage: URL
-) : BaseEntity() {
-
-}
+) : BaseEntity()

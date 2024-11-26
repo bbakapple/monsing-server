@@ -8,5 +8,4 @@ import java.time.Duration
 class ClassTime(
     @Column(name = "class_time")
     val value: Duration
-) {
-}
+)

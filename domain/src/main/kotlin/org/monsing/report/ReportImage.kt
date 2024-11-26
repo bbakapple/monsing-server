@@ -13,5 +13,4 @@ class ReportImage(
     val report: Report,
 
     val url: URL
-) : BaseEntity() {
-}
+) : BaseEntity()
