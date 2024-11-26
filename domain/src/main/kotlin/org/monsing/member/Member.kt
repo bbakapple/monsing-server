@@ -1,15 +1,16 @@
 package org.monsing.member
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embedded
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
+import jakarta.persistence.*
 import org.monsing.BaseEntity
 import java.net.URL
 
 @Entity
 class Member(
+
+    val indentifier: String,
+
+    val oauthProviderType: OauthProviderType,
+
     @Enumerated(EnumType.STRING)
     val memberType: MemberType,
 
