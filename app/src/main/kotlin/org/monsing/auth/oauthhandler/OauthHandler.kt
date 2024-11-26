@@ -2,5 +2,5 @@ package org.monsing.auth.oauthhandler
 
 interface OauthHandler {
 
-    fun handle(code: String): OauthInfo
+    fun handle(code: String): OauthIdentifier
 }
