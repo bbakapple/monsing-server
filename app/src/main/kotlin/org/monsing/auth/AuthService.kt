@@ -39,4 +39,13 @@ class AuthService(
             refreshToken = tokenManager.createRefreshToken(id)
         )
     }
+
+    fun refresh(refreshToken: String): TokenResponse {
+        val payload = tokenManager.getRefreshPayload(refreshToken)
+
+        return TokenResponse(
+            accessToken = tokenManager.createAccessToken(TokenPayload(payload)),
+            refreshToken = refreshToken
+        )
+    }
 }
