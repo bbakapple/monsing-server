@@ -11,16 +11,19 @@ import javax.crypto.SecretKey
 
 @Component
 class TokenManager(
-    @Value("\${jwt.access-key}") accessKey: String,
-    @Value("\${jwt.expire-second}") private val expireSecond: Long,
+    @Value("\${jwt.access-token.secret}") accessSecret: String,
+    @Value("\${jwt.access-token.expire-second}") private val accessExpireSecond: Long,
+    @Value("\${jwt.access-token.secret}") refreshSecret: String,
+    @Value("\${jwt.access-token.expire-second}") private val refreshExpireSecond: Long,
     private val objectMapper: ObjectMapper
 ) {
 
-    private val key: SecretKey = Keys.hmacShaKeyFor(accessKey.toByteArray())
+    private val accessKey: SecretKey = Keys.hmacShaKeyFor(accessSecret.toByteArray())
+    private val refreshKey: SecretKey = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
 
     fun getPayLoad(token: String): TokenPayload {
         val parser = Jwts.parser()
-            .verifyWith(key)
+            .verifyWith(accessKey)
             .build()
         try {
             return parser.parseSignedClaims(token)
@@ -34,15 +37,40 @@ class TokenManager(
         }
     }
 
-    fun createToken(payload: TokenPayload): String {
+    fun createAccessToken(payload: TokenPayload): String {
         val issuedAt = Date()
-        val expiration = issuedAt.toInstant().plusSeconds(expireSecond).let { Date.from(it) }
+        val expiration = issuedAt.toInstant().plusSeconds(accessExpireSecond).let { Date.from(it) }
         return Jwts.builder()
             .subject(payload.id.toString())
             .issuedAt(issuedAt)
             .expiration(expiration)
-            .signWith(key)
+            .signWith(accessKey)
             .compact()
+    }
+
+    fun createRefreshToken(id: Long): String {
+        val issuedAt = Date()
+        val expiration = issuedAt.toInstant().plusSeconds(refreshExpireSecond).let { Date.from(it) }
+        return Jwts.builder()
+            .subject(id.toString())
+            .issuedAt(issuedAt)
+            .expiration(expiration)
+            .signWith(refreshKey)
+            .compact()
+    }
+
+    fun getRefreshPayload(token: String): Long {
+        val parser = Jwts.parser()
+            .verifyWith(refreshKey)
+            .build()
+        try {
+            return parser.parseSignedClaims(token)
+                .payload
+                .subject
+                .toLong()
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Invalid token")
+        }
     }
 }
 
