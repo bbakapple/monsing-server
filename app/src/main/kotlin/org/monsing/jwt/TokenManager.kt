@@ -15,11 +15,11 @@ class TokenManager(
         .verifyWith(key)
         .build()
 
-    fun getPayLoad(token: String): String {
+    fun getPayLoad(token: String): TokenPayload {
         try {
             return parser.parseSignedClaims(token)
                 .payload
-                .subject
+                .let { TokenPayload(it["id"] as Long) }
         } catch (e: ExpiredJwtException) {
             throw ExpiredJwtException(e.header, e.claims, e.message)
         } catch (e: Exception) {

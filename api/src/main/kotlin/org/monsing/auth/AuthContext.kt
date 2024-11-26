@@ -1,5 +1,6 @@
 package org.monsing.auth
 
+import org.monsing.jwt.TokenPayload
 import org.springframework.stereotype.Component
 import org.springframework.web.context.annotation.RequestScope
 
@@ -7,5 +8,5 @@ import org.springframework.web.context.annotation.RequestScope
 @Component
 class AuthContext {
 
-    var payload: String? = null
+    var payload: TokenPayload? = null
 }
