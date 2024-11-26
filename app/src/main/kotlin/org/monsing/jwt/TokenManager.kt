@@ -13,8 +13,8 @@ import javax.crypto.SecretKey
 class TokenManager(
     @Value("\${jwt.access-token.secret}") accessSecret: String,
     @Value("\${jwt.access-token.expire-second}") private val accessExpireSecond: Long,
-    @Value("\${jwt.access-token.secret}") refreshSecret: String,
-    @Value("\${jwt.access-token.expire-second}") private val refreshExpireSecond: Long,
+    @Value("\${jwt.refresh-token.secret}") refreshSecret: String,
+    @Value("\${jwt.refresh-token.expire-second}") private val refreshExpireSecond: Long,
     private val objectMapper: ObjectMapper
 ) {
 
