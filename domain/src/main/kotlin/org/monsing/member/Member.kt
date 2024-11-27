@@ -10,6 +10,11 @@ import java.net.URL
 
 @Entity
 class Member(
+
+    val identifier: String,
+
+    val oauthProviderType: OauthProviderType,
+
     @Enumerated(EnumType.STRING)
     val memberType: MemberType,
 

@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(':domain')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
 
     // jwt

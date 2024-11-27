@@ -2,7 +2,7 @@ package org.monsing.auth
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.monsing.jwt.TokenManager
+import org.monsing.auth.jwt.TokenManager
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
