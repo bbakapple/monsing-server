@@ -14,7 +14,6 @@ class GoogleOauthHandler(
     }
 
     override fun handle(code: String): OauthIdentifier {
-
         return googleApiClient.getGoogleOauthIdentifier(code)
     }
 }

@@ -1,4 +1,4 @@
-package org.monsing.auth
+package org.monsing.auth.oauth
 
 import org.monsing.auth.oauthhandler.OauthHandler
 import org.monsing.auth.oauthhandler.OauthIdentifier
@@ -14,5 +14,9 @@ class OauthAdaptor {
         return handlers.firstOrNull() { it.canHandle(oauthProviderType) }
             ?.handle(oauthToken)
             ?: throw IllegalArgumentException("Unsupported oauth provider type: $oauthProviderType")
+    }
+
+    fun addHandler(handler: OauthHandler) {
+        handlers.add(handler)
     }
 }

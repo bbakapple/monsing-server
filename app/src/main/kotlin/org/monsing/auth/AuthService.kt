@@ -1,5 +1,6 @@
 package org.monsing.auth
 
+import org.monsing.auth.oauth.OauthAdaptor
 import org.monsing.jwt.TokenManager
 import org.monsing.jwt.TokenPayload
 import org.monsing.member.GenderType
