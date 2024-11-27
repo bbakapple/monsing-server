@@ -1,12 +1,12 @@
 package org.monsing.auth.oauthhandler
 
-import org.monsing.auth.apiclient.OauthApiClient
+import org.monsing.auth.apiclient.GoogleOauthApiClient
 import org.monsing.member.OauthProviderType
 import org.springframework.stereotype.Component
 
 @Component
 class GoogleOauthHandler(
-    private val googleApiClient: OauthApiClient
+    private val googleApiClient: GoogleOauthApiClient
 ) : OauthHandler {
 
     override fun canHandle(oauthProviderType: OauthProviderType): Boolean {
@@ -14,6 +14,6 @@ class GoogleOauthHandler(
     }
 
     override fun handle(code: String): OauthIdentifier {
-        return googleApiClient.getGoogleOauthIdentifier(code)
+        return googleApiClient.getIdentifier(code)
     }
 }

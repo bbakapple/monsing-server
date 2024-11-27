@@ -1,12 +1,12 @@
 package org.monsing.auth.oauthhandler
 
-import org.monsing.auth.apiclient.OauthApiClient
+import org.monsing.auth.apiclient.KakaoOauthApiClient
 import org.monsing.member.OauthProviderType
 import org.springframework.stereotype.Component
 
 @Component
 class KakaoOauthHandler(
-    private val kakaoApiClient: OauthApiClient
+    private val kakaoApiClient: KakaoOauthApiClient
 ) : OauthHandler {
 
     override fun canHandle(oauthProviderType: OauthProviderType): Boolean {
@@ -14,6 +14,6 @@ class KakaoOauthHandler(
     }
 
     override fun handle(code: String): OauthIdentifier {
-        return kakaoApiClient.getKakaoIdentifier(code)
+        return kakaoApiClient.getIdentifier(code)
     }
 }
