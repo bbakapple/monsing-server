@@ -13,7 +13,7 @@ paths:
     post:
       summary: 선생님 계정 생성
       security:
-        - BearerAuth: []
+        - BearerAuth: [ ]
       operationId: createTeacher
       tags:
         - Teacher
@@ -42,6 +42,36 @@ paths:
           schema:
             type: integer
           description: 페이징을 시작할 id
+        - name: size
+          in : query
+          required: false
+          schema:
+            type: integer
+          description: 한 번에 조회할 선생님 수
+        - name: gender
+          in: query
+          required: false
+          schema:
+            type: string
+          description: 선생님 성별
+        - name: max_price
+          in: query
+          required: false
+          schema:
+              type: integer
+          description: 최대 가격
+        - name: verified
+          in: query
+          required: false
+          schema:
+              type: boolean
+          description: 인증 여부
+        - name: query
+          in: query
+          required: false
+          schema:
+              type: string
+          description: 검색어
       responses:
         '200':
           description: 선생님 목록 조회 성공
@@ -52,6 +82,194 @@ paths:
         '400':
           description: 잘못된 요청
 
+  /teachers/{id}:
+    get:
+      summary: 선생님 상세 정보
+      description: 선생님 ID로 상세 정보 조회
+      tags:
+        - Teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 선생님 ID
+      responses:
+        '200':
+          description: 선생님 상세 정보 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherDetailResponse'
+        '400':
+          description: 잘못된 요청
+
+  /teachers/{id}/reviews:
+    post:
+      summary: 리뷰 작성
+      description: 특정 선생님에 대한 리뷰를 작성합니다.
+      tags:
+        - Teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 선생님의 고유 식별자
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreateRequest'
+      responses:
+        '200':
+          description: 성공적으로 리뷰가 작성되었습니다.
+        '400':
+          description: 잘못된 요청입니다.
+      security:
+        - BearerAuth: [ ]
+
+    get:
+        summary: 리뷰 목록 조회
+        description: 특정 선생님에 대한 리뷰 목록을 조회합니다.
+        tags:
+          - Teacher
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+                type: integer
+            description: 선생님의 고유 식별자
+          - name: last_id
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: 페이징을 시작할 id
+          - name: size
+            in: query
+            required: false
+            schema:
+              type: integer
+            description: 한 번에 조회할 선생님 수
+        responses:
+          '200':
+            description: 리뷰 목록 조회 성공
+            content:
+              application/json:
+                # summary랑 reviews(ReviewResponse array) 나눠서 응답하는 스크립트
+                schema:
+                  type: object
+                  properties:
+                    summary:
+                      $ref: '#/components/schemas/ReviewSummaryResponse'
+                    reviews:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ReviewResponse'
+          '400':
+            description: 잘못된 요청입니다.
+
+  /teachers/{id}/classes:
+    get:
+      summary: 일자별 선생님 수업 목록 조회
+      description: 특정 선생님의 일자별 수업 목록을 조회합니다.
+      tags:
+        - Teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 선생님의 고유 식별자
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 시작 일자
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 종료 일자
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: 일자별 선생님 수업 목록 조회 성공
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassResponse'
+        '400':
+          description: 잘못된 요청입니다.
+
+  /teachers/my:
+    get:
+      summary: 내 정보 조회
+      description: 로그인한 사용자의 선생님 정보를 조회합니다.
+      tags:
+        - Teacher
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: 성공적으로 선생님 정보를 조회했습니다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherDetailResponse'
+        '400':
+          description: 잘못된 요청입니다.
+
+  /teachers/{id}/courses:
+    get:
+      summary: 선생님 수업 목록 조회
+      description: 특정 선생님의 수업 목록을 조회합니다.
+      tags:
+        - Teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 선생님의 고유 식별자
+        - name: lastId
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 페이징 시작 ID
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 페이지 사이즈 (한 번에 가져올 수업 수)
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: 성공적으로 수업 목록을 조회했습니다.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassResponse'
+        '400':
+          description: 잘못된 요청입니다.
+
 components:
   securitySchemes:
     BearerAuth:
@@ -60,6 +278,7 @@ components:
       bearerFormat: JWT
 
   schemas:
+    # 선생님 계정 생성 요청
     TeacherCreateRequest:
       type: object
       properties:
@@ -67,6 +286,7 @@ components:
           type: string
           description: 선생님 이름
 
+    # 선생님 조회 응답
     TeacherResponse:
       type: object
       properties:
@@ -97,3 +317,176 @@ components:
         reviewCount:
           type: integer
           description: 선생님 리뷰 수
+
+    # 선생님 상세 정보 응답
+    TeacherDetailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 식별자
+        name:
+          type: string
+          description: 이름
+        experience:
+          type: integer
+          description: 경력
+        profileImage:
+          type: string
+          format: uri
+          description: 프로필 이미지 URL
+        summary:
+          type: string
+          description: 한줄 설명
+        favorite:
+          type: boolean
+          description: 즐겨찾기 여부
+        verified:
+          type: boolean
+          description: 인증 여부
+        rating:
+          type: number
+          format: float
+          description: 평균 점수
+        reviewCount:
+          type: integer
+          description: 리뷰 개수
+        courseCount:
+          type: integer
+          description: 총 수업 횟수
+        detail:
+          type: string
+          description: 상세 설명
+        careers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CareerResponse'
+
+        portfolios:
+          type: array
+          items:
+            $ref: '#/components/schemas/PortfolioResponse'
+
+    # 경력 응답
+    CareerResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: 경력 상세 내용 (예, 학원명과 기간)
+        period:
+          type: string
+          description: 경력 기간 (예, "2023~2024")
+
+    # 포트폴리오 응답
+    PortfolioResponse:
+      type: string
+      format: uri
+      description: 포트폴리오 URL 리스트 (예, "port.google.com/portport")
+
+    # 리뷰 생성 요청
+    ReviewCreateRequest:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: 리뷰 내용
+        ratings:
+          type: array
+          description: 평점 목록
+          items:
+            $ref: '#/components/schemas/RatingDto'
+      required:
+        - detail
+        - ratings
+
+    # 평가 DTO
+    RatingDto:
+      type: object
+      properties:
+        ratingType:
+          type: string
+          description: 평가 유형
+        score:
+          type: integer
+          description: 평가 점수
+
+    # 리뷰 요약 응답
+    ReviewSummaryResponse:
+      type: object
+      properties:
+        averageScore:
+          type: number
+          description: 평균 평점
+        reviewCount:
+          type: integer
+          description: 리뷰 개수
+        ratings:
+          items:
+            $ref: '#/components/schemas/RatingDto'
+
+    # 리뷰 응답
+    ReviewResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 리뷰 ID
+        writerName:
+          type: string
+          description: 리뷰 작성자 이름
+        detail:
+          type: string
+          description: 리뷰 내용
+        createdAt:
+          type: string
+          format: date-time
+          description: 리뷰 작성 시간
+        ratings:
+          type: array
+          items:
+              $ref: '#/components/schemas/RatingDto'
+
+    # 수업 응답
+    ClassResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 수업 ID
+        title:
+          type: string
+          description: 수업 제목
+        schedule:
+          $ref: '#/components/schemas/ScheduleResponse'
+
+        remain:
+          type: integer
+          description: 남은 수업 수(?)
+        student:
+          $ref: '#/components/schemas/StudentResponse'
+
+    # 스케줄 응답
+    ScheduleResponse:
+      type: object
+      properties:
+        day:
+          type: string
+          description: 요일 (2024-01-20)
+        startTime:
+          type: string
+          description: 시작 시간
+        endTime:
+          type: string
+          description: 종료 시간
+
+    # 학생 응답
+    StudentResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 학생 ID
+        name:
+          type: string
+          description: 학생 이름
