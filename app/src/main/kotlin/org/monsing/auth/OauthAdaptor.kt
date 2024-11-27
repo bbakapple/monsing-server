@@ -1,7 +1,6 @@
 package org.monsing.auth
 
-import org.monsing.auth.oauthhandler.GoogleOauthHandler
-import org.monsing.auth.oauthhandler.KakaoOauthHandler
+import org.monsing.auth.oauthhandler.OauthHandler
 import org.monsing.auth.oauthhandler.OauthIdentifier
 import org.monsing.member.OauthProviderType
 import org.springframework.stereotype.Component
@@ -9,15 +8,11 @@ import org.springframework.stereotype.Component
 @Component
 class OauthAdaptor {
 
-    companion object {
-        private val oauthHandlers = mapOf(
-            OauthProviderType.GOOGLE to GoogleOauthHandler(),
-            OauthProviderType.KAKAO to KakaoOauthHandler()
-        )
-    }
+    private val handlers = mutableListOf<OauthHandler>()
 
     fun handle(oauthProviderType: OauthProviderType, oauthToken: String): OauthIdentifier {
-        return oauthHandlers[oauthProviderType]?.handle(oauthToken)
+        return handlers.firstOrNull() { it.canHandle(oauthProviderType) }
+            ?.handle(oauthToken)
             ?: throw IllegalArgumentException("Unsupported oauth provider type: $oauthProviderType")
     }
 }
