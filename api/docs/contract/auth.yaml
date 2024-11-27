@@ -38,6 +38,7 @@ paths:
     post:
       summary: OAuth 로그인
       description: OAuth Provider를 통해 로그인하고 액세스 토큰과 리프레쉬 토큰을 발급받습니다.
+      operationId: login
       tags:
         - Auth
       requestBody:
@@ -60,6 +61,7 @@ paths:
     delete:
       summary: 회원탈퇴
       description: 회원탈퇴를 진행합니다.
+      operationId: exit
       tags:
         - Auth
       security:

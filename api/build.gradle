@@ -15,7 +15,7 @@ repositories {
 dependencies {
     implementation project(path: ':app')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'	//Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0' // Swagger
     implementation platform("com.fasterxml.jackson:jackson-bom:2.15.2") // 원하는 Jackson 버전으로 변경
     implementation "com.fasterxml.jackson.core:jackson-core"
     implementation "com.fasterxml.jackson.core:jackson-databind"
@@ -31,7 +31,7 @@ kotlin {
 }
 
 // OpenAPI Generator 설정
-def openApiGeneratedDir = "$projectDir" // api 모듈 내부 docs 패키지에 생성된 코드 저장
+def openApiGeneratedDir = "$projectDir/src/main/generated" // 생성된 코드 저장 디렉토리
 def contractDir = "$projectDir/docs/contract" // OpenAPI 사양 파일 디렉터리
 
 // 모든 OpenAPI Generator 태스크를 구성 단계에서 등록
@@ -43,9 +43,12 @@ def openApiTasks = fileTree(dir: contractDir, include: ['*.yaml', '*.yml']).coll
         inputSpec.set("$contractDir/${yamlFile.name}")
         outputDir.set(openApiGeneratedDir)
         templateDir.set("$projectDir/docs/template") // 커스텀 템플릿 경로 지정
-        packageName.set("org.monsing") // basePackage 대신 packageName 사용
-        apiPackage.set("org.monsing.api")
-        modelPackage.set("org.monsing.model")
+
+        // API별로 고유한 패키지 설정
+        packageName.set("org.monsing.${fileNameWithoutExtension}") // 기본 패키지
+        apiPackage.set("org.monsing.${fileNameWithoutExtension}.api") // API 클래스 패키지
+        modelPackage.set("org.monsing.${fileNameWithoutExtension}.model") // 모델(DTO) 클래스 패키지
+
         configOptions.set([
                 "dateLibrary"         : "java8",
                 "useSpringBoot3"      : "true",
