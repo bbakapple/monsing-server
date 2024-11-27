@@ -1,4 +1,4 @@
-package org.monsing.jwt
+package org.monsing.auth.jwt
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
