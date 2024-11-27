@@ -1,4 +1,4 @@
-package org.monsing.auth.oauth
+package org.monsing.auth.apiclient
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

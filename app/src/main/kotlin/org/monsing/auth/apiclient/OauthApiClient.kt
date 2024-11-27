@@ -1,4 +1,4 @@
-package org.monsing.auth.oauth
+package org.monsing.auth.apiclient
 
 import org.monsing.auth.oauthhandler.OauthIdentifier
 import org.springframework.web.bind.annotation.RequestHeader

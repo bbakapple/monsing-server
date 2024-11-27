@@ -1,6 +1,6 @@
 package org.monsing.auth.oauthhandler
 
-import org.monsing.auth.oauth.OauthApiClient
+import org.monsing.auth.apiclient.OauthApiClient
 import org.monsing.member.OauthProviderType
 import org.springframework.stereotype.Component
 
