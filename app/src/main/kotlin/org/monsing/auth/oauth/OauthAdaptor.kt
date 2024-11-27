@@ -19,6 +19,8 @@ class OauthAdaptor {
 
     @PostConstruct
     fun init() {
-        AnnotationConfigApplicationContext().getBeansOfType(OauthHandler::class.java).values.forEach { handlers.add(it) }
+        AnnotationConfigApplicationContext()
+            .getBeansOfType(OauthHandler::class.java)
+            .values.forEach { handlers.add(it) }
     }
 }
