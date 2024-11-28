@@ -51,7 +51,9 @@ class AuthService(
             )
         )
 
-        val id = member.id ?: throw IllegalStateException("Member id must not be null")
+        val id = requireNotNull(member.id) {
+            "Member id must not be null"
+        }
 
         return TokenResponse(
             accessToken = tokenManager.createAccessToken(TokenPayload(id)),
