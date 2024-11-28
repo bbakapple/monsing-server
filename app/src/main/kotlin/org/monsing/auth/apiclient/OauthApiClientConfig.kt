@@ -12,7 +12,7 @@ class OauthApiClientConfig {
     @Bean
     fun googleApiClient(): GoogleOauthApiClient {
         val restClient = RestClient.builder()
-            .baseUrl("https://www.googleapis.com/oauth2/v2/userinfo")
+            .baseUrl("https://www.googleapis.com")
             .build()
 
         val adaptor = RestClientAdapter.create(restClient)
@@ -24,7 +24,7 @@ class OauthApiClientConfig {
     @Bean
     fun kakaoApiClient(): KakaoOauthApiClient {
         val restClient = RestClient.builder()
-            .baseUrl("https://kapi.kakao.com/v2/user/me")
+            .baseUrl("https://kapi.kakao.com")
             .build()
 
         val adaptor = RestClientAdapter.create(restClient)

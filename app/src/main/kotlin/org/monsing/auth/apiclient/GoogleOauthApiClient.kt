@@ -8,7 +8,7 @@ import org.springframework.web.service.annotation.HttpExchange
 @HttpExchange
 interface GoogleOauthApiClient {
 
-    @GetExchange
+    @GetExchange("/oauth2/v2/userinfo")
     fun getIdentifier(
         @RequestParam(name = "access_token") token: String
     ): OauthIdentifier

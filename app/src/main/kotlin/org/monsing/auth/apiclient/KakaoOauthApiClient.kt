@@ -8,7 +8,7 @@ import org.springframework.web.service.annotation.HttpExchange
 @HttpExchange
 interface KakaoOauthApiClient {
 
-    @GetExchange
+    @GetExchange("/v2/user/me")
     fun getIdentifier(
         @RequestHeader("Authorization") token: String,
     ): OauthIdentifier
