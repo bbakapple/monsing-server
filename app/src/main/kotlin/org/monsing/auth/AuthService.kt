@@ -3,10 +3,8 @@ package org.monsing.auth
 import org.monsing.auth.jwt.TokenManager
 import org.monsing.auth.jwt.TokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
-import org.monsing.member.GenderType
 import org.monsing.member.Member
 import org.monsing.member.MemberRepository
-import org.monsing.member.MemberType
 import org.monsing.member.Nickname
 import org.monsing.member.OauthProviderType
 import org.monsing.token.Token
@@ -35,20 +33,20 @@ class AuthService(
         )
     }
 
-    fun register(registerRequest: RegisterRequest): Token {
+    fun register(registerDto: RegisterDto): Token {
         val oauthIdentifier = oauthAdaptor.handle(
-            OauthProviderType.valueOf(registerRequest.oauthProviderType),
-            registerRequest.oauthToken
+            registerDto.oauthProviderType,
+            registerDto.oauthToken
         )
 
         val member = memberRepository.save(
             Member(
                 identifier = oauthIdentifier.id,
-                oauthProviderType = OauthProviderType.valueOf(registerRequest.oauthProviderType),
-                memberType = MemberType.valueOf(registerRequest.memberType),
-                nickname = Nickname(registerRequest.nickname),
-                genderType = GenderType.valueOf(registerRequest.genderType),
-                profileImage = URL(registerRequest.profileImage)
+                oauthProviderType = registerDto.oauthProviderType,
+                memberType = registerDto.memberType,
+                nickname = Nickname(registerDto.nickname),
+                genderType = registerDto.genderType,
+                profileImage = URL(registerDto.profileImage)
             )
         )
 
