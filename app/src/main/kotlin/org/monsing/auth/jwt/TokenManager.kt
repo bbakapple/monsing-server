@@ -39,7 +39,7 @@ class TokenManager(
 
     fun createAccessToken(payload: TokenPayload): String {
         val issuedAt = Date()
-        val expiration = issuedAt.toInstant().plusSeconds(accessExpireSecond).let { Date.from(it) }
+        val expiration = getExpiration(issuedAt, accessExpireSecond)
         return Jwts.builder()
             .subject(payload.id.toString())
             .issuedAt(issuedAt)
@@ -50,13 +50,17 @@ class TokenManager(
 
     fun createRefreshToken(id: Long): String {
         val issuedAt = Date()
-        val expiration = issuedAt.toInstant().plusSeconds(refreshExpireSecond).let { Date.from(it) }
+        val expiration = getExpiration(issuedAt, refreshExpireSecond)
         return Jwts.builder()
             .subject(id.toString())
             .issuedAt(issuedAt)
             .expiration(expiration)
             .signWith(refreshKey)
             .compact()
+    }
+
+    private fun getExpiration(issuedAt: Date, expirationSecond: Long): Date {
+        return issuedAt.toInstant().plusSeconds(expirationSecond).let { Date.from(it) }
     }
 
     fun getRefreshPayload(token: String): Long {
