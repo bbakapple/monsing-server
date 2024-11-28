@@ -89,14 +89,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClassResponse'
+                $ref: '#/components/schemas/CourseResponse'
         '400':
           description: 잘못된 요청입니다.
 
-  /students/{id}/classes:
+  /students/{id}/courses:
     get:
-      summary: 수강 중인 수업 조회
-      description: 수강 중인 수업을 조회합니다.
+      summary: 수강 중인 강좌 조회
+      description: 수강 중인 강좌를 조회합니다.
       tags:
         - Student
       security:
@@ -116,7 +116,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ClassResponse'
+                  $ref: '#/components/schemas/CourseResponse'
         '400':
           description: 잘못된 요청입니다.
 
@@ -207,7 +207,7 @@ components:
       required:
         - name
 
-    ClassResponse:
+    CourseResponse:
       type: object
       properties:
         id:
