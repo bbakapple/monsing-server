@@ -1,6 +1,5 @@
 package org.monsing.course
 
-import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
@@ -22,7 +21,6 @@ class CourseTicket(
     val price: Price,
 
     @Embedded
-    @Column(name = "total_number")
     val totalNumber: ClassNumber,
 
     @Embedded
