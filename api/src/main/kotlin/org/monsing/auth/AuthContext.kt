@@ -1,6 +1,6 @@
 package org.monsing.auth
 
-import org.monsing.jwt.TokenPayload
+import org.monsing.auth.jwt.TokenPayload
 import org.springframework.stereotype.Component
 import org.springframework.web.context.annotation.RequestScope
 
