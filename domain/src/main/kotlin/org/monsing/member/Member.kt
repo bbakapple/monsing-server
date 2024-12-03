@@ -25,5 +25,12 @@ class Member(
     val genderType: GenderType,
 
     @Column(name = "profile_image")
-    val profileImage: URL
-) : BaseEntity()
+    val profileImage: URL,
+
+    private var isDeleted: Boolean = false
+) : BaseEntity() {
+
+    fun delete() {
+        isDeleted = true
+    }
+}

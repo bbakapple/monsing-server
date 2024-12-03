@@ -9,6 +9,7 @@ import org.monsing.member.Nickname
 import org.monsing.member.OauthProviderType
 import org.monsing.token.Token
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.net.URL
 
 @Service
@@ -18,6 +19,7 @@ class AuthService(
     private val tokenManager: TokenManager
 ) {
 
+    @Transactional
     fun login(oauthProviderType: OauthProviderType, oauthToken: String): Token {
         val oauthIdentifier = oauthAdaptor.handle(oauthProviderType, oauthToken)
         val member = memberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
@@ -33,6 +35,7 @@ class AuthService(
         )
     }
 
+    @Transactional
     fun register(registerDto: RegisterDto): Token {
         val oauthIdentifier = oauthAdaptor.handle(
             registerDto.oauthProviderType,
@@ -67,5 +70,12 @@ class AuthService(
             accessToken = tokenManager.createAccessToken(TokenPayload(payload)),
             refreshToken = refreshToken
         )
+    }
+
+    @Transactional
+    fun exit(memberId: Long) {
+        val member = memberRepository.findById(memberId)
+
+        member?.delete()
     }
 }
