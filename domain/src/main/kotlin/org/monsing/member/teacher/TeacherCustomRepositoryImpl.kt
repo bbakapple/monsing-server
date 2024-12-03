@@ -34,6 +34,7 @@ class TeacherCustomRepositoryImpl(
                     lt(path(CourseTicket::price)(Price::value), condition.price),
                     path(Teacher::id).gt(condition.lastId ?: 0L),
                 )
+                .orderBy(path(Teacher::id).asc())
         }.filterNotNull()
     }
 
