@@ -1,7 +1,7 @@
-package org.monsing.member
+package org.monsing.member.teacher
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PortfolioRepository : JpaRepository<Portfolio, Long>
+interface TeacherRepository : JpaRepository<Teacher, Long>
