@@ -6,6 +6,7 @@ import org.monsing.course.Price
 import org.monsing.eq
 import org.monsing.like
 import org.monsing.lt
+import org.monsing.member.GenderType
 import org.monsing.member.Member
 import org.monsing.member.Nickname
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,9 +16,16 @@ class TeacherCustomRepositoryImpl(
     @Autowired private val jpqlExecutor: KotlinJdslJpqlExecutor
 ) : TeacherCustomRepository {
 
-    override fun findByConditions(condition: TeacherCondition): List<Teacher> {
+    override fun findByConditions(
+        genderType: GenderType?,
+        verified: Boolean?,
+        size: Int?,
+        lastId: Long?,
+        keyword: String?,
+        price: Int?
+    ): List<Teacher> {
         return jpqlExecutor.findAll(
-            defaultPageStrategy(condition)
+            defaultPageStrategy(size)
         ) {
             select(entity(Teacher::class))
                 .from(
@@ -28,16 +36,16 @@ class TeacherCustomRepositoryImpl(
                         .on(entity(Teacher::class).eq(path(CourseTicket::teacher)))
                 )
                 .whereAnd(
-                    eq(path(Member::genderType), condition.genderType),
-                    eq(path(Teacher::verified), condition.verified),
-                    like(path(Member::nickname)(Nickname::value), condition.keyword),
-                    lt(path(CourseTicket::price)(Price::value), condition.price),
-                    path(Teacher::id).gt(condition.lastId ?: 0L),
+                    eq(path(Member::genderType), genderType),
+                    eq(path(Teacher::verified), verified),
+                    like(path(Member::nickname)(Nickname::value), keyword),
+                    lt(path(CourseTicket::price)(Price::value), price),
+                    path(Teacher::id).gt(lastId ?: 0L),
                 )
                 .orderBy(path(Teacher::id).asc())
         }.filterNotNull()
     }
 
-    private fun defaultPageStrategy(condition: TeacherCondition) =
-        PageRequest.of(0, condition.size ?: 10)
+    private fun defaultPageStrategy(size: Int?) =
+        PageRequest.of(0, size ?: 10)
 }
