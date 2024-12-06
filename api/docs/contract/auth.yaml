@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: 인증/인가 API
+  version: 1.0.0
+  description: 인증/인가 관련 API
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+paths:
+  /refresh:
+    get:
+      summary: 리프레쉬 토큰 요청 (액세스, 리프레쉬 토큰 모두 재발급)
+      security:
+        - BearerAuth: [ ]
+      operationId: refresh
+      tags:
+        - Auth
+      requestBody:
+        description: 이전에 발급된 리프레쉬 토큰
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: 잘못된 요청
+
+  /login:
+    post:
+      summary: OAuth 로그인
+      description: OAuth Provider를 통해 로그인하고 액세스 토큰과 리프레쉬 토큰을 발급받습니다.
+      operationId: login
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthLoginRequest'
+      responses:
+        '200':
+          description: 성공적으로 토큰이 발급되었습니다.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: 잘못된 요청입니다.
+
+  /exit:
+    delete:
+      summary: 회원탈퇴
+      description: 회원탈퇴를 진행합니다.
+      operationId: exit
+      tags:
+        - Auth
+      security:
+          - BearerAuth: [ ]
+      responses:
+        '200':
+          description: 회원탈퇴가 완료되었습니다.
+        '400':
+          description: 잘못된 요청입니다.
+
+components:
+  schemas:
+    RefreshTokenRequest:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: 리프레쉬 토큰
+      required:
+        - refreshToken
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: 액세스 토큰
+        refreshToken:
+          type: string
+          description: 리프레쉬 토큰
+      required:
+        - accessToken
+        - refreshToken
+
+    OAuthLoginRequest:
+      type: object
+      properties:
+        oauthProvider:
+          type: string
+          description: OAuth 제공자
+        oauthToken:
+          type: string
+          description: OAuth 토큰
+      required:
+        - oauthProvider
+        - oauthToken
+
