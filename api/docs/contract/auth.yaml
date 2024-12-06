@@ -65,7 +65,7 @@ paths:
       tags:
         - Auth
       security:
-          - BearerAuth: [ ]
+        - BearerAuth: [ ]
       responses:
         '200':
           description: 회원탈퇴가 완료되었습니다.
@@ -73,6 +73,12 @@ paths:
           description: 잘못된 요청입니다.
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     RefreshTokenRequest:
       type: object
