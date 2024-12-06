@@ -175,6 +175,12 @@ paths:
           description: 잘못된 요청입니다.
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     StudentCreateRequest:
       type: object
