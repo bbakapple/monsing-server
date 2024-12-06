@@ -105,14 +105,8 @@ interface {{classname}} {
     {{#allParams}}
         {{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}},{{/-last}}
     {{/allParams}}
-    ): ResponseEntity<{{>returnTypes}}>{{^skipDefaultInterface}} {
-    {{^isDelegate}}
-        return {{>returnValue}}
-    {{/isDelegate}}
-    {{#isDelegate}}
-        return getDelegate().{{operationId}}({{#allParams}}{{paramName}}{{^-last}}, {{/-last}}{{/allParams}})
-    {{/isDelegate}}
-    }{{/skipDefaultInterface}}
+    ): ResponseEntity<{{>returnTypes}}>{{^skipDefaultInterface}} {{/skipDefaultInterface}}
 {{/operation}}
 }
 {{/operations}}
+
