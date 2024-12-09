@@ -1,6 +1,6 @@
 package org.monsing.auth.teacher
 
-import org.monsing.member.GenderType
+import org.monsing.member.teacher.GenderType
 import org.monsing.member.teacher.Teacher
 import org.monsing.member.teacher.TeacherRepository
 import org.springframework.data.repository.findByIdOrNull

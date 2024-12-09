@@ -1,11 +1,18 @@
 package org.monsing.member
 
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
-import jakarta.persistence.OneToOne
 import org.monsing.BaseEntity
 
 @Entity
 class Student(
-    @OneToOne
-    val member: Member
+
+    val memberId: Long,
+
+    @Column(name = "profile_image")
+    val profileImage: String? = null,
+
+    @Embedded
+    val nickname: Nickname,
 ) : BaseEntity()

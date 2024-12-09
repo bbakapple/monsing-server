@@ -1,4 +1,4 @@
-package org.monsing.member
+package org.monsing.member.teacher
 
 enum class GenderType {
     MALE,

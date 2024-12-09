@@ -6,8 +6,6 @@ import org.monsing.course.Price
 import org.monsing.eq
 import org.monsing.like
 import org.monsing.lt
-import org.monsing.member.GenderType
-import org.monsing.member.Member
 import org.monsing.member.Nickname
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -30,15 +28,13 @@ class TeacherCustomRepositoryImpl(
             select(entity(Teacher::class))
                 .from(
                     entity(Teacher::class),
-                    join(entity(Member::class))
-                        .on(path(Teacher::member).eq(entity(Member::class))),
                     join(entity(CourseTicket::class))
                         .on(entity(Teacher::class).eq(path(CourseTicket::teacher)))
                 )
                 .whereAnd(
-                    eq(path(Member::genderType), genderType),
+                    eq(path(Teacher::genderType), genderType),
                     eq(path(Teacher::verified), verified),
-                    like(path(Member::nickname)(Nickname::value), keyword),
+                    like(path(Teacher::nickname)(Nickname::value), keyword),
                     lt(path(CourseTicket::price)(Price::value), price),
                     path(Teacher::id).gt(lastId ?: 0L),
                 )
