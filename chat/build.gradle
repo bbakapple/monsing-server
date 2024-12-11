@@ -4,7 +4,3 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.kafka:spring-kafka'
 }
-
-bootJar {
-    enabled = false
-}
