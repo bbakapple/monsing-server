@@ -2,17 +2,25 @@ package org.monsing.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.redis.connection.RedisPassword
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.GenericToStringSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
-class RedisConfig {
+class RedisConfig(private val redisProperties: RedisProperties) {
 
     @Bean
-    fun connectionFactory() = LettuceConnectionFactory().apply {
-        //TODO: 레디스 설정
+    fun connectionFactory() = LettuceConnectionFactory(redisStandAloneConfiguration())
+
+    @Bean
+    fun redisStandAloneConfiguration() = RedisStandaloneConfiguration().apply {
+        hostName = redisProperties.host
+        port = redisProperties.port
+        username = redisProperties.username
+        password = RedisPassword.of(redisProperties.password)
     }
 
     @Bean

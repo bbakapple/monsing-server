@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      username:
+      password:
+      uri: mongodb://localhost:27017/chat
+
+    redis:
+      host: localhost
+      port: 6379
+      username:
+      password:
