@@ -25,13 +25,9 @@ class WebSocketHandler(
 ) : TextWebSocketHandler() {
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
-        session.uri?.query?.takeIf {
-            it.startsWith("memberId=")
-        }?.let {
-            val memberId = it.substringAfter("memberId=").toLong()
-            session.attributes["memberId"] = memberId
-            localSessionStorage.saveSession(memberId, session)
-            globalServerIdStorage.saveServerId(memberId, session.localAddress.toString())
+        session.attributes["memberId"]?.let {
+            localSessionStorage.saveSession(it as Long, session)
+            globalServerIdStorage.saveServerId(it, session.localAddress.toString())
         }
     }
 
@@ -50,7 +46,7 @@ class WebSocketHandler(
         }
     }
 
-    fun sendMessage(message: Message) {
+    private fun sendMessage(message: Message) {
         val receivers = messageRepository.findReceiverIdByChatId(message.chatId, message.senderId)
 
         for (receiver in receivers) {
@@ -74,7 +70,7 @@ class WebSocketHandler(
         }
     }
 
-    fun sendOtherServer(receiverServerId: String, receiverId: Long, message: Message) {
+    private fun sendOtherServer(receiverServerId: String, receiverId: Long, message: Message) {
         val client = HttpClient.newHttpClient()
         client.sendAsync(
             HttpRequest.newBuilder()
