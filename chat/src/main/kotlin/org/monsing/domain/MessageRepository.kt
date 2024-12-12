@@ -36,6 +36,5 @@ class MessageRepository(private val mongoTemplate: MongoTemplate) {
             "member_chat"
         ).filter { it.memberId != senderId }
             .map { it.memberId }
-
     }
 }
