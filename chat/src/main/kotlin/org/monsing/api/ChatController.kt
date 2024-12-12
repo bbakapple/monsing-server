@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class ChatController(private val chatService: ChatService) {
 
     @PostMapping("/relay")
-    fun sendMessage(
+    fun relayMessage(
         @RequestBody message: Message,
         @RequestParam receiverId: Long
     ) {
