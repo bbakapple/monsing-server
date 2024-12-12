@@ -1,4 +1,9 @@
 spring:
+  profiles:
+    active: local
+    include:
+      - app
+
   data:
     mongodb:
       username:
