@@ -1,0 +1,13 @@
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.9
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username:
+      password:
