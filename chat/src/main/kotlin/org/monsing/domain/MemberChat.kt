@@ -1,8 +1,9 @@
 package org.monsing.domain
 
+import java.util.UUID
+
 class MemberChat(
-    val id: Long,
+    var id: String? = UUID.randomUUID().toString(),
     val memberId: Long,
-    val chatId: Long
-) {
-}
+    val chatId: String
+)
