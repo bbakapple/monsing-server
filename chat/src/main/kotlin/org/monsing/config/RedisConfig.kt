@@ -29,4 +29,11 @@ class RedisConfig(private val redisProperties: RedisProperties) {
         keySerializer = GenericToStringSerializer(Long::class.java)
         valueSerializer = StringRedisSerializer()
     }
+
+    @Bean
+    fun ticketRedisTemplate() = RedisTemplate<String, Long>().apply {
+        connectionFactory = connectionFactory()
+        keySerializer = StringRedisSerializer()
+        valueSerializer = GenericToStringSerializer(Long::class.java)
+    }
 }

@@ -1,21 +1,21 @@
 package org.monsing.domain
 
 import io.kotest.assertions.assertSoftly
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldContainOnly
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.monsing.support.SpringBootTestWithRedis
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.mongodb.core.MongoTemplate
 
-@SpringBootTest
 class MessageRepositoryTest(
     @Autowired private val messageRepository: MessageRepository,
     @Autowired private val memberChatRepository: MemberChatRepository,
     @Autowired private val mongoTemplate: MongoTemplate
-) {
+) : SpringBootTestWithRedis() {
 
     @BeforeEach
     fun clear() {
@@ -26,37 +26,43 @@ class MessageRepositoryTest(
 
     @Test
     fun `메시지 저장 및 조회`() {
-        messageRepository.save(Message(1, "1", 1, "Hello"))
+        messageRepository.save(Message(chatId = "1", senderId = 1, content = "Hello"))
 
-        val messages = messageRepository.findByChatId("1", Long.MAX_VALUE, 10)
+        val messages = messageRepository.findByChatId("1", "9".repeat(20), 10)
 
         messages[0].content shouldBe "Hello"
     }
 
     @Test
     fun `채팅 방에 따른 메시지를 찾는 쿼리 검증`() {
-        messageRepository.save(Message(1, "1", 1, "Hello"))
-        messageRepository.save(Message(2, "1", 1, "Hello"))
+        messageRepository.save(Message(chatId = "1", senderId = 1, content = "Hello"))
+        messageRepository.save(Message(chatId = "1", senderId = 1, content = "Hello"))
+        messageRepository.save(Message(chatId = "2", senderId = 1, content = "Hello"))
 
-        val messages = messageRepository.findByChatId("1", Long.MAX_VALUE, 10)
+        val messages = messageRepository.findByChatId("1", "9".repeat(20), 10)
 
         assertSoftly {
             messages.size shouldBe 2
-            messages.map { it.id } shouldContainExactlyInAnyOrder setOf(1, 2)
         }
     }
 
     @Test
     fun `메시지 조회 쿼리 페이징 검증`() {
+        var bound: String = ""
+
         for (i in 1..30) {
-            messageRepository.save(Message(i.toLong(), "1", 1, "Hello$i"))
+            val message = Message(chatId = "1", senderId = 1, content = "Hello$i")
+            messageRepository.save(message)
+            if (i == 20) {
+                bound = message.id!!
+            }
         }
 
-        val messages = messageRepository.findByChatId("1", 20, 10)
+        val messages = messageRepository.findByChatId("1", bound, 10)
 
         assertSoftly {
             messages.size shouldBe 10
-            messages.map { it.id }.all { it!! < 20 } shouldBe true
+            messages.map { it.id }.all { it!! < bound } shouldBe true
         }
     }
 
@@ -73,5 +79,29 @@ class MessageRepositoryTest(
         assertSoftly {
             receivers shouldContainOnly setOf(1)
         }
+    }
+
+    @Test
+    fun `나중에 저장된 message의 id가 더 크다`() {
+        val message1 = Message(chatId = "1", senderId = 1, content = "Hello1")
+        val message2 = Message(chatId = "1", senderId = 1, content = "Hello2")
+        messageRepository.save(message1)
+        messageRepository.save(message2)
+
+        message2.id?.shouldBeGreaterThan(message1.id!!)
+    }
+
+    @Test
+    fun `동시에 저장된 message의 id가 구분된다`() {
+        val message1 = Message(chatId = "1", senderId = 1, content = "Hello1")
+        val message2 = Message(chatId = "1", senderId = 1, content = "Hello2")
+        Thread().run {
+            messageRepository.save(message1)
+        }
+        Thread().run {
+            messageRepository.save(message2)
+        }
+
+        message1.shouldNotBeEqual(message2)
     }
 }

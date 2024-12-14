@@ -7,12 +7,17 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Component
 
 @Component
-class MessageRepository(private val mongoTemplate: MongoTemplate) {
+class MessageRepository(
+    private val mongoTemplate: MongoTemplate,
+    private val messageIdStrategy: MessageIdStrategy
+) {
 
-    //TODO: id 전략
-    fun save(message: Message) = mongoTemplate.save(message, "message")
+    fun save(message: Message) {
+        messageIdStrategy.generateId(message)
+        mongoTemplate.save(message, "message")
+    }
 
-    fun findByChatId(chatId: String, lastId: Long, limit: Int): List<Message> {
+    fun findByChatId(chatId: String, lastId: String, limit: Int): List<Message> {
         val query = Query().addCriteria(
             where("id").lt(lastId)
                 .and("chatId").`is`(chatId)
