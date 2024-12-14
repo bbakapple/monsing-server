@@ -8,4 +8,6 @@ dependencies {
 
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.6.2'
     testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
+    testImplementation 'io.mockk:mockk:1.13.13'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
 }

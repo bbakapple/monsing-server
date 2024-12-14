@@ -35,7 +35,7 @@ class ChatService(
     }
 
     private fun publishMessageSentEvent() {
-        TODO("Not yet implemented")
+        //TODO: Implement this method
     }
 
     fun createChat(memberIds: List<Long>): String {
@@ -72,32 +72,46 @@ class ChatService(
     }
 
     fun handleMessage(senderId: Long, message: WebSocketMessage<*>) {
-        //TODO: message DTO로 수정해야함
-        val msg = objectMapper.readValue(message.payload as String, Message::class.java)
+        val dto = objectMapper.readValue(message.payload as String, MessageDto::class.java)
+
+        val msg = Message(chatId = dto.chatId, senderId = senderId, content = dto.content)
 
         messageRepository.save(msg)
 
         sendMessage(msg)
     }
 
-
     private fun sendMessage(message: Message) {
         val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
 
         for (receiver in receivers) {
-            localSessionStorage.getSession(receiver)?.let {
+
+            val localSessions = localSessionStorage.getSession(receiver)
+
+            localSessions?.let {
                 it.forEach {
                     it.sendMessage(message.toPayload())
                 }
-            } ?: globalServerIdStorage.getServerId(receiver)?.let {
-                it.forEach {
-                    sendOtherServer(it, receiver, message)
+            }
+
+            if (localSessions.isNullOrEmpty()) {
+
+                val globalServerIds = globalServerIdStorage.getServerId(receiver)
+
+                globalServerIds?.let {
+                    it.forEach {
+                        sendToOtherServer(it, receiver, message)
+                    }
                 }
-            } ?: publishMessageSentEvent()
+
+                if (globalServerIds.isNullOrEmpty()) {
+                    publishMessageSentEvent()
+                }
+            }
         }
     }
 
-    private fun sendOtherServer(receiverServerId: String, receiverId: Long, message: Message) {
+    private fun sendToOtherServer(receiverServerId: String, receiverId: Long, message: Message) {
         val client = HttpClient.newHttpClient()
         client.sendAsync(
             HttpRequest.newBuilder()
