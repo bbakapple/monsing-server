@@ -1,4 +1,4 @@
-package org.monsing.application
+package org.monsing.api
 
 import org.monsing.auth.jwt.TokenManager
 import org.springframework.http.server.ServerHttpRequest

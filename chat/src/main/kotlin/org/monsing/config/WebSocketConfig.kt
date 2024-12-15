@@ -1,7 +1,7 @@
 package org.monsing.config
 
-import org.monsing.application.ChatInterceptor
-import org.monsing.application.WebSocketHandler
+import org.monsing.api.ChatInterceptor
+import org.monsing.api.WebSocketHandler
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.config.annotation.EnableWebSocket
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer

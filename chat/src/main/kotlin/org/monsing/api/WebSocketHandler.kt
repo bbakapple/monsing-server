@@ -1,5 +1,6 @@
-package org.monsing.application
+package org.monsing.api
 
+import org.monsing.application.ChatService
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.WebSocketMessage
