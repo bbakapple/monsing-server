@@ -7,6 +7,11 @@ import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.monsing.chat.Chat
+import org.monsing.chat.MemberChat
+import org.monsing.chat.MemberChatRepository
+import org.monsing.chat.Message
+import org.monsing.chat.MessageRepository
 import org.monsing.support.SpringBootTestWithRedis
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate

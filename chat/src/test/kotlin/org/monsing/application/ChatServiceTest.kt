@@ -9,11 +9,13 @@ import io.mockk.verify
 import io.mockk.verifyOrder
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.monsing.domain.MemberChatRepository
-import org.monsing.domain.Message
-import org.monsing.domain.MessageRepository
-import org.monsing.domain.session.GlobalServerIdStorage
-import org.monsing.domain.session.LocalSessionStorage
+import org.monsing.chat.ChatService
+import org.monsing.chat.MemberChatRepository
+import org.monsing.chat.Message
+import org.monsing.chat.MessageDto
+import org.monsing.chat.MessageRepository
+import org.monsing.chat.session.GlobalServerIdStorage
+import org.monsing.chat.session.LocalSessionStorage
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 

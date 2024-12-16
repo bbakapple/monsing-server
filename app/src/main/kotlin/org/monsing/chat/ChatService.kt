@@ -1,17 +1,12 @@
-package org.monsing.application
+package org.monsing.chat
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import org.monsing.domain.Chat
-import org.monsing.domain.MemberChat
-import org.monsing.domain.MemberChatRepository
-import org.monsing.domain.Message
-import org.monsing.domain.MessageRepository
-import org.monsing.domain.session.GlobalServerIdStorage
-import org.monsing.domain.session.LocalSessionStorage
+import org.monsing.chat.session.GlobalServerIdStorage
+import org.monsing.chat.session.LocalSessionStorage
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service

@@ -1,7 +1,7 @@
 package org.monsing.api
 
-import org.monsing.application.ChatService
-import org.monsing.domain.Message
+import org.monsing.chat.ChatService
+import org.monsing.chat.Message
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam

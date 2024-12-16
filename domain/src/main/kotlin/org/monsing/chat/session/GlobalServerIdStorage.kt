@@ -1,4 +1,4 @@
-package org.monsing.domain.session
+package org.monsing.chat.session
 
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration

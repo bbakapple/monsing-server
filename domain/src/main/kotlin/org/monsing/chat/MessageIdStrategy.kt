@@ -1,4 +1,4 @@
-package org.monsing.domain
+package org.monsing.chat
 
 interface MessageIdStrategy {
 

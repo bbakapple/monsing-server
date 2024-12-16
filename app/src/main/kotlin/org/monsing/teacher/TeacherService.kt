@@ -1,4 +1,4 @@
-package org.monsing.auth.teacher
+package org.monsing.teacher
 
 import org.monsing.member.GenderType
 import org.monsing.member.teacher.Teacher

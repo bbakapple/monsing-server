@@ -1,4 +1,4 @@
-package org.monsing.domain
+package org.monsing.chat
 
 import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.mapping.Document

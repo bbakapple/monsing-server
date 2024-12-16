@@ -1,4 +1,4 @@
-package org.monsing.domain
+package org.monsing.chat
 
 import kotlin.reflect.KProperty
 import org.springframework.data.domain.Sort

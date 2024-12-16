@@ -1,4 +1,4 @@
-package org.monsing.domain.session
+package org.monsing.chat.session
 
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.WebSocketSession

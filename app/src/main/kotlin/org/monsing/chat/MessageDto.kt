@@ -1,4 +1,4 @@
-package org.monsing.application
+package org.monsing.chat
 
 data class MessageDto(
     val chatId: String,

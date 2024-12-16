@@ -1,4 +1,4 @@
-package org.monsing.domain
+package org.monsing.chat
 
 import java.time.Duration
 import java.time.LocalDateTime

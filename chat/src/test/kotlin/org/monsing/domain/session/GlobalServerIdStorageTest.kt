@@ -2,6 +2,7 @@ package org.monsing.domain.session
 
 import io.kotest.matchers.collections.shouldContainOnly
 import org.junit.jupiter.api.Test
+import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.support.SpringBootTestWithRedis
 import org.springframework.beans.factory.annotation.Autowired
 

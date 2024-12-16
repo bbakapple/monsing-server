@@ -1,13 +1,6 @@
 dependencies {
     implementation project(":app")
+    implementation project(":domain")
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.kafka:spring-kafka'
-
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.6.2'
-    testImplementation 'com.github.codemonstur:embedded-redis:1.4.3'
-    testImplementation 'io.mockk:mockk:1.13.13'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
 }

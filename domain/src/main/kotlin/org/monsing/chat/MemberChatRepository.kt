@@ -1,4 +1,4 @@
-package org.monsing.domain
+package org.monsing.chat
 
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
