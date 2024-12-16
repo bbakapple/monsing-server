@@ -9,13 +9,9 @@ import org.springframework.stereotype.Component
 @Component
 class RedisTicketStrategy(private val ticketRedisTemplate: RedisTemplate<String, Long>) : MessageIdStrategy {
 
-    companion object {
-        private const val TICKET_KEY = "message_id_ticket"
-    }
-
     override fun generateId(message: Message) {
         ticketRedisTemplate.opsForValue().get(TICKET_KEY)
-            ?: run {
+            ?.run {
                 ticketRedisTemplate.opsForValue().set(
                     TICKET_KEY,
                     0,
@@ -24,7 +20,7 @@ class RedisTicketStrategy(private val ticketRedisTemplate: RedisTemplate<String,
             }
 
         val additionalId = requireNotNull(ticketRedisTemplate.opsForValue().increment(TICKET_KEY)) {
-            "Failed to generate ticket"
+            "Failed to generate id"
         }
 
         val dataTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHHmmssSS"))
@@ -32,5 +28,9 @@ class RedisTicketStrategy(private val ticketRedisTemplate: RedisTemplate<String,
         val id = "$dataTime${additionalId.toString().padStart(6, '0')}"
 
         message.id = id
+    }
+
+    companion object {
+        private const val TICKET_KEY = "message_id_ticket"
     }
 }
