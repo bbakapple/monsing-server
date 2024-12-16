@@ -25,7 +25,9 @@ class AuthController(private val authService: AuthService) : AuthApi {
         tokenPayload: TokenPayload,
         refreshTokenRequest: RefreshTokenRequest
     ): ResponseEntity<TokenResponse> {
-        TODO("Not yet implemented")
+        val token = authService.refresh(refreshTokenRequest.refreshToken)
+
+        return ResponseEntity.ok(TokenResponse(token.accessToken, token.refreshToken))
     }
 
     private fun OAuthLoginRequest.providerType() = OauthProviderType.valueOf(oauthProvider.uppercase())
