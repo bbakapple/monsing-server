@@ -1,6 +1,7 @@
 package org.monsing.api
 
 import org.monsing.auth.jwt.TokenManager
+import org.springframework.http.HttpHeaders
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.stereotype.Component
@@ -15,7 +16,7 @@ class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterce
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        request.headers["Authorization"]?.firstOrNull()
+        request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull()
             ?.let {
                 val token = it.substringAfter("Bearer ")
                 tokenManager.getPayLoad(token).let {
