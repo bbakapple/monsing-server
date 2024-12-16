@@ -60,14 +60,14 @@ class ChatService(
     fun saveSession(session: WebSocketSession) {
         session.attributes["memberId"]?.let {
             localSessionStorage.saveSession(it as Long, session)
-            globalServerIdStorage.saveServerId(it, session.localAddress.toString())
+            globalServerIdStorage.saveServerId(it, session.serverAddress())
         }
     }
 
     fun removeSession(session: WebSocketSession) {
         session.attributes["memberId"]?.let {
             localSessionStorage.removeSession(it as Long, session)
-            globalServerIdStorage.removeServerId(it, session.localAddress.toString())
+            globalServerIdStorage.removeServerId(it, session.serverAddress())
         }
     }
 
@@ -85,29 +85,31 @@ class ChatService(
         val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
 
         for (receiver in receivers) {
-
             val localSessions = localSessionStorage.getSession(receiver)
 
-            localSessions?.let {
-                it.forEach {
+            localSessions?.let { session ->
+                session.forEach {
                     it.sendMessage(message.toPayload())
                 }
             }
 
             if (localSessions.isNullOrEmpty()) {
-
-                val globalServerIds = globalServerIdStorage.getServerId(receiver)
-
-                globalServerIds?.let {
-                    it.forEach {
-                        sendToOtherServer(it, receiver, message)
-                    }
-                }
-
-                if (globalServerIds.isNullOrEmpty()) {
-                    publishMessageSentEvent()
-                }
+                findGlobalSessionAndSendMessage(receiver, message)
             }
+        }
+    }
+
+    private fun findGlobalSessionAndSendMessage(receiver: Long, message: Message) {
+        val globalServerIds = globalServerIdStorage.getServerId(receiver)
+
+        globalServerIds?.let { id ->
+            id.forEach {
+                sendToOtherServer(it, receiver, message)
+            }
+        }
+
+        if (globalServerIds.isNullOrEmpty()) {
+            publishMessageSentEvent()
         }
     }
 
@@ -115,7 +117,7 @@ class ChatService(
         val client = HttpClient.newHttpClient()
         client.sendAsync(
             HttpRequest.newBuilder()
-                .uri(URI.create("http:/$receiverServerId/relay?receiverId=$receiverId"))
+                .uri(URI.create("http://$receiverServerId/relay?receiverId=$receiverId"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(message)))
                 .build(),
@@ -124,4 +126,5 @@ class ChatService(
     }
 
     private fun Message.toPayload() = TextMessage(objectMapper.writeValueAsString(this))
+    private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }

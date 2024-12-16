@@ -1,16 +1,12 @@
 package org.monsing.domain.session
 
-import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.stereotype.Component
 
 @Component
 class GlobalServerIdStorage(private val redisTemplate: RedisTemplate<Long, String>) {
-
-    companion object {
-        private val SESSION_EXPIRE_MINUTES = 15.minutes.toJavaDuration()
-    }
 
     fun saveServerId(memberId: Long, serverId: String) {
         redisTemplate.opsForSet().add(memberId, serverId)
@@ -24,5 +20,9 @@ class GlobalServerIdStorage(private val redisTemplate: RedisTemplate<Long, Strin
 
     fun removeServerId(memberId: Long, serverId: String) {
         redisTemplate.opsForSet().remove(memberId, serverId)
+    }
+
+    companion object {
+        private val SESSION_EXPIRE_MINUTES = 15.minutes.toJavaDuration()
     }
 }
