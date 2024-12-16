@@ -26,8 +26,8 @@ class ChatService(
     private val client = HttpClient.newHttpClient()
 
     fun relayMessage(receiverId: Long, message: Message) {
-        localSessionStorage.getSession(receiverId)?.let {
-            it.forEach {
+        localSessionStorage.getSession(receiverId)?.let { session ->
+            session.forEach {
                 it.sendMessage(message.toPayload())
             }
         } ?: publishMessageSentEvent()
