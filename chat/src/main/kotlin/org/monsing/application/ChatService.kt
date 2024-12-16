@@ -12,6 +12,8 @@ import org.monsing.domain.Message
 import org.monsing.domain.MessageRepository
 import org.monsing.domain.session.GlobalServerIdStorage
 import org.monsing.domain.session.LocalSessionStorage
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketMessage
@@ -25,6 +27,8 @@ class ChatService(
     private val messageRepository: MessageRepository,
     private val objectMapper: ObjectMapper
 ) {
+
+    private val client = HttpClient.newHttpClient()
 
     fun relayMessage(receiverId: Long, message: Message) {
         localSessionStorage.getSession(receiverId)?.let {
@@ -114,11 +118,10 @@ class ChatService(
     }
 
     private fun sendToOtherServer(receiverServerId: String, receiverId: Long, message: Message) {
-        val client = HttpClient.newHttpClient()
         client.sendAsync(
             HttpRequest.newBuilder()
                 .uri(URI.create("http://$receiverServerId/relay?receiverId=$receiverId"))
-                .header("Content-Type", "application/json")
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(message)))
                 .build(),
             HttpResponse.BodyHandlers.ofString()
