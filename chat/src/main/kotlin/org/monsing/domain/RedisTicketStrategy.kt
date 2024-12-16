@@ -11,7 +11,7 @@ class RedisTicketStrategy(private val ticketRedisTemplate: RedisTemplate<String,
 
     override fun generateId(message: Message) {
         ticketRedisTemplate.opsForValue().get(TICKET_KEY)
-            ?.run {
+            ?: run {
                 ticketRedisTemplate.opsForValue().set(
                     TICKET_KEY,
                     0,
