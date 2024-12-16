@@ -1,9 +1,11 @@
 package org.monsing.domain
 
+import kotlin.reflect.KProperty
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.query.Criteria.where
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.isEqualTo
+import org.springframework.data.mongodb.core.query.lt
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,20 +16,24 @@ class MessageRepository(
 
     fun save(message: Message) {
         messageIdStrategy.generateId(message)
-        mongoTemplate.save(message, "message")
+        mongoTemplate.save(message)
     }
 
     fun findByChatId(chatId: String, lastId: String, limit: Int): List<Message> {
         val query = Query().addCriteria(
-            where("id").lt(lastId)
-                .and("chatId").`is`(chatId)
-        ).with(Sort.by(Sort.Direction.DESC, "id"))
-            .limit(limit)
+            (Message::id lt lastId)
+                .andOperator(Message::chatId isEqualTo chatId)
+        ).with(
+            sortBy(Message::id, Sort.Direction.DESC)
+        ).limit(limit)
 
         return mongoTemplate.find(
             query,
-            Message::class.java,
-            "message"
+            Message::class.java
         )
+    }
+
+    fun sortBy(property: KProperty<*>, direction: Sort.Direction = Sort.Direction.ASC): Sort {
+        return Sort.by(Sort.Order(direction, property.name))
     }
 }
