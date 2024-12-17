@@ -5,7 +5,7 @@ import org.springframework.web.socket.WebSocketSession
 
 @Component
 class LocalSessionStorage(
-    private val storage: MutableMap<Long, Set<WebSocketSession>> = mutableMapOf()
+    private val storage: HashMap<Long, Set<WebSocketSession>> = HashMap(),
 ) {
 
     fun saveSession(memberId: Long, session: WebSocketSession) {

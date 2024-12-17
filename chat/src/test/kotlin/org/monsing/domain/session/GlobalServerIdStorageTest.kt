@@ -1,6 +1,9 @@
 package org.monsing.domain.session
 
 import io.kotest.matchers.collections.shouldContainOnly
+import io.kotest.matchers.shouldBe
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
 import org.junit.jupiter.api.Test
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.support.SpringBootTestWithRedis
@@ -29,5 +32,26 @@ class GlobalServerIdStorageTest(
         val ids = globalServerIdStorage.getServerId(1)
 
         ids shouldContainOnly setOf("server-id-2")
+    }
+
+    @Test
+    fun `동시성 보장 테스트`() {
+        val memberId = 1L
+        val count = 5
+
+        val latch = CountDownLatch(count)
+        val pool = Executors.newFixedThreadPool(count)
+
+        for (i in 1..count) {
+            pool.execute {
+                globalServerIdStorage.saveServerId(memberId, "server-id-$i")
+                latch.countDown()
+            }
+        }
+        latch.await()
+
+        val ids = globalServerIdStorage.getServerId(memberId)
+
+        ids?.size shouldBe count
     }
 }
