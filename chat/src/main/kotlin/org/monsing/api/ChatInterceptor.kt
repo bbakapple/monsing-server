@@ -10,6 +10,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor
 
 @Component
 class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterceptor {
+
     override fun beforeHandshake(
         request: ServerHttpRequest,
         response: ServerHttpResponse,

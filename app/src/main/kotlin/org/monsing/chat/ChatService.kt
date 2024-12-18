@@ -66,7 +66,6 @@ class ChatService(
     fun removeSession(session: WebSocketSession) {
         session.attributes["memberId"]?.let {
             localSessionStorage.removeSession(it as Long, session)
-            globalServerIdStorage.removeServerId(it, session.serverAddress())
         }
     }
 
