@@ -16,7 +16,7 @@ class AuthController(private val authService: AuthService) : AuthApi {
     }
 
     override fun login(oauthLoginRequest: OAuthLoginRequest): ResponseEntity<TokenResponse> {
-        val token = authService.login(oauthLoginRequest.providerType(), oauthLoginRequest.oauthToken)
+        val token = authService.login(oauthLoginRequest.oauthProviderType(), oauthLoginRequest.oauthToken)
 
         return ResponseEntity.ok(TokenResponse(token.accessToken, token.refreshToken))
     }
@@ -30,6 +30,8 @@ class AuthController(private val authService: AuthService) : AuthApi {
         return ResponseEntity.ok(TokenResponse(token.accessToken, token.refreshToken))
     }
 
-    private fun OAuthLoginRequest.providerType() = OauthProviderType.valueOf(oauthProvider.uppercase())
+    private fun OAuthLoginRequest.oauthProviderType(): OauthProviderType {
+        return OauthProviderType.valueOf(oauthProvider.name.uppercase())
+    }
 }
 
