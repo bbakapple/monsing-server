@@ -52,7 +52,8 @@ subprojects {
         testImplementation 'io.mockk:mockk:1.13.13'
 
         //그라파나, 프로메테우스, 액츄에이터
-        implementation 'org.springframework.boot:spring-boot-starter-actuator:3.3.5'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
 
         //swagger
 
