@@ -12,7 +12,6 @@ class LocalSessionStorageTest {
 
     @Test
     fun `prefix로 세션을 가져온다`() {
-
         localSessionStorage.saveSession(1, "asdsda", mockk())
         localSessionStorage.saveSession(1, "meannot", mockk())
         localSessionStorage.saveSession(2, "deveve", mockk())
@@ -25,7 +24,6 @@ class LocalSessionStorageTest {
 
     @Test
     fun `prefix 자리수가 다른 경우에도 정상적으로 세션을 가져온다`() {
-
         localSessionStorage.saveSession(10, "1asd", mockk())
         localSessionStorage.saveSession(100, "0ag1", mockk())
         localSessionStorage.saveSession(1, "0asg01", mockk())
@@ -62,5 +60,20 @@ class LocalSessionStorageTest {
         val sessions = localSessionStorage.getSessionByMemberId(memberId)
 
         sessions?.size shouldBe count
+    }
+
+    @Test
+    fun `session key에 따라 정상적으로 session이 삭제된다`() {
+        localSessionStorage.saveSession(1, "1", mockk())
+        localSessionStorage.saveSession(1, "2", mockk())
+        localSessionStorage.saveSession(1, "3", mockk())
+        localSessionStorage.saveSession(1, "4", mockk())
+
+        localSessionStorage.removeSession(1, "1")
+        localSessionStorage.removeSession(1, "4")
+
+        val sessions = localSessionStorage.getSessionByMemberId(1)
+
+        sessions?.size shouldBe 2
     }
 }

@@ -17,13 +17,16 @@ class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterce
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull()
-            ?.let {
-                val token = it.substringAfter("Bearer ")
-                tokenManager.getPayLoad(token).let {
-                    attributes["memberId"] = it.id
-                }
-            } ?: return false
+        val memberId = request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull()
+            ?.let { tokenManager.getPayLoad(it.substringAfter("Bearer ")).id }
+            ?: throw IllegalArgumentException("Member id must not be null")
+
+        val deviceId = requireNotNull(request.headers["Device-Id"]?.firstOrNull()) {
+            "Device id must not be null"
+        }
+
+        attributes[MEMBER_METADATA] = MemberMetadata(memberId, deviceId)
+
         return true
     }
 

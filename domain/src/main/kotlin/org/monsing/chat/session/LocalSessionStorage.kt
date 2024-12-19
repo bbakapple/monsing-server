@@ -17,7 +17,7 @@ class LocalSessionStorage(
         return storage.subMap(memberId.convert(), (memberId + 1).convert()).values.toSet()
     }
 
-    fun removeSession(memberId: Long, deviceId: String, session: WebSocketSession) {
+    fun removeSession(memberId: Long, deviceId: String) {
         storage.remove(createKey(memberId, deviceId))
     }
 

@@ -13,17 +13,19 @@ class WebSocketHandler(
 ) : TextWebSocketHandler() {
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
-        chatService.saveSession(session)
+        val memberMetadata = requireNotNull(session.attributes[MEMBER_METADATA] as MemberMetadata)
+        chatService.saveSession(memberMetadata.memberId, memberMetadata.deviceId, session)
     }
 
     override fun handleMessage(session: WebSocketSession, message: WebSocketMessage<*>) {
-        val senderId = requireNotNull(session.attributes["memberId"] as Long)
+        val senderId = requireNotNull(session.attributes[MEMBER_METADATA] as MemberMetadata).memberId
 
         chatService.handleMessage(senderId, message)
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
-        chatService.removeSession(session)
+        val memberMetadata = requireNotNull(session.attributes[MEMBER_METADATA] as MemberMetadata)
+        chatService.removeSession(memberMetadata.memberId, memberMetadata.deviceId)
     }
 }
 

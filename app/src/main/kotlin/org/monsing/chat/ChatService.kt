@@ -56,17 +56,15 @@ class ChatService(
     }
 
 
-    fun saveSession(session: WebSocketSession) {
-        session.attributes["memberId"]?.let {
-            localSessionStorage.saveSession(it as Long, "1", session)
-            globalServerIdStorage.saveServerId(it, session.serverAddress())
-        }
+    fun saveSession(memberId: Long, deviceId: String, session: WebSocketSession) {
+        localSessionStorage.saveSession(memberId, deviceId, session)
+        globalServerIdStorage.saveServerId(memberId, session.serverAddress())
+
     }
 
-    fun removeSession(session: WebSocketSession) {
-        session.attributes["memberId"]?.let {
-            localSessionStorage.removeSession(it as Long, "1", session)
-        }
+    fun removeSession(memberId: Long, deviceId: String) {
+        localSessionStorage.removeSession(memberId, deviceId)
+
     }
 
     fun handleMessage(senderId: Long, message: WebSocketMessage<*>) {
