@@ -3,9 +3,12 @@ package org.monsing.auth
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.monsing.auth.jwt.TokenManager
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
+
+private const val BEARER = "Bearer "
 
 @Component
 class AuthInterceptor(
@@ -19,9 +22,9 @@ class AuthInterceptor(
         }
 
         if (handler.hasMethodAnnotation(Auth::class.java)) {
-            val token = request.getHeader("Authorization")
-                .takeIf { it.startsWith("Bearer ") }
-                ?.apply { removePrefix("Bearer ") }
+            val token = request.getHeader(HttpHeaders.AUTHORIZATION)
+                .takeIf { it.startsWith(BEARER) }
+                ?.apply { removePrefix(BEARER) }
                 ?: throw IllegalArgumentException("잘못된 인증 요청")
 
             val payload = tokenManager.getPayLoad(token)

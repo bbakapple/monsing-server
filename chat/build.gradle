@@ -1,8 +1,6 @@
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.3.5'
-    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.3.5'
-}
+    implementation project(":app")
+    implementation project(":domain")
 
-bootJar {
-    enabled = false
+    implementation 'org.springframework.kafka:spring-kafka'
 }
