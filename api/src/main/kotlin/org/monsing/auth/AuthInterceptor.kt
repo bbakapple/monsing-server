@@ -17,7 +17,9 @@ class AuthInterceptor(
 ) : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        handler as HandlerMethod
+        if (handler !is HandlerMethod) {
+            return true
+        }
 
         if (handler.hasMethodAnnotation(Auth::class.java)) {
             val token = request.getHeader(HttpHeaders.AUTHORIZATION)

@@ -106,8 +106,7 @@ components:
       type: object
       properties:
         oauthProvider:
-          type: string
-          description: OAuth 제공자
+          $ref: '#/components/schemas/OauthProvider'
         oauthToken:
           type: string
           description: OAuth 토큰
@@ -115,3 +114,9 @@ components:
         - oauthProvider
         - oauthToken
 
+    OauthProvider:
+      type: string
+      enum:
+        - GOOGLE
+        - KAKAO
+      description: OAuth 제공자
