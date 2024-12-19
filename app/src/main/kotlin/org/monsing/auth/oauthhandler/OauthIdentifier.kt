@@ -1,6 +1,5 @@
 package org.monsing.auth.oauthhandler
 
-@JvmInline
-value class OauthIdentifier(
+class OauthIdentifier(
     val id: String
 )
