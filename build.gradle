@@ -53,7 +53,7 @@ subprojects {
 
         //그라파나, 프로메테우스, 액츄에이터
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
-        implementation 'io.micrometer:micrometer-registry-prometheus'
+        implementation 'io.micrometer:micrometer-registry-prometheus:1.14.2'
 
         //swagger
 
