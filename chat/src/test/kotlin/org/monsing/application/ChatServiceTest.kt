@@ -54,7 +54,7 @@ class ChatServiceTest {
         // given
         val receiverId = 1L
         val message = objectMapper.writeValueAsString(MessageDto("1", "Hello"))
-        every { localSessionStorage.getSession(receiverId) } returns null
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns null
         // when
         chatService.handleMessage(receiverId, TextMessage(message))
 
@@ -67,7 +67,7 @@ class ChatServiceTest {
         // given
         val receiverId = 1L
         val message = objectMapper.writeValueAsString(MessageDto("1", "Hello"))
-        every { localSessionStorage.getSession(receiverId) } returns setOf()
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns setOf()
         // when
         chatService.handleMessage(receiverId, TextMessage(message))
 
@@ -80,14 +80,14 @@ class ChatServiceTest {
         // given
         val receiverId = 1L
         val message = objectMapper.writeValueAsString(MessageDto("1", "Hello"))
-        every { localSessionStorage.getSession(receiverId) } returns null
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns null
         every { globalSessionStorage.getServerId(receiverId) } returns null
         // when
         chatService.handleMessage(receiverId, TextMessage(message))
 
         // then
         verifyOrder {
-            localSessionStorage.getSession(receiverId)
+            localSessionStorage.getSessionByMemberId(receiverId)
             globalSessionStorage.getServerId(receiverId)
             chatService["publishMessageSentEvent"]()
         }
@@ -97,7 +97,7 @@ class ChatServiceTest {
     fun `local에 session이 있을 때 global은 호출하지 않는다`() {
         // given
         val receiverId = 1L
-        every { localSessionStorage.getSession(receiverId) } returns setOf(mockk<WebSocketSession>(relaxed = true))
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns setOf(mockk<WebSocketSession>(relaxed = true))
         // when
         chatService.handleMessage(receiverId, TextMessage(""))
 
@@ -110,7 +110,7 @@ class ChatServiceTest {
         // given
         val receiverId = 1L
         every { objectMapper.writeValueAsString(any()) } returns ""
-        every { localSessionStorage.getSession(receiverId) } returns null
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns null
         every { globalSessionStorage.getServerId(receiverId) } returns setOf("serverId")
         every {
             chatService["sendToOtherServer"](
@@ -137,7 +137,7 @@ class ChatServiceTest {
         // given
         val receiverId = 1L
         val session = mockk<WebSocketSession>(relaxed = true)
-        every { localSessionStorage.getSession(receiverId) } returns setOf(session)
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns setOf(session)
         // when
         chatService.handleMessage(receiverId, TextMessage(""))
 
@@ -149,7 +149,7 @@ class ChatServiceTest {
     fun `message를 relay할 때 local에 session이 없다면 event를 발행한다`() {
         // given
         val receiverId = 1L
-        every { localSessionStorage.getSession(receiverId) } returns null
+        every { localSessionStorage.getSessionByMemberId(receiverId) } returns null
         every { globalSessionStorage.getServerId(receiverId) } returns null
         // when
         chatService.handleMessage(receiverId, TextMessage(""))

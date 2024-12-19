@@ -26,7 +26,7 @@ class ChatService(
     private val client = HttpClient.newHttpClient()
 
     fun relayMessage(receiverId: Long, message: Message) {
-        localSessionStorage.getSession(receiverId)?.let { session ->
+        localSessionStorage.getSessionByMemberId(receiverId)?.let { session ->
             session.forEach {
                 it.sendMessage(message.toPayload())
             }
@@ -58,14 +58,14 @@ class ChatService(
 
     fun saveSession(session: WebSocketSession) {
         session.attributes["memberId"]?.let {
-            localSessionStorage.saveSession(it as Long, session)
+            localSessionStorage.saveSession(it as Long, "1", session)
             globalServerIdStorage.saveServerId(it, session.serverAddress())
         }
     }
 
     fun removeSession(session: WebSocketSession) {
         session.attributes["memberId"]?.let {
-            localSessionStorage.removeSession(it as Long, session)
+            localSessionStorage.removeSession(it as Long, "1", session)
         }
     }
 
@@ -83,7 +83,7 @@ class ChatService(
         val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
 
         for (receiver in receivers) {
-            val localSessions = localSessionStorage.getSession(receiver)
+            val localSessions = localSessionStorage.getSessionByMemberId(receiver)
 
             localSessions?.let { session ->
                 session.forEach {
