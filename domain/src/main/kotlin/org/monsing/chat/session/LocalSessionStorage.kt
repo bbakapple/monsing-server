@@ -14,7 +14,7 @@ class LocalSessionStorage(
     }
 
     fun getSessionByMemberId(memberId: Long): Set<WebSocketSession>? {
-        return storage.subMap(memberId.convert(), (memberId + 1).convert()).values.toSet()
+        return storage.subMap("${memberId}:", "${memberId + 1}:").values.toSet()
     }
 
     fun removeSession(memberId: Long, deviceId: String) {
@@ -22,10 +22,6 @@ class LocalSessionStorage(
     }
 
     private fun createKey(memberId: Long, deviceId: String): String {
-        return "${memberId.convert()}$deviceId"
-    }
-
-    private fun Long.convert(): String {
-        return this.toString().padStart(20, '0')
+        return "$memberId:$deviceId"
     }
 }

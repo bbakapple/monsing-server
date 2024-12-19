@@ -25,6 +25,7 @@ class LocalSessionStorageTest {
     @Test
     fun `prefix 자리수가 다른 경우에도 정상적으로 세션을 가져온다`() {
         localSessionStorage.saveSession(10, "1asd", mockk())
+        localSessionStorage.saveSession(11, "mdf,kasmfm", mockk())
         localSessionStorage.saveSession(100, "0ag1", mockk())
         localSessionStorage.saveSession(1, "0asg01", mockk())
         localSessionStorage.saveSession(1, "0akbak001", mockk())
