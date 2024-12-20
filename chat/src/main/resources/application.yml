@@ -4,3 +4,9 @@ spring:
     include:
       - app
       - domain
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus

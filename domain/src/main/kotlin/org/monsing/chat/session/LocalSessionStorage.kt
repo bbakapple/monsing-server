@@ -24,4 +24,8 @@ class LocalSessionStorage(
     private fun createKey(memberId: Long, deviceId: String): String {
         return "$memberId:$deviceId"
     }
+
+    fun countSessions(): Int {
+        return storage.size
+    }
 }
