@@ -120,6 +120,14 @@ class ChatService(
         )
     }
 
+    fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
+        val isExists = memberChatRepository.existByChatId(chatId, memberId)
+        if (isExists) {
+            messageRepository.findByChatId(chatId, lastId, size)
+        }
+        throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
+    }
+
     private fun Message.toPayload() = TextMessage(objectMapper.writeValueAsString(this))
     private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }

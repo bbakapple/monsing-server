@@ -39,4 +39,16 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
     fun saveChat(chat: Chat): Chat {
         return mongoTemplate.save(chat)
     }
+
+    fun existByChatId(chatId: String, memberId: Long): Boolean {
+        val query = Query().addCriteria(
+            (MemberChat::chatId isEqualTo chatId)
+                .andOperator(MemberChat::memberId isEqualTo memberId)
+        )
+
+        return mongoTemplate.exists(
+            query,
+            MemberChat::class.java,
+        )
+    }
 }
