@@ -37,12 +37,12 @@ class ChatService(
         //TODO: Implement this method
     }
 
-    fun createChat(memberIds: List<Long>): String {
+    fun createChat(vararg memberId: Long): String {
         val chat = memberChatRepository.saveChat(Chat())
         val chatId = chat.id
 
-        memberIds.forEach { memberId ->
-            joinChat(chatId, memberId)
+        memberId.forEach {
+            joinChat(chatId, it)
         }
         return chatId
     }

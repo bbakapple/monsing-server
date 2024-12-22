@@ -1,7 +1,11 @@
 package org.monsing.api
 
+import org.monsing.auth.Auth
+import org.monsing.auth.AuthPayload
+import org.monsing.auth.jwt.TokenPayload
 import org.monsing.chat.ChatService
 import org.monsing.chat.Message
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,5 +23,15 @@ class ChatController(private val chatService: ChatService) {
             receiverId,
             message
         )
+    }
+
+    @Auth
+    @PostMapping("/chats")
+    fun createChat(
+        @RequestBody request: CreateChatRequest,
+        @AuthPayload tokenPayload: TokenPayload
+    ): ResponseEntity<Unit> {
+        chatService.createChat(request.memberId, tokenPayload.id)
+        return ResponseEntity.ok().build()
     }
 }
