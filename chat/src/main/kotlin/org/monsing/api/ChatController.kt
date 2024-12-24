@@ -57,4 +57,27 @@ class ChatController(private val chatService: ChatService) {
 
         return ResponseEntity.ok(response)
     }
+
+    @Auth
+    @GetMapping("/chats")
+    fun getChats(
+        @AuthPayload tokenPayload: TokenPayload
+    ): ResponseEntity<List<ChatThumbnailResponse>> {
+        val response = mutableListOf<ChatThumbnailResponse>()
+
+        val chats = chatService.findChatByMemberId(tokenPayload.id)
+        for (chat in chats) {
+            val lastMessage = chatService.findLastMessageByChatId(chat.id)
+            response.add(
+                ChatThumbnailResponse(
+                    id = chat.id,
+                    senderId = lastMessage?.senderId,
+                    lastMessage = lastMessage?.content,
+                    lastMessageTime = lastMessage?.createdAt
+                )
+            )
+        }
+
+        return ResponseEntity.ok(response)
+    }
 }

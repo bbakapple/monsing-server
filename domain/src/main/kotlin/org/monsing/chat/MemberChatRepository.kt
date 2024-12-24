@@ -2,6 +2,7 @@ package org.monsing.chat
 
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.inValues
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.data.mongodb.core.query.ne
 import org.springframework.stereotype.Component
@@ -49,6 +50,24 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
         return mongoTemplate.exists(
             query,
             MemberChat::class.java,
+        )
+    }
+
+    fun findChatByMemberId(memberId: Long): List<Chat> {
+        val query = Query().addCriteria(
+            MemberChat::memberId isEqualTo memberId
+        )
+
+        val chatIds = mongoTemplate.find(
+            query,
+            MemberChat::class.java,
+        ).map { it.chatId }
+
+        return mongoTemplate.find(
+            Query().addCriteria(
+                Chat::id inValues chatIds
+            ),
+            Chat::class.java
         )
     }
 }

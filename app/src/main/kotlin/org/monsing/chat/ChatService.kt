@@ -128,6 +128,14 @@ class ChatService(
         throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
     }
 
+    fun findChatByMemberId(memberId: Long): List<Chat> {
+        return memberChatRepository.findChatByMemberId(memberId)
+    }
+
+    fun findLastMessageByChatId(chatId: String): Message? {
+        return messageRepository.findLastMessageByChatId(chatId)
+    }
+
     private fun Message.toPayload() = TextMessage(objectMapper.writeValueAsString(this))
     private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }

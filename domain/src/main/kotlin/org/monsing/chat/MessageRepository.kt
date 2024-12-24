@@ -38,4 +38,17 @@ class MessageRepository(
     fun sortBy(property: KProperty<*>, direction: Sort.Direction = Sort.Direction.ASC): Sort {
         return Sort.by(Sort.Order(direction, property.name))
     }
+
+    fun findLastMessageByChatId(chatId: String): Message? {
+        val query = Query().addCriteria(
+            Message::chatId isEqualTo chatId
+        ).with(
+            sortBy(Message::id, Sort.Direction.DESC)
+        ).limit(1)
+
+        return mongoTemplate.findOne(
+            query,
+            Message::class.java
+        )
+    }
 }
