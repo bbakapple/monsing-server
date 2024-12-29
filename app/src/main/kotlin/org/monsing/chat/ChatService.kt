@@ -122,10 +122,10 @@ class ChatService(
 
     fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
         val isExists = memberChatRepository.existByChatId(chatId, memberId)
-        if (isExists) {
-            messageRepository.findByChatId(chatId, lastId, size)
+        require(isExists) {
+            throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
         }
-        throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
+        return messageRepository.findByChatId(chatId, lastId, size)
     }
 
     fun findChatByMemberId(memberId: Long): List<Chat> {

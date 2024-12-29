@@ -63,18 +63,13 @@ class ChatController(private val chatService: ChatService) {
     fun getChats(
         @AuthPayload tokenPayload: TokenPayload
     ): ResponseEntity<List<ChatThumbnailResponse>> {
-        val response = mutableListOf<ChatThumbnailResponse>()
-
-        val chats = chatService.findChatByMemberId(tokenPayload.id)
-        for (chat in chats) {
-            val lastMessage = chatService.findLastMessageByChatId(chat.id)
-            response.add(
-                ChatThumbnailResponse(
-                    id = chat.id,
-                    senderId = lastMessage?.senderId,
-                    lastMessage = lastMessage?.content,
-                    lastMessageTime = lastMessage?.createdAt
-                )
+        val response = chatService.findChatByMemberId(tokenPayload.id).map {
+            val lastMessage = chatService.findLastMessageByChatId(it.id)
+            ChatThumbnailResponse(
+                it.id,
+                lastMessage?.senderId,
+                lastMessage?.content,
+                lastMessage?.createdAt
             )
         }
 
