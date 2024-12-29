@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.data.mongodb.core.query.lt
 import org.springframework.stereotype.Component
 
+private const val DEFAULT_SIZE = 10
+
 @Component
 class MessageRepository(
     private val mongoTemplate: MongoTemplate,
@@ -19,13 +21,13 @@ class MessageRepository(
         mongoTemplate.save(message)
     }
 
-    fun findByChatId(chatId: String, lastId: String, limit: Int): List<Message> {
+    fun findByChatId(chatId: String, lastId: String?, limit: Int?): List<Message> {
         val query = Query().addCriteria(
-            (Message::id lt lastId)
+            (Message::id lt (lastId ?: "9".repeat(20)))
                 .andOperator(Message::chatId isEqualTo chatId)
         ).with(
             sortBy(Message::id, Sort.Direction.DESC)
-        ).limit(limit)
+        ).limit(limit ?: DEFAULT_SIZE)
 
         return mongoTemplate.find(
             query,
@@ -35,5 +37,18 @@ class MessageRepository(
 
     fun sortBy(property: KProperty<*>, direction: Sort.Direction = Sort.Direction.ASC): Sort {
         return Sort.by(Sort.Order(direction, property.name))
+    }
+
+    fun findLastMessageByChatId(chatId: String): Message? {
+        val query = Query().addCriteria(
+            Message::chatId isEqualTo chatId
+        ).with(
+            sortBy(Message::id, Sort.Direction.DESC)
+        ).limit(1)
+
+        return mongoTemplate.findOne(
+            query,
+            Message::class.java
+        )
     }
 }
