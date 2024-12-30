@@ -10,3 +10,7 @@ management:
     web:
       exposure:
         include: prometheus
+
+jasypt:
+  encryptor:
+    password: hello
