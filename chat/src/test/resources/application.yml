@@ -1,14 +1,6 @@
-de:
-  flapdoodle:
-    mongodb:
-      embedded:
-        version: 4.4.9
-
 spring:
   profiles:
     active: test
-    include:
-      - app
 
   data:
     redis:
@@ -17,3 +9,20 @@ spring:
       username:
       password:
 
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.4.9
+
+jwt:
+  access-token:
+    secret: akdsmksamdkdamkdkmasdkmdakmsdnmbambmb4294g4kokgo4k4g
+    expire-second: 1800
+  refresh-token:
+    secret: fkimf224mg42mg24mk4gmvnsnbnaoaofkl23lf3f329m2ollfflf4f4
+    expire-second: 1296000
+
+jasypt:
+  encryptor:
+    password: testkey
