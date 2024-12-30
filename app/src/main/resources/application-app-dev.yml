@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+jwt:
+  access-token:
+    secret: ENC(xF6NiqtnrjWv5c92AtD5KEMgozzVkfAobomlV5kUhMscsOvXOLd7NDB5XbBCV0u+fuuhZPnOsMehe5cgf1CU3VqyyuOsM03JdfRLItnXSJo=)
+    expire-second: 1800
+  refresh-token:
+    secret: ENC(8Lb9/yU6rTEG5TEQyWM/I4tr3U1fDZlTKu1Nrz0DCUV24WCN3BqpQ5NfKKrj72yuRtHAJdfjP0zIhrqXwSpJt754fRmlqc6c9puvdgQrmhY=)
+    expire-second: 1296000
