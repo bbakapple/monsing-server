@@ -14,7 +14,7 @@ class RecordUploader(
     @Value("\${s3.bucket}") private val bucket: String
 ) {
 
-    fun uploadRecord(file: MultipartFile) {
+    fun uploadRecord(file: MultipartFile): String {
         val key = createKey(file.originalFilename)
         val request = PutObjectRequest.builder()
             .bucket(bucket)
@@ -22,6 +22,8 @@ class RecordUploader(
             .build()
 
         s3Client.putObject(request, RequestBody.fromBytes(file.bytes))
+
+        return key
     }
 
     private fun createKey(originalFileName: String?): String {
