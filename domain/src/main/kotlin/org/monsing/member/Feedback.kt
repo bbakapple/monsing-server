@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import org.monsing.BaseEntity
 import org.monsing.member.teacher.Teacher
+import org.monsing.record.Record
 
 @Entity
 class Feedback(
