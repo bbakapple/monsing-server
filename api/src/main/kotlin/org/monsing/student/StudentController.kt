@@ -7,16 +7,27 @@ import openapi.model.StudentResponse
 import openapi.model.StudentUpdateRequest
 import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.TokenPayload
+import org.monsing.member.Nickname
+import org.monsing.member.Student
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class StudentController : StudentApi {
+class StudentController(
+    private val studentService: StudentService
+) : StudentApi {
+
     override fun createStudent(
         tokenPayload: TokenPayload,
         studentCreateRequest: StudentCreateRequest
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        val student = Student(
+            memberId = tokenPayload.id,
+            nickname = Nickname(studentCreateRequest.name),
+        )
+        studentService.create(student)
+
+        return ResponseEntity.ok().build()
     }
 
     override fun studentsIdCoursesGet(tokenPayload: TokenPayload, id: Int): ResponseEntity<List<CourseResponse>> {
