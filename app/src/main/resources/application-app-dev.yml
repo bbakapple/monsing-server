@@ -10,3 +10,6 @@ jwt:
   refresh-token:
     secret: ENC(8Lb9/yU6rTEG5TEQyWM/I4tr3U1fDZlTKu1Nrz0DCUV24WCN3BqpQ5NfKKrj72yuRtHAJdfjP0zIhrqXwSpJt754fRmlqc6c9puvdgQrmhY=)
     expire-second: 1296000
+
+s3:
+  bucket: ENC(GDUOuAxgh483HzqPJNNl4huu/O6rav7+)
