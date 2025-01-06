@@ -43,7 +43,7 @@ paths:
             type: integer
           description: 페이징을 시작할 id
         - name: size
-          in : query
+          in: query
           required: false
           schema:
             type: integer
@@ -58,19 +58,19 @@ paths:
           in: query
           required: false
           schema:
-              type: integer
+            type: integer
           description: 최대 가격
         - name: verified
           in: query
           required: false
           schema:
-              type: boolean
+            type: boolean
           description: 인증 여부
         - name: query
           in: query
           required: false
           schema:
-              type: string
+            type: string
           description: 검색어
       responses:
         '200':
@@ -135,47 +135,47 @@ paths:
         - BearerAuth: [ ]
 
     get:
-        summary: 리뷰 목록 조회
-        description: 특정 선생님에 대한 리뷰 목록을 조회합니다.
-        operationId: readReviews
-        tags:
-          - Teacher
-        parameters:
-          - name: id
-            in: path
-            required: true
-            schema:
-                type: integer
-            description: 선생님의 고유 식별자
-          - name: last_id
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: 페이징을 시작할 id
-          - name: size
-            in: query
-            required: false
-            schema:
-              type: integer
-            description: 한 번에 조회할 선생님 수
-        responses:
-          '200':
-            description: 리뷰 목록 조회 성공
-            content:
-              application/json:
-                # summary랑 reviews(ReviewResponse array) 나눠서 응답하는 스크립트
-                schema:
-                  type: object
-                  properties:
-                    summary:
-                      $ref: '#/components/schemas/ReviewSummaryResponse'
-                    reviews:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/ReviewResponse'
-          '400':
-            description: 잘못된 요청입니다.
+      summary: 리뷰 목록 조회
+      description: 특정 선생님에 대한 리뷰 목록을 조회합니다.
+      operationId: readReviews
+      tags:
+        - Teacher
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 선생님의 고유 식별자
+        - name: last_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 페이징을 시작할 id
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: 한 번에 조회할 선생님 수
+      responses:
+        '200':
+          description: 리뷰 목록 조회 성공
+          content:
+            application/json:
+              # summary랑 reviews(ReviewResponse array) 나눠서 응답하는 스크립트
+              schema:
+                type: object
+                properties:
+                  summary:
+                    $ref: '#/components/schemas/ReviewSummaryResponse'
+                  reviews:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewResponse'
+        '400':
+          description: 잘못된 요청입니다.
 
   /teachers/{id}/classes:
     get:
@@ -291,6 +291,11 @@ components:
         name:
           type: string
           description: 선생님 이름
+        gender:
+          $ref: '#/components/schemas/Gender'
+      required:
+        - name
+        - gender
 
     # 선생님 조회 응답
     TeacherResponse:
@@ -454,7 +459,7 @@ components:
         ratings:
           type: array
           items:
-              $ref: '#/components/schemas/RatingDto'
+            $ref: '#/components/schemas/RatingDto'
 
     # 수업 응답
     CourseResponse:
@@ -503,5 +508,12 @@ components:
           type: string
           description: 학생 이름
 
+    Gender:
+      type: string
+      description: 선생님 성별
+      enum:
+        - MALE
+        - FEMALE
+        - OTHER
 
 # todo : course, class 리스펀스 구분
