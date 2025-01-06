@@ -31,4 +31,13 @@ class RecordService(
         ticket.decreaseAmount()
         record.requestFeedback(teacherId)
     }
+
+    @Transactional
+    fun writeFeedback(writerId: Long, recordId: Long, detail: String) {
+        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+        val feedback = record.feedbacks.find { it.teacherId == writerId }
+            ?: throw IllegalArgumentException("Feedback not found")
+
+        feedback.writeFeedback(detail)
+    }
 }

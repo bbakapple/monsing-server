@@ -4,6 +4,7 @@ import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.TokenPayload
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -37,6 +38,17 @@ class RecordController(
         @RequestBody request: RequestFeedbackRequest
     ): ResponseEntity<Unit> {
         recordService.requestFeedback(tokenPayload.id, recordId, request.teacherId)
+        return ResponseEntity.ok().build()
+    }
+
+    @Auth
+    @PatchMapping("/records/{recordId}/feedback")
+    fun writeFeedback(
+        @AuthPayload tokenPayload: TokenPayload,
+        @PathVariable recordId: Long,
+        @RequestBody request: WriteFeedbackRequest
+    ): ResponseEntity<Unit> {
+        recordService.writeFeedback(tokenPayload.id, recordId, request.detail)
         return ResponseEntity.ok().build()
     }
 }
