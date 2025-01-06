@@ -2,5 +2,6 @@ package org.monsing.record
 
 interface RecordCustomRepository {
 
-    fun findByMemberIdWithPaging(id: Long, size: Int?, lastId: Long?): List<Record>
+    fun findStudentRecordsByMemberIdWithPaging(id: Long, size: Int?, lastId: Long?): List<Record>
+    fun findTeacherRecordsByMemberIdWithPaging(id: Long, size: Int?, lastId: Long?): List<Record>
 }

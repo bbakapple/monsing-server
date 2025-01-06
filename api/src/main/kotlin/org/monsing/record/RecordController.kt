@@ -63,12 +63,12 @@ class RecordController(
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) lastId: Long?
     ): ResponseEntity<List<RecordResponse>> {
-        val records = recordService.findRecordsByMemberId(tokenPayload.id, size, lastId)
+        val records = recordService.findRecordsByMemberId(tokenPayload.id, tokenPayload.role, size, lastId)
 
         val response = records.map {
             RecordResponse(
                 id = requireNotNull(it.id),
-                url = it.key.toUrl(),
+                url = it.fileKey.toUrl(),
                 createdAt = it.createdDate
             )
         }
@@ -82,10 +82,10 @@ class RecordController(
         @AuthPayload tokenPayload: TokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<RecordResponse> {
-        val record = recordService.findRecordById(recordId, tokenPayload.id)
+        val record = recordService.findRecordById(recordId, tokenPayload.id, tokenPayload.role)
         val response = RecordResponse(
             requireNotNull(record.id),
-            record.key.toUrl(),
+            record.fileKey.toUrl(),
             record.createdDate,
             record.feedbacks.map {
                 FeedbackResponse(
