@@ -22,11 +22,12 @@ class RecordService(
     fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
         val student = studentRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("Student not found")
+        require(record.studentId == student.id) { "Record does not belong to student" }
+
         val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
             requireNotNull(student.id),
             teacherId
         ) ?: throw IllegalArgumentException("Feedback ticket not found")
-        require(record.studentId == student.id) { "Record does not belong to student" }
 
         ticket.decreaseAmount()
         record.requestFeedback(teacherId)
@@ -39,5 +40,20 @@ class RecordService(
             ?: throw IllegalArgumentException("Feedback not found")
 
         feedback.writeFeedback(detail)
+    }
+
+    @Transactional(readOnly = true)
+    fun findRecordsByMemberId(id: Long, size: Int?, lastId: Long?): List<Record> {
+        return recordRepository.findByMemberIdWithPaging(id, size, lastId)
+    }
+
+    @Transactional(readOnly = true)
+    fun findRecordById(recordId: Long, studentId: Long): Record {
+        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+        val student = studentRepository.findByIdOrNull(studentId)
+
+        require(record.studentId == student?.id) { "Record does not belong to student" }
+
+        return record
     }
 }

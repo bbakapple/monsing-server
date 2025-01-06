@@ -9,7 +9,7 @@ import org.monsing.record.feedback.Feedback
 class Record(
     val studentId: Long,
 
-    val url: String,
+    val key: String,
 
     @OneToMany
     val feedbacks: MutableList<Feedback> = mutableListOf()
