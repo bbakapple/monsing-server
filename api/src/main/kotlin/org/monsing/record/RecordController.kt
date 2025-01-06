@@ -4,7 +4,9 @@ import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.TokenPayload
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
@@ -25,5 +27,16 @@ class RecordController(
         recordService.saveRecord(Record(tokenPayload.id, key))
 
         return ResponseEntity.ok(RecordUploadResponse(key))
+    }
+
+    @Auth
+    @PostMapping("/records/{recordId}/feedback")
+    fun requestFeedback(
+        @AuthPayload tokenPayload: TokenPayload,
+        @PathVariable recordId: Long,
+        @RequestBody request: RequestFeedbackRequest
+    ): ResponseEntity<Unit> {
+        recordService.requestFeedback(tokenPayload.id, recordId, request.teacherId)
+        return ResponseEntity.ok().build()
     }
 }

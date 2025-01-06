@@ -12,5 +12,10 @@ class Record(
     val url: String,
 
     @OneToMany
-    val feedbacks: List<Feedback> = mutableListOf()
-) : BaseEntity()
+    val feedbacks: MutableList<Feedback> = mutableListOf()
+) : BaseEntity() {
+
+    fun requestFeedback(teacherId: Long) {
+        feedbacks.add(Feedback(teacherId = teacherId))
+    }
+}
