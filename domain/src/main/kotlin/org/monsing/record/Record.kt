@@ -16,6 +16,7 @@ class Record(
 ) : BaseEntity() {
 
     fun requestFeedback(teacherId: Long) {
+        require(feedbacks.none { it.teacherId == teacherId }) { "Feedback already requested" }
         feedbacks.add(Feedback(teacherId = teacherId))
     }
 }
