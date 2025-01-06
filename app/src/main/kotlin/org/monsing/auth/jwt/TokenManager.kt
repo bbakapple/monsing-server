@@ -1,6 +1,7 @@
 package org.monsing.auth.jwt
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -29,19 +30,20 @@ class TokenManager(
             return parser.parseSignedClaims(token)
                 .payload
                 .subject
-                .let { objectMapper.readValue(it, TokenPayload::class.java) }
+                .let { objectMapper.registerKotlinModule().readValue(it, TokenPayload::class.java) }
         } catch (e: ExpiredJwtException) {
             throw ExpiredJwtException(e.header, e.claims, e.message)
         } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid token")
+            throw IllegalArgumentException(e.message)
         }
     }
 
     fun createAccessToken(payload: TokenPayload): String {
         val issuedAt = Date()
         val expiration = getExpiration(issuedAt, accessExpireSecond)
+        val subject = objectMapper.writeValueAsString(payload)
         return Jwts.builder()
-            .subject(payload.id.toString())
+            .subject(subject)
             .issuedAt(issuedAt)
             .expiration(expiration)
             .signWith(accessKey)

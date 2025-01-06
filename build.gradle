@@ -35,7 +35,7 @@ subprojects {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-data-redis'
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2'
         implementation 'org.jetbrains.kotlin:kotlin-reflect'
         implementation 'org.springframework.boot:spring-boot-starter-websocket'
         runtimeOnly 'com.h2database:h2'
@@ -62,7 +62,7 @@ subprojects {
 
         // jasypt
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-        
+
         //aws s3
         implementation 'software.amazon.awssdk:s3:2.29.43'
     }

@@ -30,7 +30,7 @@ class TokenManagerTest : StringSpec({
 
         shouldThrow<IllegalArgumentException> {
             tokenManager.getPayLoad(token)
-        }.message shouldBe "Invalid token"
+        }
     }
 
     "리프레시 키로 액세스 토큰을 디코딩할 수 없음" {
