@@ -1,14 +1,16 @@
 package org.monsing.record
 
 import jakarta.persistence.Entity
-import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import org.monsing.BaseEntity
-import java.net.URL
-import org.monsing.member.Student
+import org.monsing.record.feedback.Feedback
 
 @Entity
 class Record(
     val studentId: Long,
 
-    val url: String
+    val url: String,
+
+    @OneToMany
+    val feedbacks: List<Feedback> = mutableListOf()
 ) : BaseEntity()
