@@ -77,10 +77,19 @@ class RecordService(
     @Transactional
     fun deleteRecord(recordId: Long, id: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        require(record.studentId == id) { "Record does not belong to student" }
+        val student = studentRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Student not found")
+        require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
             feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacherId)?.increaseAmount()
         }
         recordRepository.delete(record)
+    }
+
+    @Transactional
+    fun updateRecord(recordId: Long, id: Long, title: String) {
+        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+        val student = studentRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Student not found")
+        require(record.studentId == student.id) { "Record does not belong to student" }
+        record.updateTitle(title)
     }
 }

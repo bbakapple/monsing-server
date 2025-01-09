@@ -4,6 +4,7 @@ import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.TokenPayload
 import org.monsing.record.request.RequestFeedbackRequest
+import org.monsing.record.request.UpdateRecordRequest
 import org.monsing.record.request.UploadRecordRequest
 import org.monsing.record.request.WriteFeedbackRequest
 import org.monsing.record.response.FeedbackResponse
@@ -115,6 +116,17 @@ class RecordController(
         @PathVariable recordId: Long
     ): ResponseEntity<Unit> {
         recordService.deleteRecord(recordId, tokenPayload.id)
+        return ResponseEntity.ok().build()
+    }
+
+    @Auth
+    @PatchMapping("/records/{recordId}")
+    fun updateRecord(
+        @AuthPayload tokenPayload: TokenPayload,
+        @PathVariable recordId: Long,
+        @RequestBody request: UpdateRecordRequest
+    ): ResponseEntity<Unit> {
+        recordService.updateRecord(recordId, tokenPayload.id, request.title)
         return ResponseEntity.ok().build()
     }
 
