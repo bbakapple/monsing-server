@@ -5,6 +5,7 @@ import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.TokenPayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -99,6 +100,16 @@ class RecordController(
         )
 
         return ResponseEntity.ok(response)
+    }
+
+    @Auth
+    @DeleteMapping("/records/{recordId}")
+    fun deleteRecord(
+        @AuthPayload tokenPayload: TokenPayload,
+        @PathVariable recordId: Long
+    ): ResponseEntity<Unit> {
+        recordService.deleteRecord(recordId, tokenPayload.id)
+        return ResponseEntity.ok().build()
     }
 
     private fun String.toUrl() = "$cloudfrontUrl$this"

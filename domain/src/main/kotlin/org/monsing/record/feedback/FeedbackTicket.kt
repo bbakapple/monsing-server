@@ -10,11 +10,18 @@ class FeedbackTicket(
 
     val studentId: Long,
 
-    var amount: Int,
+    private var _amount: Int,
 ) : BaseEntity() {
 
+    val amount: Int
+        get() = _amount
+
     fun decreaseAmount() {
-        require(amount > 0) { "Amount must be greater than 0" }
-        amount--
+        require(_amount > 0) { "Amount must be greater than 0" }
+        _amount--
+    }
+
+    fun increaseAmount() {
+        _amount++
     }
 }

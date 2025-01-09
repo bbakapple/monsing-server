@@ -5,6 +5,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import org.monsing.BaseEntity
 import org.monsing.record.feedback.Feedback
+import org.monsing.record.feedback.FeedbackStatus
 
 @Entity
 class Record(
@@ -26,6 +27,9 @@ class Record(
             "Title must not be longer than 30 characters"
         }
     }
+
+    val notCompletedFeedBacks
+        get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 
     fun requestFeedback(teacherId: Long) {
         require(feedbacks.requestedBy(teacherId).not()) { "Feedback already requested" }
