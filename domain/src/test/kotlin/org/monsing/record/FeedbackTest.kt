@@ -22,4 +22,18 @@ class FeedbackTest : StringSpec({
             feedback.writeFeedback("내용")
         }
     }
+
+    "피드백이 3000자를 초과하면 작성할 수 없다" {
+        val feedback = Feedback(1)
+
+        shouldThrow<IllegalArgumentException> {
+            feedback.writeFeedback("a".repeat(3001))
+        }
+    }
+
+    "피드백이 3000자 이하면 작성할 수 있다" {
+        val feedback = Feedback(1)
+
+        feedback.writeFeedback("a".repeat(3000))
+    }
 })
