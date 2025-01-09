@@ -26,10 +26,11 @@ class RecordController(
     @PostMapping("/records")
     fun uploadRecord(
         @RequestPart file: MultipartFile,
-        @AuthPayload tokenPayload: TokenPayload
+        @AuthPayload tokenPayload: TokenPayload,
+        @RequestBody request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
-        recordService.saveRecord(Record(tokenPayload.id, key))
+        recordService.saveRecord(Record(request.title, tokenPayload.id, key))
 
         return ResponseEntity.ok(RecordUploadResponse(key))
     }
