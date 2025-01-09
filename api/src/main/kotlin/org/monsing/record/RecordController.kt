@@ -3,6 +3,12 @@ package org.monsing.record
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.TokenPayload
+import org.monsing.record.request.RequestFeedbackRequest
+import org.monsing.record.request.UploadRecordRequest
+import org.monsing.record.request.WriteFeedbackRequest
+import org.monsing.record.response.FeedbackResponse
+import org.monsing.record.response.RecordResponse
+import org.monsing.record.response.RecordUploadResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
