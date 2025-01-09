@@ -1,6 +1,7 @@
 package org.monsing.record
 
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import org.monsing.BaseEntity
@@ -9,8 +10,7 @@ import org.monsing.record.feedback.FeedbackStatus
 
 @Entity
 class Record(
-    @Column(nullable = false)
-    val title: String,
+    title: String,
 
     @Column(nullable = false)
     val studentId: Long,
@@ -21,6 +21,12 @@ class Record(
     @OneToMany
     val feedbacks: MutableList<Feedback> = mutableListOf()
 ) : BaseEntity() {
+
+    @Embedded
+    private var _title = RecordTitle(title)
+
+    val title
+        get() = _title.value
 
     init {
         require(title.length <= 30) {
@@ -42,5 +48,9 @@ class Record(
 
     private fun List<Feedback>.requestedBy(teacherId: Long): Boolean {
         return any { it.teacherId == teacherId }
+    }
+
+    fun updateTitle(title: String) {
+        _title = RecordTitle(title)
     }
 }
