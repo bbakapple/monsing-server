@@ -1,8 +1,8 @@
 package org.monsing.record
 
+import org.monsing.RoleAdaptor
 import org.monsing.auth.jwt.Role
 import org.monsing.member.StudentRepository
-import org.monsing.member.teacher.TeacherRepository
 import org.monsing.record.feedback.FeedbackTicketRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -13,7 +13,7 @@ class RecordService(
     private val recordRepository: RecordRepository,
     private val feedbackTicketRepository: FeedbackTicketRepository,
     private val studentRepository: StudentRepository,
-    private val teacherRepository: TeacherRepository
+    private val roleAdaptor: RoleAdaptor
 ) {
 
     @Transactional
@@ -47,29 +47,13 @@ class RecordService(
 
     @Transactional(readOnly = true)
     fun findRecordsByMemberId(id: Long, role: Role, size: Int?, lastId: Long?): List<Record> {
-        return when (role) {
-            Role.STUDENT -> recordRepository.findStudentRecordsByMemberIdWithPaging(id, size, lastId)
-            Role.TEACHER -> recordRepository.findTeacherRecordsByMemberIdWithPaging(id, size, lastId)
-            else -> throw IllegalArgumentException("Role must not be NONE")
-        }
+        return roleAdaptor.handleRecord(role) { it.findRecordsByMemberId(id, size, lastId) }
     }
 
     @Transactional(readOnly = true)
     fun findRecordById(recordId: Long, memberId: Long, role: Role): Record {
-        require(role != Role.NONE) { "Role must not be NONE" }
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-
-        if (role == Role.STUDENT) {
-            val student = studentRepository.findByMemberId(memberId)
-            require(record.studentId == student?.id) { "Record does not belong to student" }
-        }
-        if (role == Role.TEACHER) {
-            val teacher = teacherRepository.findByMemberId(memberId)
-                ?: throw IllegalArgumentException("Teacher not found")
-            require(record.containsTeacherFeedback(requireNotNull(teacher.id))) {
-                "Record does not contain teacher feedback"
-            }
-        }
+        roleAdaptor.handleRecord(role) { it.validateRecordOwnership(memberId, record) }
 
         return record
     }
