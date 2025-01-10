@@ -1,7 +1,7 @@
 package org.monsing.alert
 
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.Message
+import com.google.firebase.messaging.MulticastMessage
 import com.google.firebase.messaging.Notification
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Service
@@ -12,8 +12,8 @@ class AlertService(
     private val fcm: FirebaseMessaging
 ) {
 
-    fun send(token: String, alert: Alert) {
-        val msg = Message.builder()
+    fun send(alert: Alert, vararg tokens: String) {
+        val messages = MulticastMessage.builder()
             .setNotification(
                 Notification.builder()
                     .setTitle(alert.title)
@@ -21,8 +21,9 @@ class AlertService(
                     .setImage(alert.image)
                     .build()
             )
-            .setToken(token)
+            .addAllTokens(tokens.toList())
             .build()
-        fcm.send(msg)
+
+        fcm.sendEachForMulticast(messages)
     }
 }
