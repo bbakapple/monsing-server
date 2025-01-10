@@ -6,7 +6,9 @@ import com.google.firebase.FirebaseOptions
 import com.google.firebase.messaging.FirebaseMessaging
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
+@Profile("dev")
 @Configuration
 class AlertConfig {
 
@@ -15,9 +17,8 @@ class AlertConfig {
 
     @Bean
     fun firebaseOptions(): FirebaseOptions {
-        val stream = ClassLoader.getSystemResourceAsStream("firebase/firebase.json")
         return FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(stream))
+            .setCredentials(GoogleCredentials.getApplicationDefault())
             .build()
     }
 
