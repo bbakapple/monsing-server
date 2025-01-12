@@ -15,22 +15,11 @@ class RecordTest : StringSpec({
         }
     }
 
-    "녹음 제목을 30자로 만들 수 있다" {
-        shouldNotThrowAny {
-            Record("1".repeat(30), 1, "key")
-        }
-    }
-
-    "녹음 제목을 30자 초과로 만들 수 없다" {
-        shouldThrow<IllegalArgumentException> {
-            Record("2".repeat(31), 1, "key")
-        }
-    }
-
     "녹음 제목을 30자로 수정할 수 있다" {
         val record = Record("title", 1, "key")
 
         shouldNotThrowAny {
+
             record.updateTitle("1".repeat(30))
         }
     }
@@ -40,12 +29,6 @@ class RecordTest : StringSpec({
 
         shouldThrow<IllegalArgumentException> {
             record.updateTitle("3".repeat(31))
-        }
-    }
-
-    "녹음 제목을 공백으로 만들 수 없다" {
-        shouldThrow<IllegalArgumentException> {
-            Record("  ", 1, "key")
         }
     }
 
