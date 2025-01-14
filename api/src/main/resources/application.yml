@@ -1,12 +1,23 @@
 spring:
   profiles:
+    group:
+      local:
+        - app
+        - domain
+      dev:
+        - app-dev
+        - domain-dev
     active: local
-    include:
-      - app
-      - domain
+
+  config:
+    import: classpath:application-dev.yml
 
 management:
   endpoints:
     web:
       exposure:
         include: prometheus
+
+logging:
+  discord:
+    webhook-url:
