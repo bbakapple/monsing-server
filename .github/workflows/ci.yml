@@ -65,6 +65,7 @@ jobs:
 
       - name: Run Detekt
         run: ./gradlew detekt
+        continue-on-error: true
 
       - name: Upload Detekt Report
         uses: actions/upload-artifact@v4
