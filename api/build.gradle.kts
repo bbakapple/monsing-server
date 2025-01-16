@@ -6,13 +6,6 @@ plugins {
     id("org.openapi.generator") version "7.5.0"
 }
 
-group = "org.bbakaple"
-version = "0.0.1-SNAPSHOT"
-
-java.sourceCompatibility = JavaVersion.VERSION_17
-
-repositories.mavenCentral()
-
 dependencies {
     implementation(project(path = ":app"))
     implementation(project(path = ":domain"))
@@ -23,10 +16,6 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core")
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.core:jackson-annotations")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
 
 val openApiPackages = Pair(

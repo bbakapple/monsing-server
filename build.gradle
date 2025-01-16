@@ -4,6 +4,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.25'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.7'
 }
 
 group = 'org.bbakaple'
@@ -22,10 +23,19 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+    apply plugin: 'io.gitlab.arturbosch.detekt'
 
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    configurations.matching { it.name == "detekt" }.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin") {
+                useVersion("2.0.10")
+            }
         }
     }
 
@@ -62,7 +72,7 @@ subprojects {
 
         // jasypt
         implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-        
+
         //aws s3
         implementation 'software.amazon.awssdk:s3:2.29.43'
     }
