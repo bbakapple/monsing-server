@@ -67,7 +67,7 @@ jobs:
         run: ./gradlew detekt
 
       - name: Upload Detekt Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: detekt-report
           path: build/reports/detekt/detekt.xml
@@ -76,4 +76,4 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           path: build/reports/detekt/detekt.xml
-
+          repo-token: ${{ secrets.SECRET }}
