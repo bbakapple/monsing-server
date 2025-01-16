@@ -26,3 +26,7 @@ jwt:
 jasypt:
   encryptor:
     password: testkey
+
+logging:
+  discord:
+    webhook-url:

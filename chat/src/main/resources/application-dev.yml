@@ -2,3 +2,7 @@ spring:
   config:
     activate:
       on-profile: dev
+
+logging:
+  discord:
+    webhook-url:
