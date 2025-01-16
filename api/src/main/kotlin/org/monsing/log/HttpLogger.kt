@@ -34,9 +34,20 @@ class HttpLogger(
         metadata.get().apply {
             end = System.currentTimeMillis()
             status = response.status
-            responseBody = ex?.let {
-                "${ex.javaClass}: ${ex.message}"
-            } ?: response.contentAsByteArray.toString()
+            val body = response.contentAsByteArray.toString(charset("UTF-8"))
+            responseBody = body
+        }
+    }
+
+    fun setException(ex: Exception) {
+        val message = StringBuilder().apply {
+            appendLine("${ex.javaClass}: ${ex.message}")
+            ex.stackTrace.take(3).forEach {
+                appendLine(it)
+            }
+        }
+        metadata.get().apply {
+            exception = message.toString()
         }
     }
 
@@ -50,7 +61,8 @@ class HttpLogger(
     }
 
     private val LogMetadata.log: String
-        get() = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
+        get() = objectMapper.writerWithDefaultPrettyPrinter()
+            .writeValueAsString(this)
 }
 
 data class LogMetadata(
@@ -66,6 +78,7 @@ data class LogMetadata(
     @JsonIgnore
     var end: Long? = null,
     var responseBody: String? = null,
+    var exception: String? = null
 ) {
     @get:JsonProperty
     private val duration: String

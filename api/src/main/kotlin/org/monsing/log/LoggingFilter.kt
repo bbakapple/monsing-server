@@ -19,15 +19,11 @@ class LoggingFilter(
     ) {
         httpLogger.init(request)
         val wrappedResponse = ContentCachingResponseWrapper(response)
-        runCatching {
-            filterChain.doFilter(request, wrappedResponse)
-        }.onSuccess {
-            httpLogger.setResponse(wrappedResponse, null)
-        }.onFailure {
-            httpLogger.setResponse(wrappedResponse, it as Exception)
-        }.also {
-            wrappedResponse.copyBodyToResponse()
-            httpLogger.log()
-        }
+
+        filterChain.doFilter(request, wrappedResponse)
+
+        httpLogger.setResponse(wrappedResponse, null)
+        wrappedResponse.copyBodyToResponse()
+        httpLogger.log()
     }
 }
