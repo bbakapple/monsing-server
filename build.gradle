@@ -99,6 +99,19 @@ subprojects {
             xml.required.set(true)
         }
     }
+
+    tasks.register("reportMerge", io.gitlab.arturbosch.detekt.report.ReportMergeTask) {
+        output = project.layout.buildDirectory.file("reports/detekt/detekt.xml")
+    }
+
+
+    tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach {
+        finalizedBy(reportMerge)
+    }
+
+    reportMerge.configure {
+        input.from(tasks.withType(io.gitlab.arturbosch.detekt.Detekt).collect { it.xmlReportFile })
+    }
 }
 
 bootJar {
