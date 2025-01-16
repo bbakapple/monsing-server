@@ -49,7 +49,8 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -64,3 +65,15 @@ jobs:
 
       - name: Run Detekt
         run: ./gradlew detekt
+
+      - name: Upload Detekt Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: detekt-report
+          path: build/reports/detekt/detekt.xml
+
+      - name: Post Detekt Report to PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: build/reports/detekt/detekt.xml
+

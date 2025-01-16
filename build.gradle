@@ -95,6 +95,9 @@ subprojects {
 
     detekt {
         config.setFrom("$rootDir/detekt.yml")
+        reports {
+            xml.required.set(true)
+        }
     }
 }
 
