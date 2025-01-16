@@ -15,9 +15,14 @@
 
     <springProfile name="dev">
         <!--        ROLLING + DISCORD 로 수정 -->
-        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>log-file-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
             <encoder>
-                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+                <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n</pattern>
             </encoder>
         </appender>
 
@@ -39,7 +44,7 @@
         </appender>
 
         <root level="info">
-            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
             <appender-ref ref="DISCORD"/>
         </root>
     </springProfile>
