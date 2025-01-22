@@ -130,5 +130,5 @@ class RecordController(
         return ResponseEntity.ok().build()
     }
 
-    private fun String.toUrl() = "$cloudfrontUrl$this"
+    private fun String.toUrl() = "$cloudfrontUrl/$this"
 }
