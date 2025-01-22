@@ -76,5 +76,5 @@ jobs:
       - name: Post Detekt Report to PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
-          path: build/reports/detekt/detekt.xml
+          path: build/reports/detekt/detekt.md
           GITHUB_TOKEN: ${{ secrets.SECRET }}

@@ -20,6 +20,48 @@ tasks.register("reportMerge", io.gitlab.arturbosch.detekt.report.ReportMergeTask
     output = project.layout.buildDirectory.file("reports/detekt/detekt.xml")
 }
 
+tasks.register("convertCheckstyleToMarkdown") {
+    doLast {
+        def checkstyleFile = file("build/reports/detekt/detekt.xml")
+        def outputFile = file("build/reports/detekt/detekt.md")
+
+        if (!checkstyleFile.exists()) {
+            println "Checkstyle report not found: ${checkstyleFile}"
+            return
+        }
+
+        def xml = new XmlParser().parse(checkstyleFile)
+        def mdContent = new StringBuilder()
+        mdContent.append("# Checkstyle Report\n\n")
+
+        xml.file.each { fileNode ->
+            def fileName = fileNode.@name
+            def className = fileName.substring(fileName.lastIndexOf("/") + 1)
+            mdContent.append("### File: ${className}\n\n")
+
+            fileNode.error.each { errorNode ->
+                def line = errorNode.@line
+                def column = errorNode.@column
+                def message = errorNode.@message
+                def severity = errorNode.@severity
+                def source = errorNode.@source
+
+                mdContent.append("- **Line ${line}, Column ${column}**\n")
+                mdContent.append("  - Message: ${message}\n")
+                mdContent.append("  - Severity: ${severity}\n")
+                mdContent.append("  - Source: ${source}\n\n")
+            }
+        }
+
+        outputFile.text = mdContent.toString()
+        println "Checkstyle report converted to Markdown: ${outputFile}"
+    }
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.report.ReportMergeTask).configureEach {
+    finalizedBy("convertCheckstyleToMarkdown")
+}
+
 subprojects {
 
     apply plugin: 'org.jetbrains.kotlin.jvm'
