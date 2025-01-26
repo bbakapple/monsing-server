@@ -26,3 +26,6 @@ jwt:
 jasypt:
   encryptor:
     password: testkey
+
+s3:
+  bucket: testets

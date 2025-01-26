@@ -15,16 +15,16 @@ class Teacher(
 
     val memberId: Long,
 
-    val summary: String,
+    val summary: String? = null,
 
     @Enumerated(EnumType.STRING)
-    val strongSideType: StrongSideType,
+    val strongSideType: StrongSideType? = null,
 
-    val description: String,
+    val description: String? = null,
 
-    val forStudent: String,
+    val forStudent: String? = null,
 
-    val verified: Boolean,
+    val verified: Boolean = false,
 
     @Embedded
     val nickname: Nickname,
