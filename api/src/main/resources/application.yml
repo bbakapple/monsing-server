@@ -1,12 +1,33 @@
 spring:
   profiles:
+    group:
+      local:
+        - app
+        - domain
+      dev:
+        - app-dev
+        - domain-dev
     active: local
-    include:
-      - app
-      - domain
+
+  config:
+    import: classpath:application-dev.yml
 
 management:
   endpoints:
     web:
       exposure:
         include: prometheus
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+jasypt:
+  encryptor:
+    password: hello
+
+aws:
+  cloudfront-url: https://sadniasdksmkadmiqiq.com
