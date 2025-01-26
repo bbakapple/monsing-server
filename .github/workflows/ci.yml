@@ -75,7 +75,6 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           path: build/reports/detekt/detekt.md
-          delete: true
           recreate: true
           ignore_empty: true
           GITHUB_TOKEN: ${{ secrets.SECRET }}
