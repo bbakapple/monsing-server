@@ -1,4 +1,4 @@
-name: deploy api dev
+name: deploy dev api
 
 on:
   push:
