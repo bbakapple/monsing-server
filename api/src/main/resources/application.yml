@@ -25,9 +25,5 @@ spring:
     activate:
       on-profile: local
 
-jasypt:
-  encryptor:
-    password: hello
-
 aws:
   cloudfront-url: https://sadniasdksmkadmiqiq.com
