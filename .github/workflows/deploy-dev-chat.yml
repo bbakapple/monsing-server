@@ -40,7 +40,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          tags: judebellingham/monsing-dev:latest
+          tags: judebellingham/monsing-dev:chat-latest
           push: true
           platforms: linux/amd64/v3
           build-args: |
@@ -65,10 +65,10 @@ jobs:
             
             echo "${{ secrets.DOCKERHUB_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
-            sudo docker pull judebellingham/monsing-dev:latest
+            sudo docker pull judebellingham/monsing-dev:chat-latest
             
             sudo docker run -d --name monsing-dev \
             -p 80:8080 \
             -e "PROFILE=dev" \
             -e "JASYPT=${{secrets.JASYPT_KEY}}" \
-            judebellingham/monsing-dev:latest
+            judebellingham/monsing-dev:chat-latest
