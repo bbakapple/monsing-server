@@ -4,6 +4,7 @@ plugins {
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.25'
+    id 'io.gitlab.arturbosch.detekt' version '1.23.7'
 }
 
 group = 'org.bbakaple'
@@ -15,6 +16,52 @@ allprojects {
     }
 }
 
+tasks.register("reportMerge", io.gitlab.arturbosch.detekt.report.ReportMergeTask) {
+    output = project.layout.buildDirectory.file("reports/detekt/detekt.xml")
+}
+
+tasks.register("convertCheckstyleToMarkdown") {
+    doLast {
+        def checkstyleFile = file("build/reports/detekt/detekt.xml")
+        def outputFile = file("build/reports/detekt/detekt.md")
+
+        if (!checkstyleFile.exists()) {
+            println "Checkstyle report not found: ${checkstyleFile}"
+            return
+        }
+
+        def xml = new XmlParser().parse(checkstyleFile)
+        def mdContent = new StringBuilder()
+        mdContent.append("# Checkstyle Report\n\n")
+
+        xml.file.each { fileNode ->
+            def fileName = fileNode.@name
+            def className = fileName.substring(fileName.lastIndexOf("/") + 1)
+            mdContent.append("### File: ${className}\n\n")
+
+            fileNode.error.each { errorNode ->
+                def line = errorNode.@line
+                def column = errorNode.@column
+                def message = errorNode.@message
+                def severity = errorNode.@severity
+                def source = errorNode.@source
+
+                mdContent.append("- **Line ${line}, Column ${column}**\n")
+                mdContent.append("  - Message: ${message}\n")
+                mdContent.append("  - Severity: ${severity}\n")
+                mdContent.append("  - Source: ${source}\n\n")
+            }
+        }
+
+        outputFile.text = mdContent.toString()
+        println "Checkstyle report converted to Markdown: ${outputFile}"
+    }
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.report.ReportMergeTask).configureEach {
+    finalizedBy("convertCheckstyleToMarkdown")
+}
+
 subprojects {
 
     apply plugin: 'org.jetbrains.kotlin.jvm'
@@ -22,6 +69,7 @@ subprojects {
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+    apply plugin: 'io.gitlab.arturbosch.detekt'
 
     java {
         toolchain {
@@ -81,6 +129,29 @@ subprojects {
 
     tasks.named('test') {
         useJUnitPlatform()
+    }
+
+    configurations.matching { it.name == "detekt" }.configureEach {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.jetbrains.kotlin") {
+                useVersion("2.0.10")
+            }
+        }
+    }
+
+    detekt {
+        config.setFrom("$rootDir/detekt.yml")
+        reports {
+            xml.required.set(true)
+        }
+    }
+
+    tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach {
+        finalizedBy(reportMerge)
+    }
+
+    reportMerge.configure {
+        input.from(tasks.withType(io.gitlab.arturbosch.detekt.Detekt).collect { it.xmlReportFile })
     }
 }
 

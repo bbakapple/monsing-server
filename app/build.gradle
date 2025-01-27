@@ -2,13 +2,6 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
-group = 'org.bbakaple'
-version = '0.0.1-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(':domain')
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
@@ -17,13 +10,6 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-}
-
-test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(17)
 }
 
 bootJar {
