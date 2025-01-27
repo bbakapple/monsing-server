@@ -42,7 +42,7 @@ jobs:
           file: ./Dockerfile
           tags: judebellingham/monsing-dev:latest
           push: true
-          platforms: linux/arm64
+          platforms: linux/amd64/v3
           build-args: |
             MODULE=chat
 
