@@ -63,13 +63,7 @@ jobs:
             sudo docker stop monsing-dev || true
             sudo docker rm monsing-dev || true
             
-            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            if [ $? -eq 0 ]; then
-              echo "Docker Hub login successful!"
-            else
-              echo "Docker Hub login failed! Please check your credentials."
-              exit 1
-            fi
+            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
             sudo docker pull judebellingham/monsing-dev:latest
             
