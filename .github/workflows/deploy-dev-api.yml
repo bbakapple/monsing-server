@@ -55,11 +55,21 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
+          docker-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker-password: ${{ secrets.DOCKERHUB_PASSWORD }}
           envs: JASYPT
 
           script: |
             sudo docker stop monsing-dev || true
             sudo docker rm monsing-dev || true
+            
+            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            if [ $? -eq 0 ]; then
+              echo "Docker Hub login successful!"
+            else
+              echo "Docker Hub login failed! Please check your credentials."
+              exit 1
+            fi
             
             sudo docker pull judebellingham/monsing-dev:latest
             
