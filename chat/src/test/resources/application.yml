@@ -27,6 +27,9 @@ jasypt:
   encryptor:
     password: testkey
 
+s3:
+  bucket: testets
+
 logging:
   discord:
     webhook-url:

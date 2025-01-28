@@ -8,11 +8,17 @@ import openapi.model.TeacherCreateRequest
 import openapi.model.TeacherDetailResponse
 import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.TokenPayload
+import org.monsing.member.Nickname
+import org.monsing.member.teacher.GenderType
+import org.monsing.member.teacher.Teacher
+import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TeacherController : TeacherApi {
+class TeacherController(
+    private val teacherService: TeacherService
+) : TeacherApi {
     override fun createReview(
         tokenPayload: TokenPayload,
         id: Int,
@@ -25,7 +31,22 @@ class TeacherController : TeacherApi {
         tokenPayload: TokenPayload,
         teacherCreateRequest: TeacherCreateRequest
     ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        val teacher = Teacher(
+            memberId = tokenPayload.id,
+            nickname = Nickname(teacherCreateRequest.name),
+            genderType = requireNotNull(teacherCreateRequest.gender()) {
+                "GenderType is invalid"
+            }
+        )
+        teacherService.createTeacher(teacher)
+
+        return ResponseEntity.ok().build()
+    }
+
+    private fun TeacherCreateRequest.gender(): GenderType? {
+        return enumValueOrNull<GenderType>(
+            gender.name.uppercase()
+        )
     }
 
     override fun readClasses(
