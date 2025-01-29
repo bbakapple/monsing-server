@@ -15,19 +15,17 @@ class HttpLogger(
     @Value("\${spring.profiles.active}") private val profile: String,
     private val objectMapper: ObjectMapper
 ) {
-    private val metadata: ThreadLocal<LogMetadata> = ThreadLocal()
+    private val metadata: ThreadLocal<LogMetadata> = ThreadLocal.withInitial { LogMetadata(profile = profile) }
     private val logger = Logger.getLogger(HttpLogger::class.simpleName)
 
-    fun init(request: HttpServletRequest) {
-        metadata.set(
-            LogMetadata(
-                url = request.requestURI,
-                method = request.method,
-                profile = profile,
-                headers = request.headerNames.toList().associateWith { request.getHeader(it) },
-                requestBody = request.reader.readText()
-            )
-        )
+    fun setRequest(request: HttpServletRequest) {
+        metadata.get().apply {
+            url = request.requestURI
+            method = request.method
+            headers = request.headerNames.toList().associateWith { request.getHeader(it) }
+            requestBody = request.reader.readText()
+            start = System.currentTimeMillis()
+        }
     }
 
     fun setResponse(response: ContentCachingResponseWrapper, ex: Exception?) {
@@ -58,6 +56,7 @@ class HttpLogger(
             else -> logger.severe(metadata.get().log)
         }
         metadata.remove()
+        metadata.set(LogMetadata(profile = profile))
     }
 
     private val LogMetadata.log: String
@@ -67,14 +66,14 @@ class HttpLogger(
 
 data class LogMetadata(
     val id: String = UUID.randomUUID().toString(),
-    val profile: String,
-    val method: String,
-    val url: String,
-    val requestBody: String,
-    val headers: Map<String, String> = emptyMap(),
+    val profile: String?,
+    var method: String? = null,
+    var url: String? = null,
+    var requestBody: String? = null,
+    var headers: Map<String, String> = emptyMap(),
     var status: Int? = null,
     @JsonIgnore
-    val start: Long = System.currentTimeMillis(),
+    var start: Long? = null,
     @JsonIgnore
     var end: Long? = null,
     var responseBody: String? = null,
@@ -82,5 +81,5 @@ data class LogMetadata(
 ) {
     @get:JsonProperty
     private val duration: String
-        get() = "${requireNotNull(end) - start}ms"
+        get() = "${requireNotNull(end) - requireNotNull(start)}ms"
 }

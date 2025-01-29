@@ -17,7 +17,7 @@ class LoggingFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        httpLogger.init(request)
+        httpLogger.setRequest(request)
         val wrappedResponse = ContentCachingResponseWrapper(response)
 
         filterChain.doFilter(request, wrappedResponse)
