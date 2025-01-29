@@ -22,7 +22,7 @@ class LoggingFilter(
 
         filterChain.doFilter(request, wrappedResponse)
 
-        httpLogger.setResponse(wrappedResponse, null)
+        httpLogger.setResponse(wrappedResponse)
         wrappedResponse.copyBodyToResponse()
         httpLogger.log()
     }

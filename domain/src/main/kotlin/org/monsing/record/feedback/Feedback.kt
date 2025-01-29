@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.Lob
 import org.monsing.BaseEntity
 
+private const val MAXIMUM_LENGTH = 3000
+
 @Entity
 class Feedback(
     @Column(nullable = false)
@@ -24,7 +26,7 @@ class Feedback(
 
     fun writeFeedback(detail: String) {
         require(detail.isNotBlank()) { "Detail must not be blank" }
-        require(detail.length <= 3000) { "Detail must not exceed 3000 characters" }
+        require(detail.length <= MAXIMUM_LENGTH) { "Detail must not exceed $MAXIMUM_LENGTH characters" }
         status = status.complete()
         this._detail = detail
     }

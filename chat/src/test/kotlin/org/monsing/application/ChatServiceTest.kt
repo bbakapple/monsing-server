@@ -97,7 +97,10 @@ class ChatServiceTest {
     fun `local에 session이 있을 때 global은 호출하지 않는다`() {
         // given
         val receiverId = 1L
-        every { localSessionStorage.getSessionByMemberId(receiverId) } returns setOf(mockk<WebSocketSession>(relaxed = true))
+        every {
+            localSessionStorage.getSessionByMemberId(receiverId)
+        } returns setOf(mockk<WebSocketSession>(relaxed = true))
+        
         // when
         chatService.handleMessage(receiverId, TextMessage(""))
 

@@ -7,8 +7,11 @@ import jakarta.servlet.http.HttpServletRequest
 import java.util.UUID
 import java.util.logging.Logger
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.util.ContentCachingResponseWrapper
+
+private const val ERROR_TRACE_LINE_NUMBER = 3
 
 @Component
 class HttpLogger(
@@ -28,7 +31,7 @@ class HttpLogger(
         }
     }
 
-    fun setResponse(response: ContentCachingResponseWrapper, ex: Exception?) {
+    fun setResponse(response: ContentCachingResponseWrapper) {
         metadata.get().apply {
             end = System.currentTimeMillis()
             status = response.status
@@ -40,7 +43,7 @@ class HttpLogger(
     fun setException(ex: Exception) {
         val message = StringBuilder().apply {
             appendLine("${ex.javaClass}: ${ex.message}")
-            ex.stackTrace.take(3).forEach {
+            ex.stackTrace.take(ERROR_TRACE_LINE_NUMBER).forEach {
                 appendLine(it)
             }
         }
@@ -51,8 +54,8 @@ class HttpLogger(
 
     fun log() {
         when (metadata.get().status) {
-            200 -> logger.info(metadata.get().log)
-            400 -> logger.warning(metadata.get().log)
+            HttpStatus.OK.value() -> logger.info(metadata.get().log)
+            HttpStatus.BAD_REQUEST.value() -> logger.warning(metadata.get().log)
             else -> logger.severe(metadata.get().log)
         }
         metadata.remove()
