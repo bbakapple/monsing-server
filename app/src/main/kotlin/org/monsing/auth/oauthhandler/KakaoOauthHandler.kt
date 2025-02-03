@@ -4,6 +4,8 @@ import org.monsing.auth.apiclient.KakaoOauthApiClient
 import org.monsing.member.OauthProviderType
 import org.springframework.stereotype.Component
 
+private const val BEARER = "Bearer "
+
 @Component
 class KakaoOauthHandler(
     private val kakaoApiClient: KakaoOauthApiClient
@@ -14,6 +16,6 @@ class KakaoOauthHandler(
     }
 
     override fun handle(code: String): OauthIdentifier {
-        return kakaoApiClient.getIdentifier(code)
+        return kakaoApiClient.getIdentifier("$BEARER$code")
     }
 }
