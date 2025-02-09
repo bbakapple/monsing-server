@@ -9,7 +9,7 @@ import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 import org.springframework.web.util.UriComponentsBuilder
 
-private const val BEARER = "Bearer "
+private const val BEARER = "Bearer"
 
 @Component
 class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterceptor {
