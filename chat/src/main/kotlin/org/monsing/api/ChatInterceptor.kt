@@ -7,6 +7,7 @@ import org.springframework.http.server.ServerHttpResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
+import org.springframework.web.util.UriComponentsBuilder
 
 private const val BEARER = "Bearer "
 
@@ -19,11 +20,13 @@ class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterce
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        val memberId = request.headers[HttpHeaders.AUTHORIZATION]?.firstOrNull()
+        val query = UriComponentsBuilder.fromUri(request.uri).build().queryParams
+
+        val memberId = query[HttpHeaders.AUTHORIZATION]?.firstOrNull()
             ?.let { tokenManager.getPayLoad(it.substringAfter(BEARER)).id }
             ?: throw IllegalArgumentException("Member id must not be null")
 
-        val deviceId = requireNotNull(request.headers["Device-Id"]?.firstOrNull()) {
+        val deviceId = requireNotNull(query["Device-Id"]?.firstOrNull()) {
             "Device id must not be null"
         }
 
