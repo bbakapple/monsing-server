@@ -34,7 +34,7 @@ class TokenManager(
         } catch (e: ExpiredJwtException) {
             throw ExpiredJwtException(e.header, e.claims, e.message)
         } catch (e: Exception) {
-            throw IllegalArgumentException(e.message)
+            throw IllegalArgumentException("${e.javaClass}: ${e.message}")
         }
     }
 

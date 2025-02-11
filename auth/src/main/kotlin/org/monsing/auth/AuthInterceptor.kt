@@ -24,7 +24,7 @@ class AuthInterceptor(
         if (handler.hasMethodAnnotation(Auth::class.java)) {
             val token = request.getHeader(HttpHeaders.AUTHORIZATION)
                 ?.takeIf { it.startsWith(BEARER) }
-                ?.apply { removePrefix(BEARER) }
+                ?.removePrefix(BEARER)
                 ?: throw IllegalArgumentException("잘못된 인증 요청")
 
             val payload = tokenManager.getPayLoad(token)
