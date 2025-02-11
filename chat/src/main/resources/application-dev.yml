@@ -2,7 +2,3 @@ spring:
   config:
     activate:
       on-profile: dev
-
-logging:
-  discord:
-    webhook-url: ENC(BwuxHTKf/eHk96dTtF3JQSx00Vn6MlwxLrihxVpDvebIRBaknELMOC7OwUNViz9br0sDAauOzz61kdbVMLzw58CDNDd/jnWER8GtBoFx8X5hXa6wu/sLC/HM0cx1RnpQaubuSnL4TgiFl5mmtwn778/EkaoIHocalHX5pxovW22vBVX4lJ78OQ==)
