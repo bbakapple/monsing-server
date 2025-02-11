@@ -1,0 +1,52 @@
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProfile name="local">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <!--        ROLLING + DISCORD 로 수정 -->
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>log-file-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>30</maxHistory>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
+        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>%d{HH:mm:ss} [%thread] [%-5level] %logger{36} - %msg%n```%ex{full}```</pattern>
+            </layout>
+            <username>WanF-logback</username>
+            <avatarUrl>https://cdn-icons-png.flaticon.com/512/1383/1383395.png</avatarUrl>
+            <tts>false</tts>
+        </appender>
+
+        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="DISCORD"/>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="ASYNC_DISCORD"/>
+        </root>
+    </springProfile>
+</configuration>

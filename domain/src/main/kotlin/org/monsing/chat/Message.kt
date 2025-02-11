@@ -13,5 +13,4 @@ class Message(
     val senderId: Long,
     val content: String,
     val createdAt: LocalDateTime = LocalDateTime.now()
-) {
-}
+)

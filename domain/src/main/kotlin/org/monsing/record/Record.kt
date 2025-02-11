@@ -28,12 +28,6 @@ class Record(
     val title
         get() = _title.value
 
-    init {
-        require(title.length <= 30) {
-            "Title must not be longer than 30 characters"
-        }
-    }
-
     val notCompletedFeedBacks
         get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 

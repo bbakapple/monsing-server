@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.lt
 import org.springframework.stereotype.Component
 
 private const val DEFAULT_SIZE = 10
+private const val MAXIMUM_ID = "99999999999999999999"
 
 @Component
 class MessageRepository(
@@ -23,7 +24,7 @@ class MessageRepository(
 
     fun findByChatId(chatId: String, lastId: String?, limit: Int?): List<Message> {
         val query = Query().addCriteria(
-            (Message::id lt (lastId ?: "9".repeat(20)))
+            (Message::id lt (lastId ?: MAXIMUM_ID))
                 .andOperator(Message::chatId isEqualTo chatId)
         ).with(
             sortBy(Message::id, Sort.Direction.DESC)

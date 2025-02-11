@@ -38,4 +38,11 @@ class RedisConfig(private val redisProperties: RedisProperties) {
         keySerializer = StringRedisSerializer()
         valueSerializer = GenericToStringSerializer(Long::class.java)
     }
+
+    @Bean
+    fun fcmTokenRedisTemplate() = RedisTemplate<String, String>().apply {
+        connectionFactory = connectionFactory()
+        keySerializer = StringRedisSerializer()
+        valueSerializer = StringRedisSerializer()
+    }
 }

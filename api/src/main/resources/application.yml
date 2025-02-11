@@ -1,16 +1,9 @@
 spring:
   profiles:
-    group:
-      local:
-        - app
-        - domain
-      dev:
-        - app-dev
-        - domain-dev
     active: local
-
-  config:
-    import: classpath:application-dev.yml
+    include:
+      - app
+      - domain
 
 management:
   endpoints:
@@ -27,3 +20,7 @@ spring:
 
 aws:
   cloudfront-url: https://sadniasdksmkadmiqiq.com
+
+logging:
+  discord:
+    webhook-url:
