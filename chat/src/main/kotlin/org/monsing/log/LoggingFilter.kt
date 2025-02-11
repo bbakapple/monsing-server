@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.ContentCachingResponseWrapper
 
 @Component
@@ -17,10 +18,11 @@ class LoggingFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        httpLogger.setRequest(request)
+        val wrappedRequest = ContentCachingRequestWrapper(request)
         val wrappedResponse = ContentCachingResponseWrapper(response)
 
-        filterChain.doFilter(request, wrappedResponse)
+        httpLogger.setRequest(wrappedRequest)
+        filterChain.doFilter(wrappedRequest, wrappedResponse)
 
         httpLogger.setResponse(wrappedResponse)
         wrappedResponse.copyBodyToResponse()
