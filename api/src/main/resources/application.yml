@@ -1,9 +1,13 @@
 spring:
   profiles:
+    group:
+      local:
+        - app
+        - domain
+      dev:
+        - app-dev
+        - domain-dev
     active: local
-    include:
-      - app
-      - domain
 
 management:
   endpoints:
