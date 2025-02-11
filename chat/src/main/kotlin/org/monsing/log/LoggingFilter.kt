@@ -19,6 +19,7 @@ class LoggingFilter(
         filterChain: FilterChain
     ) {
         val wrappedRequest = ContentCachingRequestWrapper(request)
+        wrappedRequest.inputStream.readBytes()
         val wrappedResponse = ContentCachingResponseWrapper(response)
 
         httpLogger.setRequest(wrappedRequest)
