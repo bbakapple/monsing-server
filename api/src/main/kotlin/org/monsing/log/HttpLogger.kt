@@ -3,12 +3,12 @@ package org.monsing.log
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
-import jakarta.servlet.http.HttpServletRequest
 import java.util.UUID
 import java.util.logging.Logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.ContentCachingResponseWrapper
 
 private const val ERROR_TRACE_LINE_NUMBER = 3
@@ -21,12 +21,12 @@ class HttpLogger(
     private val metadata: ThreadLocal<LogMetadata> = ThreadLocal.withInitial { LogMetadata(profile = profile) }
     private val logger = Logger.getLogger(HttpLogger::class.simpleName)
 
-    fun setRequest(request: HttpServletRequest) {
+    fun setRequest(request: ContentCachingRequestWrapper) {
         metadata.get().apply {
             url = request.requestURI
             method = request.method
             headers = request.headerNames.toList().associateWith { request.getHeader(it) }
-            requestBody = request.reader.readText()
+            requestBody = request.contentAsString
             start = System.currentTimeMillis()
         }
     }
@@ -35,8 +35,7 @@ class HttpLogger(
         metadata.get().apply {
             end = System.currentTimeMillis()
             status = response.status
-            val body = response.contentAsByteArray.toString(charset("UTF-8"))
-            responseBody = body
+            responseBody = response.contentAsByteArray.toString(charset("UTF-8"))
         }
     }
 
