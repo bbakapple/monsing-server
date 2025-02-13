@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 
 {{#discriminator}}
     {{>typeInfoAnnotation}}{{/discriminator}}
-{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}class {{classname}} @JsonCreator constructor(
+{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}} @JsonCreator constructor(
 {{#requiredVars}}
     {{>dataClassReqVar}}{{^-last}},
     {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
