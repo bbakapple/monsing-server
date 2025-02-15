@@ -1,15 +1,12 @@
-import com.fasterxml.jackson.annotation.JsonCreator
-
 /**
 * TEAM BBAKAPLE API 생성 Template 에서 제작된 소스입니다.
 {{#vars}}
     * @param {{name}} {{{description}}}
 {{/vars}}
 */
-
 {{#discriminator}}
     {{>typeInfoAnnotation}}{{/discriminator}}
-{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}} @JsonCreator constructor(
+{{#discriminator}}interface {{classname}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class {{classname}}(
 {{#requiredVars}}
     {{>dataClassReqVar}}{{^-last}},
     {{/-last}}{{/requiredVars}}{{#hasRequired}}{{#hasOptional}},
