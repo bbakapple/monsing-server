@@ -18,6 +18,10 @@ class ClassRoom(
         status = ClassRoomStatusType.CLOSED
     }
 
+    fun enter() {
+        status = ClassRoomStatusType.IN_PROGRESS
+    }
+
     companion object {
         fun create(teacher: Teacher, student: Student): ClassRoom {
             return ClassRoom(teacher, student, ClassRoomStatusType.OPEN)

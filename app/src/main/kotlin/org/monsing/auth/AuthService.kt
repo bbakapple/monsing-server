@@ -1,15 +1,15 @@
 package org.monsing.auth
 
 import org.monsing.auth.jwt.Role
-import org.monsing.auth.jwt.TokenManager
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenManager
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
 import org.monsing.member.Member
 import org.monsing.member.MemberRepository
 import org.monsing.member.OauthProviderType
 import org.monsing.member.StudentRepository
 import org.monsing.member.teacher.TeacherRepository
-import org.monsing.token.Token
+import org.monsing.token.AuthToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,11 +19,11 @@ class AuthService(
     private val studentRepository: StudentRepository,
     private val teacherRepository: TeacherRepository,
     private val oauthAdaptor: OauthAdaptor,
-    private val tokenManager: TokenManager
+    private val authTokenManager: AuthTokenManager
 ) {
 
     @Transactional
-    fun login(oauthProviderType: OauthProviderType, oauthToken: String): Token {
+    fun login(oauthProviderType: OauthProviderType, oauthToken: String): AuthToken {
         val oauthIdentifier = oauthAdaptor.handle(oauthProviderType, oauthToken)
         val member = memberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
             ?: memberRepository.save(Member(oauthIdentifier.id, oauthProviderType))
@@ -34,19 +34,19 @@ class AuthService(
 
         val role = findRoleByMemberId(id)
 
-        return Token(
-            accessToken = tokenManager.createAccessToken(TokenPayload(id, role)),
-            refreshToken = tokenManager.createRefreshToken(id)
+        return AuthToken(
+            accessToken = authTokenManager.createAccessToken(AuthTokenPayload(id, role)),
+            refreshToken = authTokenManager.createRefreshToken(id)
         )
     }
 
     @Transactional(readOnly = true)
-    fun refresh(refreshToken: String): Token {
-        val payload = tokenManager.getRefreshPayload(refreshToken)
+    fun refresh(refreshToken: String): AuthToken {
+        val payload = authTokenManager.getRefreshPayload(refreshToken)
         val role = findRoleByMemberId(payload)
 
-        return Token(
-            accessToken = tokenManager.createAccessToken(TokenPayload(payload, role)),
+        return AuthToken(
+            accessToken = authTokenManager.createAccessToken(AuthTokenPayload(payload, role)),
             refreshToken = refreshToken
         )
     }
