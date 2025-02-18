@@ -63,6 +63,7 @@ jobs:
           script: |
             sudo docker stop monsing-dev || true
             sudo docker rm monsing-dev || true
+            sudo docker container prune -f
             
             echo "${{ secrets.DOCKERHUB_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             
@@ -74,3 +75,4 @@ jobs:
             -e "JASYPT=${{secrets.JASYPT_KEY}}" \
             -e "DISCORD_TOKEN=${{secrets.DISCORD_TOKEN}}" \
             judebellingham/monsing-dev:api-latest
+            sudo docker image prune -a -f
