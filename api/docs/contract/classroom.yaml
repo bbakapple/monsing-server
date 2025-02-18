@@ -99,7 +99,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClassRoomResponse'
+                $ref: '#/components/schemas/ClassRoomEnterResponse'
           description: 성공적으로 수업이 완료되었습니다.
         '400':
           description: 잘못된 요청입니다.

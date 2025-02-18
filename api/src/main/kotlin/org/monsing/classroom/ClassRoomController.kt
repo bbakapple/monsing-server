@@ -3,8 +3,9 @@ package org.monsing.classroom
 import openapi.api.ClassRoomApi
 import openapi.model.ClassRoomCreateRequest
 import openapi.model.ClassRoomCreateResponse
+import openapi.model.ClassRoomEnterResponse
 import openapi.model.ClassRoomResponse
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -14,12 +15,12 @@ class ClassRoomController(
 ) : ClassRoomApi {
 
     override fun createClassRoom(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         classRoomCreateRequest: ClassRoomCreateRequest
     ): ResponseEntity<ClassRoomCreateResponse> {
         val classRoom = classRoomService.createClassRoom(
-            tokenPayload.id,
-            tokenPayload.role,
+            authTokenPayload.id,
+            authTokenPayload.role,
             classRoomCreateRequest.studentId
         )
 
@@ -30,8 +31,18 @@ class ClassRoomController(
         )
     }
 
-    override fun retrieveClassRooms(tokenPayload: TokenPayload): ResponseEntity<List<ClassRoomResponse>> {
-        val classRooms = classRoomService.retrieveClassRooms(tokenPayload.id, tokenPayload.role)
+    override fun enterClassRoom(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<ClassRoomEnterResponse> {
+        val token = classRoomService.enterClassRoom(authTokenPayload.id, authTokenPayload.role, id)
+
+        return ResponseEntity.ok(
+            ClassRoomEnterResponse(
+                token = token
+            )
+        )
+    }
+
+    override fun retrieveClassRooms(authTokenPayload: AuthTokenPayload): ResponseEntity<List<ClassRoomResponse>> {
+        val classRooms = classRoomService.retrieveClassRooms(authTokenPayload.id, authTokenPayload.role)
 
         return ResponseEntity.ok(
             classRooms.map {
@@ -44,12 +55,8 @@ class ClassRoomController(
         )
     }
 
-    override fun completeClassRoom(tokenPayload: TokenPayload, id: Int): ResponseEntity<Unit> {
-        classRoomService.completeClassRoom(tokenPayload.id, id)
+    override fun completeClassRoom(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<Unit> {
+        classRoomService.completeClassRoom(authTokenPayload.id, id)
         return ResponseEntity.ok().build()
-    }
-
-    override fun enterClassRoom(tokenPayload: TokenPayload, id: Int): ResponseEntity<ClassRoomResponse> {
-        TODO("Not yet implemented")
     }
 }
