@@ -29,4 +29,11 @@ class ClassRoomService(
             Role.NONE -> throw IllegalArgumentException("Role is NONE")
         }
     }
+
+    fun completeClassRoom(teacherId: Long, classRoomId: Int) {
+        val classRoom = classRoomRepository.findById(classRoomId.toLong())
+            .orElseThrow { throw IllegalArgumentException("Class room not found") }
+        check(classRoom.teacher.id == teacherId) { "Only teacher can complete a class room" }
+        classRoom.complete()
+    }
 }

@@ -12,8 +12,12 @@ class ClassRoom(
     val teacher: Teacher,
     @OneToOne
     val student: Student,
-    val status: ClassRoomStatusType
+    var status: ClassRoomStatusType
 ) : BaseEntity() {
+    fun complete() {
+        status = ClassRoomStatusType.CLOSED
+    }
+
     companion object {
         fun create(teacher: Teacher, student: Student): ClassRoom {
             return ClassRoom(teacher, student, ClassRoomStatusType.OPEN)

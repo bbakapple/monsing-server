@@ -45,7 +45,8 @@ class ClassRoomController(
     }
 
     override fun completeClassRoom(tokenPayload: TokenPayload, id: Int): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
+        classRoomService.completeClassRoom(tokenPayload.id, id)
+        return ResponseEntity.ok().build()
     }
 
     override fun enterClassRoom(tokenPayload: TokenPayload, id: Int): ResponseEntity<ClassRoomResponse> {

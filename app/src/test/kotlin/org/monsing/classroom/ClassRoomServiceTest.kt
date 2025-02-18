@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.monsing.auth.jwt.Role
 import org.monsing.course.ClassRoom
 import org.monsing.course.ClassRoomRepository
@@ -50,7 +51,7 @@ class ClassRoomServiceTest : FreeSpec({
             val result = sut.createClassRoom(teacherId, role, studentId)
 
             // then
-            every { classRoomRepository.save(any()) }
+            verify(exactly = 1) { classRoomRepository.save(any()) }
         }
         "선생이 아닌 경우 에러" {
             // given
@@ -131,6 +132,57 @@ class ClassRoomServiceTest : FreeSpec({
 
             // then
             exception.message shouldBe "Role is NONE"
+        }
+    }
+
+    "completeClassRoom" - {
+        "정상 완료" {
+            // given
+            val teacherId = 1L
+            val classRoomId = 1
+            val classRoom = mockk<ClassRoom>(relaxed = true) {
+                every { teacher.id } returns teacherId
+            }
+            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.of(classRoom)
+
+            // when
+            sut.completeClassRoom(teacherId, classRoomId)
+
+            // then
+            verify { classRoom.complete() }
+        }
+
+        "클래스룸이 없는 경우 에러" {
+            // given
+            val teacherId = 1L
+            val classRoomId = 1
+            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.empty()
+
+            // when
+            val exception = shouldThrow<IllegalArgumentException> {
+                sut.completeClassRoom(teacherId, classRoomId)
+            }
+
+            // then
+            exception.message shouldBe "Class room not found"
+        }
+
+        "다른 선생님이 완료하려는 경우 에러" {
+            // given
+            val teacherId = 1L
+            val classRoomId = 1
+            val classRoom = mockk<ClassRoom>(relaxed = true) {
+                every { teacher.id } returns 2L
+            }
+            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.of(classRoom)
+
+            // when
+            val exception = shouldThrow<IllegalStateException> {
+                sut.completeClassRoom(teacherId, classRoomId)
+            }
+
+            // then
+            exception.message shouldBe "Only teacher can complete a class room"
         }
     }
 })
