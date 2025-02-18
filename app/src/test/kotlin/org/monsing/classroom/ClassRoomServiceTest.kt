@@ -2,6 +2,7 @@ package org.monsing.classroom
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -87,6 +88,49 @@ class ClassRoomServiceTest : FreeSpec({
             val exception = shouldThrow<IllegalArgumentException> {
                 sut.createClassRoom(teacherId, role, studentId)
             }
+        }
+    }
+    "retrieveClassRooms" - {
+        "선생님 역할로 조회" {
+            // given
+            val teacherId = 1L
+            val role = Role.TEACHER
+            val classRooms = listOf(mockk<ClassRoom>(relaxed = true))
+            every { classRoomRepository.findByTeacherId(teacherId) } returns classRooms
+
+            // when
+            val result = sut.retrieveClassRooms(teacherId, role)
+
+            // then
+            result shouldBe classRooms
+        }
+
+        "학생 역할로 조회" {
+            // given
+            val studentId = 1L
+            val role = Role.STUDENT
+            val classRooms = listOf(mockk<ClassRoom>(relaxed = true))
+            every { classRoomRepository.findByStudentId(studentId) } returns classRooms
+
+            // when
+            val result = sut.retrieveClassRooms(studentId, role)
+
+            // then
+            result shouldBe classRooms
+        }
+
+        "역할이 NONE인 경우 에러" {
+            // given
+            val id = 1L
+            val role = Role.NONE
+
+            // when
+            val exception = shouldThrow<IllegalArgumentException> {
+                sut.retrieveClassRooms(id, role)
+            }
+
+            // then
+            exception.message shouldBe "Role is NONE"
         }
     }
 })

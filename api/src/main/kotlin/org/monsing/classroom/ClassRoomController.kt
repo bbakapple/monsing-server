@@ -31,7 +31,17 @@ class ClassRoomController(
     }
 
     override fun retrieveClassRooms(tokenPayload: TokenPayload): ResponseEntity<List<ClassRoomResponse>> {
-        TODO("Not yet implemented")
+        val classRooms = classRoomService.retrieveClassRooms(tokenPayload.id, tokenPayload.role)
+
+        return ResponseEntity.ok(
+            classRooms.map {
+                ClassRoomResponse(
+                    classRoomId = requireNotNull(it.id).toInt(),
+                    studentId = requireNotNull(it.student.id).toInt(),
+                    status = it.status.name
+                )
+            }
+        )
     }
 
     override fun completeClassRoom(tokenPayload: TokenPayload, id: Int): ResponseEntity<Unit> {

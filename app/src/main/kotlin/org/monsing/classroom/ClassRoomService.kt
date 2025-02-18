@@ -21,4 +21,12 @@ class ClassRoomService(
             .orElseThrow { throw IllegalArgumentException("Student not found") }
         return classRoomRepository.save(ClassRoom.create(teacher, student))
     }
+
+    fun retrieveClassRooms(id: Long, role: Role): List<ClassRoom> {
+        return when (role) {
+            Role.TEACHER -> classRoomRepository.findByTeacherId(id)
+            Role.STUDENT -> classRoomRepository.findByStudentId(id)
+            Role.NONE -> throw IllegalArgumentException("Role is NONE")
+        }
+    }
 }
