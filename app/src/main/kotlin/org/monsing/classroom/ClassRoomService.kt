@@ -5,6 +5,7 @@ import org.monsing.course.ClassRoom
 import org.monsing.course.ClassRoomRepository
 import org.monsing.member.StudentRepository
 import org.monsing.member.teacher.TeacherRepository
+import org.monsing.token.Token
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,7 +34,17 @@ class ClassRoomService(
     fun completeClassRoom(teacherId: Long, classRoomId: Int) {
         val classRoom = classRoomRepository.findById(classRoomId.toLong())
             .orElseThrow { throw IllegalArgumentException("Class room not found") }
-        check(classRoom.teacher.id == teacherId) { "Only teacher can complete a class room" }
+        check(classRoom.teacher.memberId == teacherId) { "Only teacher can complete a class room" }
         classRoom.complete()
+    }
+
+    fun enterClassRoom(memberId: Long, classRoomId: Int): Token {
+        val classRoom = classRoomRepository.findById(classRoomId.toLong())
+            .orElseThrow { throw IllegalArgumentException("Class room not found") }
+        check(classRoom.student.memberId == memberId || classRoom.teacher.memberId == memberId) {
+            "Only student can enter a class room"
+        }
+        classRoom.enter()
+        return Token("", "")
     }
 }

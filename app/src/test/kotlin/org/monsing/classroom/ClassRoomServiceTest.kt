@@ -141,7 +141,7 @@ class ClassRoomServiceTest : FreeSpec({
             val teacherId = 1L
             val classRoomId = 1
             val classRoom = mockk<ClassRoom>(relaxed = true) {
-                every { teacher.id } returns teacherId
+                every { teacher.memberId } returns teacherId
             }
             every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.of(classRoom)
 
