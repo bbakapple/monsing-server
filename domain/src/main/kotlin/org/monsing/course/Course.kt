@@ -1,19 +1,29 @@
 package org.monsing.course
 
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
+import jakarta.persistence.OneToMany
 import org.monsing.BaseEntity
-import org.monsing.member.Student
 
 @Entity
 class Course(
-    @OneToOne
-    @JoinColumn(name = "course_schedule_id")
-    val courseSchedule: CourseSchedule,
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    val student: Student
+    @Embedded
+    val courseOverview: CourseOverview,
+
+    @Column(nullable = false)
+    val teacherId: Long,
+
+    @Column(nullable = false)
+    val duration: Int,
+
+    @Column(nullable = false)
+    val pricePerLesson: Int,
+
+    @Column(nullable = false)
+    val minimumLessonCount: Int,
+
+    @OneToMany
+    val lessons: List<Lesson> = mutableListOf()
 ) : BaseEntity()
