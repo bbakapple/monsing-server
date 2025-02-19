@@ -14,3 +14,13 @@ spring:
       port: ENC(AmGJ5jY3T+1qsG97auYUeA==)
       username:
       password:
+
+  datasource:
+    url: ENC(tCnM01bRH3Yodli62IVyQ9Ka+/kR1bStDzJcJmXXq/qqs6SW4ClVmjTUyHWhQmqw)
+    username: ENC(+3YXkWFLPqCG6jXAtSAmrA==)
+    password: ENC(ahyDykj1LRfggBLzwZV8hXVcXp4WlN7v)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
