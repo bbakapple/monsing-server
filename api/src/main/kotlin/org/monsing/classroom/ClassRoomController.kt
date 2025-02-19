@@ -26,12 +26,12 @@ class ClassRoomController(
 
         return ResponseEntity.ok(
             ClassRoomCreateResponse(
-                classRoomId = requireNotNull(classRoom.id).toInt()
+                classRoomId = requireNotNull(classRoom.id)
             )
         )
     }
 
-    override fun enterClassRoom(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<ClassRoomEnterResponse> {
+    override fun enterClassRoom(authTokenPayload: AuthTokenPayload, id: Long): ResponseEntity<ClassRoomEnterResponse> {
         val token = classRoomService.enterClassRoom(authTokenPayload.id, authTokenPayload.role, id)
 
         return ResponseEntity.ok(
@@ -47,15 +47,15 @@ class ClassRoomController(
         return ResponseEntity.ok(
             classRooms.map {
                 ClassRoomResponse(
-                    classRoomId = requireNotNull(it.id).toInt(),
-                    studentId = requireNotNull(it.student.id).toInt(),
+                    classRoomId = requireNotNull(it.id),
+                    studentId = requireNotNull(it.student.id),
                     status = it.status.name
                 )
             }
         )
     }
 
-    override fun completeClassRoom(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<Unit> {
+    override fun completeClassRoom(authTokenPayload: AuthTokenPayload, id: Long): ResponseEntity<Unit> {
         classRoomService.completeClassRoom(authTokenPayload.id, id)
         return ResponseEntity.ok().build()
     }

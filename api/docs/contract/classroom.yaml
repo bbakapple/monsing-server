@@ -68,6 +68,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           description: 수업 ID
       responses:
         '200':
@@ -93,6 +94,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           description: 수업 ID
       responses:
         '200':
@@ -125,6 +127,7 @@ components:
       properties:
         studentId:
           type: integer
+          format: int64
           description: 학생 id
       required:
         - studentId
@@ -133,6 +136,7 @@ components:
       properties:
         classRoomId:
           type: integer
+          format: int64
           description: 방 id
       required:
         - classRoomId
@@ -141,9 +145,11 @@ components:
       properties:
         classRoomId:
           type: integer
+          format: int64
           description: 방 id
         studentId:
           type: integer
+          format: int64
           description: 학생 id
         status:
           type: string

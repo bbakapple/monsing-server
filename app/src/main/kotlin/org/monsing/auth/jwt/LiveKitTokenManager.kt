@@ -25,14 +25,13 @@ class LiveKitTokenManager(
     ): String {
         val issuedAt = Date()
         val expiration = getExpiration(issuedAt, accessExpireSecond)
-        val payload = mapOf(
-            "name" to name,
-            "identity" to participantIdentity,
-            "metadata" to null,
-            "grants" to mapOf(
-                "room" to mapOf(
-                    "join" to true,
-                    "name" to roomName
+        val payload = LiveKitPayload(
+            name = name,
+            identity = participantIdentity,
+            grants = LiveKitPayload.Grants(
+                room = LiveKitPayload.Room(
+                    join = true,
+                    name = roomName
                 )
             )
         )
@@ -51,3 +50,21 @@ class LiveKitTokenManager(
     }
 
 }
+
+data class LiveKitPayload(
+    val name: String,
+    val identity: String,
+    val metadata: Any? = null,
+    val grants: Grants
+) {
+
+    data class Grants(
+        val room: Room
+    )
+
+    data class Room(
+        val join: Boolean,
+        val name: String
+    )
+}
+
