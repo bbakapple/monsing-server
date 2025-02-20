@@ -6,11 +6,18 @@ import jakarta.persistence.Column
 class CourseOverview(
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false)
-    val description: String,
+    var description: String,
 
     @Column(nullable = false)
-    val curriculum: String,
-)
+    var curriculum: String,
+) {
+
+    fun update(name: String?, description: String?, curriculum: String?) {
+        name?.let { this.name = it }
+        description?.let { this.description = it }
+        curriculum?.let { this.curriculum = it }
+    }
+}
