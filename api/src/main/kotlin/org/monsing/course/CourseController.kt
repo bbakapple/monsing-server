@@ -6,6 +6,7 @@ import openapi.api.CourseApi
 import openapi.model.CourseCreateRequest
 import openapi.model.CourseUpdateRequest
 import openapi.model.DayOfWeekRequest
+import openapi.model.LessonRegisterRequest
 import org.monsing.auth.jwt.TokenPayload
 import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
@@ -65,6 +66,23 @@ class CourseController(
             courseUpdateRequest.price,
             courseUpdateRequest.minimumLessonCount
         )
+        return ResponseEntity.ok().build()
+    }
+
+    override fun registerLesson(
+        tokenPayload: TokenPayload,
+        courseId: Long,
+        lessonId: Long,
+        lessonRegisterRequest: LessonRegisterRequest
+    ): ResponseEntity<Unit> {
+        courseService.registerLesson(
+            tokenPayload.id,
+            tokenPayload.role,
+            courseId,
+            lessonId,
+            lessonRegisterRequest.lessonCount
+        )
+
         return ResponseEntity.ok().build()
     }
 }

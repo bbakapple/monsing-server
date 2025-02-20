@@ -17,4 +17,15 @@ class Lesson(
 
     @Column(nullable = false)
     var isSold: Boolean = false
-) : BaseEntity()
+) : BaseEntity() {
+
+    fun register(id: Long, lessonCount: Int) {
+        require(isSold.not()) {
+            "Lesson is already sold"
+        }
+
+        studentId = id
+        lessonRemaining = lessonCount
+        isSold = true
+    }
+}

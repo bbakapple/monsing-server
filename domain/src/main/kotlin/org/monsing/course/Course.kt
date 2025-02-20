@@ -46,6 +46,15 @@ class Course(
         duration?.let { this.duration = CourseDuration(it) }
         minimumLessonCount?.let { this.minimumLessonCount = CourseMinimumLessonCount(it) }
     }
+
+    fun findLessonById(lessonId: Long): Lesson {
+        return lessons.findLast { it.id == lessonId }
+            ?: throw IllegalArgumentException("Lesson not found")
+    }
+
+    fun hasLesserLessonCount(lessonCount: Int): Boolean {
+        return minimumLessonCount <= lessonCount
+    }
 }
 
 class CourseMinimumLessonCount(
@@ -57,6 +66,10 @@ class CourseMinimumLessonCount(
         require(value > 0) {
             "Minimum lesson count must be greater than 0"
         }
+    }
+
+    operator fun compareTo(lessonCount: Int): Int {
+        return value.compareTo(lessonCount)
     }
 }
 

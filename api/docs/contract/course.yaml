@@ -11,14 +11,14 @@ servers:
 paths:
   /courses:
     post:
-      summary: 수업 등록
+      summary: 강의 등록
       security:
         - BearerAuth: [ ]
       operationId: createCourse
       tags:
         - Course
       requestBody:
-        description: 수업 등록 요청
+        description: 강의 등록 요청
         required: true
         content:
           application/json:
@@ -45,7 +45,7 @@ paths:
           schema:
             type: integer
             format: int64
-          description: 수정할 수업 ID
+          description: 수정할 강의 ID
       requestBody:
         description: 수정할 정보
         required: true
@@ -53,6 +53,42 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CourseUpdateRequest'
+      responses:
+        '200':
+          description: 성공
+        '400':
+          description: 잘못된 요청입니다.
+
+  /courses/{courseId}/lessons/{lessonId}:
+    post:
+      summary: 수업 신청
+      security:
+        - BearerAuth: [ ]
+      operationId: registerLesson
+      tags:
+        - Course
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 신청할 강의 ID
+        - name: lessonId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: 신청할 수업 ID
+      requestBody:
+        description: 수업 신청
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRegisterRequest'
       responses:
         '200':
           description: 성공
@@ -148,3 +184,12 @@ components:
         minimumLessonCount:
           type: integer
           description: 최소 수업 횟수
+
+    LessonRegisterRequest:
+      type: object
+      properties:
+        lessonCount:
+          type: integer
+          description: 수업 횟수
+      required:
+        - lessonCount

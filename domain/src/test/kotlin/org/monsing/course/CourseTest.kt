@@ -208,4 +208,22 @@ class CourseTest : StringSpec({
         course.pricePerLesson.value shouldBe 10000
         course.minimumLessonCount.value shouldBe 10
     }
+
+    "minimumLessonCount 비교" {
+        val course = Course(
+            courseOverview = CourseOverview(
+                name = "코틀린 기초",
+                description = "코틀린 기초 문법을 배웁니다.",
+                curriculum = "코틀린 기초 문법을 배웁니다.",
+            ),
+            teacherId = 1,
+            duration = CourseDuration(1),
+            pricePerLesson = CoursePricePerLesson(10000),
+            minimumLessonCount = CourseMinimumLessonCount(10),
+        )
+
+        course.hasLesserLessonCount(9) shouldBe false
+        course.hasLesserLessonCount(10) shouldBe true
+        course.hasLesserLessonCount(11) shouldBe true
+    }
 })
