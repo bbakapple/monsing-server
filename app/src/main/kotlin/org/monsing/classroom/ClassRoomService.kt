@@ -20,8 +20,8 @@ class ClassRoomService(
     fun createClassRoom(teacherId: Long, role: Role, studentId: Long): ClassRoom {
         check(role == Role.TEACHER) { "Only teacher can create a class room" }
 
-        val teacher = teacherRepository.findByIdOrElseThrow(teacherId)
-        val student = studentRepository.findByIdOrElseThrow(studentId)
+        val teacher = teacherRepository.findByIdOrElseThrow(teacherId, "존재하지 않는 선생입니다. : $teacherId")
+        val student = studentRepository.findByIdOrElseThrow(studentId, "존재하지 않는 학생입니다. : $studentId")
 
         return classRoomRepository.save(ClassRoom.create(teacher, student))
     }
