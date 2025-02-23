@@ -5,3 +5,7 @@ plugins {
 bootJar {
     enabled = false
 }
+
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+}
