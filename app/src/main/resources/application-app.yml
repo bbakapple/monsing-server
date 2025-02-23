@@ -12,9 +12,9 @@ jwt:
     expire-second: 1296000
 livekit:
   secret:
-    key: test
+    key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
     expire-second: 1800
-  api-key: test
+  api-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
 
 s3:
   bucket: bucketname
