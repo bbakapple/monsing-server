@@ -6,7 +6,7 @@ import openapi.model.StudentCreateRequest
 import openapi.model.StudentResponse
 import openapi.model.StudentUpdateRequest
 import openapi.model.TeacherResponse
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.Nickname
 import org.monsing.member.Student
 import org.springframework.http.ResponseEntity
@@ -18,11 +18,11 @@ class StudentController(
 ) : StudentApi {
 
     override fun createStudent(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         studentCreateRequest: StudentCreateRequest
     ): ResponseEntity<Unit> {
         val student = Student(
-            memberId = tokenPayload.id,
+            memberId = authTokenPayload.id,
             nickname = Nickname(studentCreateRequest.name),
         )
         studentService.create(student)
@@ -30,28 +30,28 @@ class StudentController(
         return ResponseEntity.ok().build()
     }
 
-    override fun studentsIdCoursesGet(tokenPayload: TokenPayload, id: Int): ResponseEntity<List<CourseResponse>> {
+    override fun studentsIdCoursesGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<List<CourseResponse>> {
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdFavoritesGet(tokenPayload: TokenPayload, id: Int): ResponseEntity<List<TeacherResponse>> {
+    override fun studentsIdFavoritesGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<List<TeacherResponse>> {
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdFavoritesPost(tokenPayload: TokenPayload, id: Int, body: Int): ResponseEntity<Unit> {
+    override fun studentsIdFavoritesPost(authTokenPayload: AuthTokenPayload, id: Int, body: Int): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdNextClassGet(tokenPayload: TokenPayload, id: Int): ResponseEntity<CourseResponse> {
+    override fun studentsIdNextClassGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<CourseResponse> {
         TODO("Not yet implemented")
     }
 
-    override fun studentsMyGet(tokenPayload: TokenPayload): ResponseEntity<StudentResponse> {
+    override fun studentsMyGet(authTokenPayload: AuthTokenPayload): ResponseEntity<StudentResponse> {
         TODO("Not yet implemented")
     }
 
     override fun studentsMyPatch(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         studentUpdateRequest: StudentUpdateRequest
     ): ResponseEntity<Unit> {
         TODO("Not yet implemented")

@@ -1,6 +1,6 @@
 package org.monsing.api
 
-import org.monsing.auth.jwt.TokenManager
+import org.monsing.auth.jwt.AuthTokenManager
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
@@ -12,7 +12,7 @@ import org.springframework.web.util.UriComponentsBuilder
 private const val BEARER = "Bearer"
 
 @Component
-class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterceptor {
+class ChatInterceptor(private val authTokenManager: AuthTokenManager) : HandshakeInterceptor {
 
     override fun beforeHandshake(
         request: ServerHttpRequest,
@@ -23,7 +23,7 @@ class ChatInterceptor(private val tokenManager: TokenManager) : HandshakeInterce
         val query = UriComponentsBuilder.fromUri(request.uri).build().queryParams
 
         val memberId = query[HttpHeaders.AUTHORIZATION]?.firstOrNull()
-            ?.let { tokenManager.getPayLoad(it.substringAfter(BEARER)).id }
+            ?.let { authTokenManager.getPayLoad(it.substringAfter(BEARER)).id }
             ?: throw IllegalArgumentException("Member id must not be null")
 
         val deviceId = requireNotNull(query["Device-Id"]?.firstOrNull()) {

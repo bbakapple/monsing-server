@@ -7,7 +7,7 @@ import openapi.model.ReviewCreateRequest
 import openapi.model.TeacherCreateRequest
 import openapi.model.TeacherDetailResponse
 import openapi.model.TeacherResponse
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.Nickname
 import org.monsing.member.teacher.GenderType
 import org.monsing.member.teacher.Teacher
@@ -20,7 +20,7 @@ class TeacherController(
     private val teacherService: TeacherService
 ) : TeacherApi {
     override fun createReview(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         id: Int,
         reviewCreateRequest: ReviewCreateRequest
     ): ResponseEntity<Unit> {
@@ -28,11 +28,11 @@ class TeacherController(
     }
 
     override fun createTeacher(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         teacherCreateRequest: TeacherCreateRequest
     ): ResponseEntity<Unit> {
         val teacher = Teacher(
-            memberId = tokenPayload.id,
+            memberId = authTokenPayload.id,
             nickname = Nickname(teacherCreateRequest.name),
             genderType = requireNotNull(teacherCreateRequest.gender()) {
                 "GenderType is invalid"
@@ -50,7 +50,7 @@ class TeacherController(
     }
 
     override fun readClasses(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         id: Int,
         lastId: Int?,
         size: Int?
@@ -59,7 +59,7 @@ class TeacherController(
     }
 
     override fun readClassesByDate(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         id: Int,
         from: String,
         to: String
@@ -67,7 +67,7 @@ class TeacherController(
         TODO("Not yet implemented")
     }
 
-    override fun readMyInfo(tokenPayload: TokenPayload): ResponseEntity<TeacherDetailResponse> {
+    override fun readMyInfo(authTokenPayload: AuthTokenPayload): ResponseEntity<TeacherDetailResponse> {
         TODO("Not yet implemented")
     }
 

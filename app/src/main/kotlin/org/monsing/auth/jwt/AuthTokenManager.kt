@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class TokenManager(
+class AuthTokenManager(
     @Value("\${jwt.access-token.secret}") accessSecret: String,
     @Value("\${jwt.access-token.expire-second}") private val accessExpireSecond: Long,
     @Value("\${jwt.refresh-token.secret}") refreshSecret: String,
@@ -22,7 +22,7 @@ class TokenManager(
     private val accessKey: SecretKey = Keys.hmacShaKeyFor(accessSecret.toByteArray())
     private val refreshKey: SecretKey = Keys.hmacShaKeyFor(refreshSecret.toByteArray())
 
-    fun getPayLoad(token: String): TokenPayload {
+    fun getPayLoad(token: String): AuthTokenPayload {
         val parser = Jwts.parser()
             .verifyWith(accessKey)
             .build()
@@ -30,7 +30,7 @@ class TokenManager(
             return parser.parseSignedClaims(token)
                 .payload
                 .subject
-                .let { objectMapper.registerKotlinModule().readValue(it, TokenPayload::class.java) }
+                .let { objectMapper.registerKotlinModule().readValue(it, AuthTokenPayload::class.java) }
         } catch (e: ExpiredJwtException) {
             throw ExpiredJwtException(e.header, e.claims, e.message)
         } catch (e: Exception) {
@@ -38,7 +38,7 @@ class TokenManager(
         }
     }
 
-    fun createAccessToken(payload: TokenPayload): String {
+    fun createAccessToken(payload: AuthTokenPayload): String {
         val issuedAt = Date()
         val expiration = getExpiration(issuedAt, accessExpireSecond)
         val subject = objectMapper.writeValueAsString(payload)

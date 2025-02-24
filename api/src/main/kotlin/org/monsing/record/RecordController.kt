@@ -2,7 +2,7 @@ package org.monsing.record
 
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.record.request.RequestFeedbackRequest
 import org.monsing.record.request.UpdateRecordRequest
 import org.monsing.record.request.UploadRecordRequest
@@ -34,11 +34,11 @@ class RecordController(
     @PostMapping("/records")
     fun uploadRecord(
         @RequestPart file: MultipartFile,
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestBody request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
-        recordService.saveRecord(Record(request.title, tokenPayload.id, key))
+        recordService.saveRecord(Record(request.title, authTokenPayload.id, key))
 
         return ResponseEntity.ok(RecordUploadResponse(key))
     }
@@ -46,33 +46,33 @@ class RecordController(
     @Auth
     @PostMapping("/records/{recordId}/feedback")
     fun requestFeedback(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: RequestFeedbackRequest
     ): ResponseEntity<Unit> {
-        recordService.requestFeedback(tokenPayload.id, recordId, request.teacherId)
+        recordService.requestFeedback(authTokenPayload.id, recordId, request.teacherId)
         return ResponseEntity.ok().build()
     }
 
     @Auth
     @PatchMapping("/records/{recordId}/feedback")
     fun writeFeedback(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: WriteFeedbackRequest
     ): ResponseEntity<Unit> {
-        recordService.writeFeedback(tokenPayload.id, recordId, request.detail)
+        recordService.writeFeedback(authTokenPayload.id, recordId, request.detail)
         return ResponseEntity.ok().build()
     }
 
     @Auth
     @GetMapping("/records")
     fun listRecords(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) lastId: Long?
     ): ResponseEntity<List<RecordResponse>> {
-        val records = recordService.findRecordsByMemberId(tokenPayload.id, tokenPayload.role, size, lastId)
+        val records = recordService.findRecordsByMemberId(authTokenPayload.id, authTokenPayload.role, size, lastId)
 
         val response = records.map {
             RecordResponse(
@@ -88,10 +88,10 @@ class RecordController(
     @Auth
     @GetMapping("/records/{recordId}")
     fun getRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<RecordResponse> {
-        val record = recordService.findRecordById(recordId, tokenPayload.id, tokenPayload.role)
+        val record = recordService.findRecordById(recordId, authTokenPayload.id, authTokenPayload.role)
         val response = RecordResponse(
             requireNotNull(record.id),
             record.fileKey.toUrl(),
@@ -112,21 +112,21 @@ class RecordController(
     @Auth
     @DeleteMapping("/records/{recordId}")
     fun deleteRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<Unit> {
-        recordService.deleteRecord(recordId, tokenPayload.id)
+        recordService.deleteRecord(recordId, authTokenPayload.id)
         return ResponseEntity.ok().build()
     }
 
     @Auth
     @PatchMapping("/records/{recordId}")
     fun updateRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: UpdateRecordRequest
     ): ResponseEntity<Unit> {
-        recordService.updateRecord(recordId, tokenPayload.id, request.title)
+        recordService.updateRecord(recordId, authTokenPayload.id, request.title)
         return ResponseEntity.ok().build()
     }
 
