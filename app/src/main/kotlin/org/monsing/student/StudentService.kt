@@ -18,6 +18,7 @@ class StudentService(
 
         memberRepository.save(
             Student(
+                id = member.id,
                 identifier = member.identifier,
                 oauthProviderType = member.oauthProviderType,
                 nickname = Nickname(name)

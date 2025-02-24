@@ -25,7 +25,7 @@ class RecordService(
     @Transactional
     fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = memberRepository.findStudentByMemberId(memberId)
+        val student = memberRepository.findStudentById(memberId)
             ?: throw IllegalArgumentException("Student not found")
 
         val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
@@ -64,7 +64,7 @@ class RecordService(
     @Transactional
     fun deleteRecord(recordId: Long, id: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = memberRepository.findStudentByMemberId(id) ?: throw IllegalArgumentException("Student not found")
+        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
             feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacherId)?.increaseAmount()
@@ -75,7 +75,7 @@ class RecordService(
     @Transactional
     fun updateRecord(recordId: Long, id: Long, title: String) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = memberRepository.findStudentByMemberId(id) ?: throw IllegalArgumentException("Student not found")
+        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.updateTitle(title)
     }

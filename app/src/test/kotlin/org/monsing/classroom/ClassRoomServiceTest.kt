@@ -33,10 +33,10 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val studentId = 2L
-            every { memberRepository.findTeacherByMemberId(teacherId) } returns mockk<Teacher>(relaxed = true) {
+            every { memberRepository.findTeacherById(teacherId) } returns mockk<Teacher>(relaxed = true) {
                 every { id } returns teacherId
             }
-            every { memberRepository.findStudentByMemberId(studentId) } returns mockk<Student>(relaxed = true) {
+            every { memberRepository.findStudentById(studentId) } returns mockk<Student>(relaxed = true) {
                 every { id } returns studentId
             }
             every { classRoomRepository.save(any()) } returns ClassRoom(
@@ -56,7 +56,7 @@ class ClassRoomServiceTest : FreeSpec({
             val teacherId = 1L
             val studentId = 2L
 
-            every { memberRepository.findTeacherByMemberId(teacherId) } returns null
+            every { memberRepository.findTeacherById(teacherId) } returns null
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {
@@ -67,7 +67,7 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val studentId = 2L
-            every { memberRepository.findTeacherByMemberId(teacherId) } returns null
+            every { memberRepository.findTeacherById(teacherId) } returns null
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {
@@ -79,8 +79,8 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val studentId = 2L
-            every { memberRepository.findTeacherByMemberId(teacherId) } returns mockk()
-            every { memberRepository.findStudentByMemberId(studentId) } returns null
+            every { memberRepository.findTeacherById(teacherId) } returns mockk()
+            every { memberRepository.findStudentById(studentId) } returns null
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {

@@ -10,11 +10,11 @@ interface MemberRepository : JpaRepository<Member, Long> {
 
     fun findByIdentifierAndOauthProviderType(id: String, oauthProviderType: OauthProviderType): Member?
 
-    fun findTeacherByMemberId(id: Long): Teacher? {
+    fun findTeacherById(id: Long): Teacher? {
         return findByIdOrNull(id) as? Teacher
     }
 
-    fun findStudentByMemberId(id: Long): Student? {
+    fun findStudentById(id: Long): Student? {
         return findByIdOrNull(id) as? Student
     }
 }

@@ -8,6 +8,8 @@ import jakarta.persistence.Entity
 @Entity
 class Student(
 
+    id: Long? = null,
+
     identifier: String,
 
     oauthProviderType: OauthProviderType,
@@ -17,4 +19,4 @@ class Student(
     @Column(name = "profile_image")
     val profileImage: String? = null
 
-) : Member(identifier, oauthProviderType, nickname)
+) : Member(id, identifier, oauthProviderType, nickname)

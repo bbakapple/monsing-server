@@ -18,6 +18,7 @@ class TeacherService(private val memberRepository: MemberRepository) {
 
         memberRepository.save(
             Teacher(
+                id = member.id,
                 identifier = member.identifier,
                 oauthProviderType = member.oauthProviderType,
                 nickname = Nickname(name),

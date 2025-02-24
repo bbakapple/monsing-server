@@ -18,10 +18,10 @@ class ClassRoomService(
 
     @Transactional
     fun createClassRoom(memberId: Long, studentId: Long): ClassRoom {
-        val teacher = memberRepository.findTeacherByMemberId(memberId)
+        val teacher = memberRepository.findTeacherById(memberId)
             ?: throw IllegalArgumentException("Teacher not found")
 
-        val student = memberRepository.findStudentByMemberId(studentId)
+        val student = memberRepository.findStudentById(studentId)
             ?: throw IllegalArgumentException("Student not found")
 
         return classRoomRepository.save(ClassRoom.create(teacher, student))

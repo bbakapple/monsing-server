@@ -15,6 +15,8 @@ import org.monsing.member.StrongSideType
 @Entity
 class Teacher(
 
+    id: Long? = null,
+
     identifier: String,
 
     oauthProviderType: OauthProviderType,
@@ -44,4 +46,4 @@ class Teacher(
     @OneToMany
     val careers: List<Career> = mutableListOf()
 
-) : Member(identifier, oauthProviderType, nickname)
+) : Member(id, identifier, oauthProviderType, nickname)

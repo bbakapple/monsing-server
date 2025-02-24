@@ -12,10 +12,13 @@ import org.monsing.BaseEntity
 @Entity
 class Member(
 
+    id: Long? = null,
+
     val identifier: String,
 
     val oauthProviderType: OauthProviderType,
 
     @Embedded
-    var nickname: Nickname,
-) : BaseEntity()
+    var nickname: Nickname = Nickname()
+
+) : BaseEntity(id = id)
