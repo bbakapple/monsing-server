@@ -6,6 +6,7 @@ import org.monsing.course.ClassRoomRepository
 import org.monsing.member.MemberRepository
 import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service
@@ -14,6 +15,8 @@ class ClassRoomService(
     private val memberRepository: MemberRepository,
     private val liveKitTokenManager: LiveKitTokenManager,
 ) {
+
+    @Transactional
     fun createClassRoom(memberId: Long, studentId: Long): ClassRoom {
         val teacher = memberRepository.findTeacherByMemberId(memberId)
             ?: throw IllegalArgumentException("Teacher not found")
@@ -24,16 +27,19 @@ class ClassRoomService(
         return classRoomRepository.save(ClassRoom.create(teacher, student))
     }
 
+    @Transactional
     fun retrieveClassRooms(id: Long): List<ClassRoom> {
         return classRoomRepository.findByStudentIdOrTeacherId(id, id)
     }
 
+    @Transactional
     fun completeClassRoom(teacherId: Long, classRoomId: Long) {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
         check(classRoom.teacher.id == teacherId) { "Only teacher can complete a class room" }
         classRoom.complete()
     }
 
+    @Transactional
     fun enterClassRoom(memberId: Long, classRoomId: Long): String {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
         check(classRoom.student.id == memberId || classRoom.teacher.id == memberId) {
