@@ -1,6 +1,7 @@
 package org.monsing.auth.jwt
 
-data class AuthTokenPayload(
-    val id: Long,
-    val role: Role = Role.NONE
+import com.fasterxml.jackson.annotation.JsonCreator
+
+data class AuthTokenPayload @JsonCreator constructor(
+    val id: Long
 )

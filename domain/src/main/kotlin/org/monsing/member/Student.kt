@@ -1,18 +1,20 @@
 package org.monsing.member
 
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
+import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
-import org.monsing.BaseEntity
 
+@DiscriminatorValue("student")
 @Entity
 class Student(
 
-    val memberId: Long,
+    identifier: String,
+
+    oauthProviderType: OauthProviderType,
+
+    nickname: Nickname,
 
     @Column(name = "profile_image")
-    val profileImage: String? = null,
+    val profileImage: String? = null
 
-    @Embedded
-    val nickname: Nickname,
-) : BaseEntity()
+) : Member(identifier, oauthProviderType, nickname)

@@ -1,11 +1,9 @@
 package org.monsing.classroom
 
 import org.monsing.auth.jwt.LiveKitTokenManager
-import org.monsing.auth.jwt.Role
 import org.monsing.course.ClassRoom
 import org.monsing.course.ClassRoomRepository
-import org.monsing.member.StudentRepository
-import org.monsing.member.teacher.TeacherRepository
+import org.monsing.member.MemberRepository
 import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
 
@@ -13,55 +11,41 @@ import org.springframework.stereotype.Service
 @Service
 class ClassRoomService(
     private val classRoomRepository: ClassRoomRepository,
-    private val teacherRepository: TeacherRepository,
-    private val studentRepository: StudentRepository,
+    private val memberRepository: MemberRepository,
     private val liveKitTokenManager: LiveKitTokenManager,
 ) {
-    fun createClassRoom(memberId: Long, role: Role, studentId: Long): ClassRoom {
-        check(role == Role.TEACHER) { "Only teacher can create a class room" }
-
-        val teacher = teacherRepository.findByMemberId(memberId)
+    fun createClassRoom(memberId: Long, studentId: Long): ClassRoom {
+        val teacher = memberRepository.findTeacherByMemberId(memberId)
             ?: throw IllegalArgumentException("Teacher not found")
-        val student = studentRepository.findByIdOrElseThrow(studentId)
+
+        val student = memberRepository.findStudentByMemberId(studentId)
+            ?: throw IllegalArgumentException("Student not found")
 
         return classRoomRepository.save(ClassRoom.create(teacher, student))
     }
 
-    fun retrieveClassRooms(id: Long, role: Role): List<ClassRoom> {
-        return when (role) {
-            Role.TEACHER -> classRoomRepository.findByTeacherId(id)
-            Role.STUDENT -> classRoomRepository.findByStudentId(id)
-            Role.NONE -> throw IllegalArgumentException("Role is NONE")
-        }
+    fun retrieveClassRooms(id: Long): List<ClassRoom> {
+        return classRoomRepository.findByStudentIdOrTeacherId(id, id)
     }
 
     fun completeClassRoom(teacherId: Long, classRoomId: Long) {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
-        check(classRoom.teacher.memberId == teacherId) { "Only teacher can complete a class room" }
+        check(classRoom.teacher.id == teacherId) { "Only teacher can complete a class room" }
         classRoom.complete()
     }
 
-    fun enterClassRoom(memberId: Long, role: Role, classRoomId: Long): String {
+    fun enterClassRoom(memberId: Long, classRoomId: Long): String {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
-        check(classRoom.student.memberId == memberId || classRoom.teacher.memberId == memberId) {
+        check(classRoom.student.id == memberId || classRoom.teacher.id == memberId) {
             "Only student can enter a class room"
         }
 
         classRoom.enter()
-        return getLiveKitToken(memberId, role, classRoomId)
+        return getLiveKitToken(memberId, classRoomId)
     }
 
-    private fun getLiveKitToken(memberId: Long, role: Role, classRoomId: Long) = when (role) {
-        Role.TEACHER -> {
-            val member = requireNotNull(teacherRepository.findByMemberId(memberId))
-            liveKitTokenManager.generateToken(member.nickname.value, classRoomId.toString(), member.id.toString())
-        }
-
-        Role.STUDENT -> {
-            val member = requireNotNull(studentRepository.findByMemberId(memberId))
-            liveKitTokenManager.generateToken(member.nickname.value, classRoomId.toString(), member.id.toString())
-        }
-
-        Role.NONE -> throw IllegalArgumentException("Role is NONE")
+    private fun getLiveKitToken(memberId: Long, classRoomId: Long): String {
+        val member = memberRepository.findByIdOrElseThrow(memberId)
+        return liveKitTokenManager.generateToken(member.nickname.value, classRoomId.toString(), member.id.toString())
     }
 }

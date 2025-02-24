@@ -7,8 +7,6 @@ import openapi.model.StudentResponse
 import openapi.model.StudentUpdateRequest
 import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.AuthTokenPayload
-import org.monsing.member.Nickname
-import org.monsing.member.Student
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
@@ -21,20 +19,22 @@ class StudentController(
         authTokenPayload: AuthTokenPayload,
         studentCreateRequest: StudentCreateRequest
     ): ResponseEntity<Unit> {
-        val student = Student(
-            memberId = authTokenPayload.id,
-            nickname = Nickname(studentCreateRequest.name),
-        )
-        studentService.create(student)
+        studentService.create(authTokenPayload.id, studentCreateRequest.name)
 
         return ResponseEntity.ok().build()
     }
 
-    override fun studentsIdCoursesGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<List<CourseResponse>> {
+    override fun studentsIdCoursesGet(
+        authTokenPayload: AuthTokenPayload,
+        id: Int
+    ): ResponseEntity<List<CourseResponse>> {
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdFavoritesGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<List<TeacherResponse>> {
+    override fun studentsIdFavoritesGet(
+        authTokenPayload: AuthTokenPayload,
+        id: Int
+    ): ResponseEntity<List<TeacherResponse>> {
         TODO("Not yet implemented")
     }
 

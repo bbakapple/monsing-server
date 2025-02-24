@@ -1,18 +1,29 @@
 package org.monsing.teacher
 
+import org.monsing.member.MemberRepository
+import org.monsing.member.Nickname
+import org.monsing.member.OauthProviderType
 import org.monsing.member.teacher.GenderType
 import org.monsing.member.teacher.Teacher
-import org.monsing.member.teacher.TeacherRepository
-import org.springframework.data.repository.findByIdOrNull
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class TeacherService(private val teacherRepository: TeacherRepository) {
+class TeacherService(private val memberRepository: MemberRepository) {
 
     @Transactional
-    fun createTeacher(teacher: Teacher) {
-        teacherRepository.save(teacher)
+    fun createTeacher(memberId: Long, name: String, genderType: GenderType?) {
+        val member = memberRepository.findByIdOrElseThrow(memberId)
+
+        memberRepository.save(
+            Teacher(
+                identifier = member.identifier,
+                oauthProviderType = member.oauthProviderType,
+                nickname = Nickname(name),
+                genderType = genderType ?: GenderType.OTHER
+            )
+        )
     }
 
     @Transactional(readOnly = true)
@@ -24,11 +35,17 @@ class TeacherService(private val teacherRepository: TeacherRepository) {
         keyword: String?,
         price: Int?
     ): List<Teacher> {
-        return teacherRepository.findByConditions(genderType, verified, size, lastId, keyword, price)
+//        return teacherRepository.findByConditions(genderType, verified, size, lastId, keyword, price)
+        return emptyList()
     }
 
     @Transactional(readOnly = true)
     fun findTeacherById(id: Long): Teacher {
-        return teacherRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Teacher not found")
+        return Teacher(
+            identifier = "$id",
+            oauthProviderType = OauthProviderType.KAKAO,
+            nickname = Nickname("teacher"),
+            genderType = GenderType.OTHER
+        )
     }
 }
