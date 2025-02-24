@@ -10,6 +10,7 @@ jwt:
   refresh-token:
     secret: fkimf224mg42mg24mk4gmvnsnbnaoaofkl23lf3f329m2ollfflf4f4
     expire-second: 1296000
+
 livekit:
   secret:
     key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest

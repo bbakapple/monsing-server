@@ -29,3 +29,12 @@ jasypt:
 
 s3:
   bucket: bucekttest
+
+livekit:
+  secret:
+    key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+    expire-second: 1800
+  api-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+
+aws:
+  cloudfront-url: https://sadniasdksmkadmiqiq.com

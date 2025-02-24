@@ -5,6 +5,4 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TeacherRepository : JpaRepository<Teacher, Long>, TeacherCustomRepository {
-    fun existsByMemberId(memberId: Long): Boolean
-    fun findByMemberId(memberId: Long): Teacher?
 }

@@ -3,17 +3,16 @@ package org.monsing.auth
 import org.monsing.auth.jwt.AuthTokenManager
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
-import org.monsing.member.Member
-import org.monsing.member.MemberRepository
-import org.monsing.member.Nickname
 import org.monsing.member.OauthProviderType
+import org.monsing.member.TempMember
+import org.monsing.member.TempMemberRepository
 import org.monsing.token.AuthToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService(
-    private val memberRepository: MemberRepository,
+    private val tempMemberRepository: TempMemberRepository,
     private val oauthAdaptor: OauthAdaptor,
     private val authTokenManager: AuthTokenManager
 ) {
@@ -21,13 +20,11 @@ class AuthService(
     @Transactional
     fun login(oauthProviderType: OauthProviderType, oauthToken: String): AuthToken {
         val oauthIdentifier = oauthAdaptor.handle(oauthProviderType, oauthToken)
-        val member = memberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
-            ?: memberRepository.save(
-                Member(
+        val member = tempMemberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
+            ?: tempMemberRepository.save(
+                TempMember(
                     identifier = oauthIdentifier.id,
-                    oauthProviderType = oauthProviderType,
-                    nickname = Nickname("temp")
-                    //TODO: nickname 초기 설정
+                    oauthProviderType = oauthProviderType
                 )
             )
 

@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MemberRepository : JpaRepository<Member, Long> {
 
-    fun findByIdentifierAndOauthProviderType(id: String, oauthProviderType: OauthProviderType): Member?
-
     fun findTeacherById(id: Long): Teacher? {
         return findByIdOrNull(id) as? Teacher
     }
