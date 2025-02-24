@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.StringSpec
 class RecordTest : StringSpec({
 
     "피드백을 같은 선생님에게 재요청할 수 없다" {
-        val record = Record("title", 1, "key")
+        val record = Record(id = 1, title = "title", studentId = 1, fileKey = "key")
         record.requestFeedback(1)
 
         shouldThrow<IllegalArgumentException> {
@@ -16,7 +16,7 @@ class RecordTest : StringSpec({
     }
 
     "녹음 제목을 30자로 수정할 수 있다" {
-        val record = Record("title", 1, "key")
+        val record = Record(title = "title", studentId = 1, fileKey = "key")
 
         shouldNotThrowAny {
 
@@ -25,7 +25,7 @@ class RecordTest : StringSpec({
     }
 
     "녹음 제목을 30자 초과로 수정할 수 없다" {
-        val record = Record("title", 1, "key")
+        val record = Record(title = "title", studentId = 1, fileKey = "key")
 
         shouldThrow<IllegalArgumentException> {
             record.updateTitle("3".repeat(31))
@@ -33,7 +33,7 @@ class RecordTest : StringSpec({
     }
 
     "녹음 제목을 공백으로 수정할 수 없다" {
-        val record = Record("title", 1, "key")
+        val record = Record(title = "title", studentId = 1, fileKey = "key")
 
         shouldThrow<IllegalArgumentException> {
             record.updateTitle("  ")
