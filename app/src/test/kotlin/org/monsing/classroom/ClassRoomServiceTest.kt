@@ -7,6 +7,8 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.Optional
+import org.monsing.auth.jwt.LiveKitTokenManager
 import org.monsing.auth.jwt.Role
 import org.monsing.course.ClassRoom
 import org.monsing.course.ClassRoomRepository
@@ -14,16 +16,17 @@ import org.monsing.member.Student
 import org.monsing.member.StudentRepository
 import org.monsing.member.teacher.Teacher
 import org.monsing.member.teacher.TeacherRepository
-import java.util.Optional
 
 class ClassRoomServiceTest : FreeSpec({
     val classRoomRepository = mockk<ClassRoomRepository>()
     val teacherRepository = mockk<TeacherRepository>()
     val studentRepository = mockk<StudentRepository>()
+    val liveKitTokenManager = mockk<LiveKitTokenManager>()
     val sut = ClassRoomService(
         classRoomRepository,
         teacherRepository,
-        studentRepository
+        studentRepository,
+        liveKitTokenManager
     )
     beforeTest {
         clearAllMocks()
@@ -34,12 +37,12 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val role = Role.TEACHER
-            val studentId = 1
-            every { teacherRepository.findById(teacherId) } returns Optional.of(mockk<Teacher>(relaxed = true) {
+            val studentId = 1L
+            every { teacherRepository.findByMemberId(teacherId) } returns mockk<Teacher>(relaxed = true) {
                 every { id } returns teacherId
-            })
-            every { studentRepository.findById(studentId.toLong()) } returns Optional.of(mockk<Student>(relaxed = true) {
-                every { id } returns studentId.toLong()
+            }
+            every { studentRepository.findById(studentId) } returns Optional.of(mockk<Student>(relaxed = true) {
+                every { id } returns studentId
             })
             every { classRoomRepository.save(any()) } returns ClassRoom(
                 teacher = mockk(),
@@ -57,7 +60,7 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val role = Role.STUDENT
-            val studentId = 1
+            val studentId = 1L
 
             // when
             val exception = shouldThrow<IllegalStateException> {
@@ -68,8 +71,8 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val role = Role.TEACHER
-            val studentId = 1
-            every { teacherRepository.findById(teacherId) } returns Optional.empty()
+            val studentId = 1L
+            every { teacherRepository.findByMemberId(teacherId) } returns null
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {
@@ -81,9 +84,9 @@ class ClassRoomServiceTest : FreeSpec({
             // given
             val teacherId = 1L
             val role = Role.TEACHER
-            val studentId = 1
-            every { teacherRepository.findById(teacherId) } returns Optional.of(mockk())
-            every { studentRepository.findById(studentId.toLong()) } returns Optional.empty()
+            val studentId = 1L
+            every { teacherRepository.findByMemberId(teacherId) } returns mockk()
+            every { studentRepository.findById(studentId) } returns Optional.empty()
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {
@@ -139,11 +142,11 @@ class ClassRoomServiceTest : FreeSpec({
         "정상 완료" {
             // given
             val teacherId = 1L
-            val classRoomId = 1
+            val classRoomId = 1L
             val classRoom = mockk<ClassRoom>(relaxed = true) {
                 every { teacher.memberId } returns teacherId
             }
-            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.of(classRoom)
+            every { classRoomRepository.findById(classRoomId) } returns Optional.of(classRoom)
 
             // when
             sut.completeClassRoom(teacherId, classRoomId)
@@ -155,8 +158,8 @@ class ClassRoomServiceTest : FreeSpec({
         "클래스룸이 없는 경우 에러" {
             // given
             val teacherId = 1L
-            val classRoomId = 1
-            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.empty()
+            val classRoomId = 1L
+            every { classRoomRepository.findById(classRoomId) } returns Optional.empty()
 
             // when
             val exception = shouldThrow<IllegalArgumentException> {
@@ -164,17 +167,17 @@ class ClassRoomServiceTest : FreeSpec({
             }
 
             // then
-            exception.message shouldBe "Class room not found"
+            exception.message shouldBe "ClassRoom을 찾을 수 없습니다"
         }
 
         "다른 선생님이 완료하려는 경우 에러" {
             // given
             val teacherId = 1L
-            val classRoomId = 1
+            val classRoomId = 1L
             val classRoom = mockk<ClassRoom>(relaxed = true) {
                 every { teacher.id } returns 2L
             }
-            every { classRoomRepository.findById(classRoomId.toLong()) } returns Optional.of(classRoom)
+            every { classRoomRepository.findById(classRoomId) } returns Optional.of(classRoom)
 
             // when
             val exception = shouldThrow<IllegalStateException> {

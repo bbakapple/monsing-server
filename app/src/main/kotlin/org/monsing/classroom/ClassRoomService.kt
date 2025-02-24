@@ -17,11 +17,12 @@ class ClassRoomService(
     private val studentRepository: StudentRepository,
     private val liveKitTokenManager: LiveKitTokenManager,
 ) {
-    fun createClassRoom(teacherId: Long, role: Role, studentId: Long): ClassRoom {
+    fun createClassRoom(memberId: Long, role: Role, studentId: Long): ClassRoom {
         check(role == Role.TEACHER) { "Only teacher can create a class room" }
 
-        val teacher = teacherRepository.findByIdOrElseThrow(teacherId, "존재하지 않는 선생입니다. : $teacherId")
-        val student = studentRepository.findByIdOrElseThrow(studentId, "존재하지 않는 학생입니다. : $studentId")
+        val teacher = teacherRepository.findByMemberId(memberId)
+            ?: throw IllegalArgumentException("Teacher not found")
+        val student = studentRepository.findByIdOrElseThrow(studentId)
 
         return classRoomRepository.save(ClassRoom.create(teacher, student))
     }
