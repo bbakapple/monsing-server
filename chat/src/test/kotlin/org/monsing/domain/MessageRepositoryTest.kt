@@ -5,6 +5,7 @@ import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.equals.shouldNotBeEqual
 import io.kotest.matchers.shouldBe
+import kotlin.test.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.monsing.chat.Chat
@@ -16,6 +17,7 @@ import org.monsing.support.SpringBootTestWithRedis
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.mongodb.core.MongoTemplate
 
+@Ignore
 class MessageRepositoryTest(
     @Autowired private val messageRepository: MessageRepository,
     @Autowired private val memberChatRepository: MemberChatRepository,

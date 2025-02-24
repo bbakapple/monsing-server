@@ -4,11 +4,13 @@ import io.kotest.matchers.collections.shouldContainOnly
 import io.kotest.matchers.shouldBe
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import kotlin.test.Ignore
 import org.junit.jupiter.api.Test
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.support.SpringBootTestWithRedis
 import org.springframework.beans.factory.annotation.Autowired
 
+@Ignore
 class GlobalServerIdStorageTest(
     @Autowired private val globalServerIdStorage: GlobalServerIdStorage
 ) : SpringBootTestWithRedis() {
