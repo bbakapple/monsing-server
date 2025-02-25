@@ -38,13 +38,13 @@ class RecordController(
         @RequestBody request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
-        recordService.saveRecord(Record(request.title, authTokenPayload.id, key))
+        recordService.saveRecord(Record(title = request.title, studentId = authTokenPayload.id, fileKey = key))
 
         return ResponseEntity.ok(RecordUploadResponse(key))
     }
 
     @Auth
-    @PostMapping("/records/{recordId}/feedback")
+    @PostMapping("/records/{recordId}/feedbacks")
     fun requestFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
@@ -55,7 +55,7 @@ class RecordController(
     }
 
     @Auth
-    @PatchMapping("/records/{recordId}/feedback")
+    @PatchMapping("/records/{recordId}/feedbacks")
     fun writeFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
@@ -66,13 +66,33 @@ class RecordController(
     }
 
     @Auth
+    @GetMapping("/feedbacks")
+    fun listFeedbacks(
+        @AuthPayload authTokenPayload: AuthTokenPayload,
+    ): ResponseEntity<List<FeedbackResponse>> {
+        val feedbacks = recordService.findFeedbacksByTeacherId(authTokenPayload.id)
+
+        val response = feedbacks.map {
+            FeedbackResponse(
+                id = requireNotNull(it.id),
+                writerId = it.teacherId,
+                recordId = it.recordId,
+                detail = it.detail,
+                createdAt = it.updatedDate
+            )
+        }
+
+        return ResponseEntity.ok(response)
+    }
+
+    @Auth
     @GetMapping("/records")
     fun listRecords(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) lastId: Long?
     ): ResponseEntity<List<RecordResponse>> {
-        val records = recordService.findRecordsByMemberId(authTokenPayload.id, authTokenPayload.role, size, lastId)
+        val records = recordService.findRecordsByMemberId(authTokenPayload.id, size, lastId)
 
         val response = records.map {
             RecordResponse(
@@ -91,17 +111,18 @@ class RecordController(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<RecordResponse> {
-        val record = recordService.findRecordById(recordId, authTokenPayload.id, authTokenPayload.role)
+        val record = recordService.findRecordById(recordId, authTokenPayload.id)
         val response = RecordResponse(
             requireNotNull(record.id),
             record.fileKey.toUrl(),
             record.createdDate,
             record.feedbacks.map {
                 FeedbackResponse(
-                    requireNotNull(it.id),
-                    it.teacherId,
-                    it.detail,
-                    it.updatedDate
+                    id = requireNotNull(it.id),
+                    writerId = it.teacherId,
+                    recordId = it.recordId,
+                    detail = it.detail,
+                    createdAt = it.updatedDate
                 )
             }
         )

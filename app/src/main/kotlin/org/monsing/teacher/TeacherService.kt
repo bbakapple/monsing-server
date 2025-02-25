@@ -1,34 +1,32 @@
 package org.monsing.teacher
 
+import org.monsing.member.MemberRepository
+import org.monsing.member.Nickname
+import org.monsing.member.TempMemberRepository
 import org.monsing.member.teacher.GenderType
 import org.monsing.member.teacher.Teacher
-import org.monsing.member.teacher.TeacherRepository
-import org.springframework.data.repository.findByIdOrNull
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class TeacherService(private val teacherRepository: TeacherRepository) {
+class TeacherService(
+    private val memberRepository: MemberRepository,
+    private val tempMemberRepository: TempMemberRepository
+) {
 
     @Transactional
-    fun createTeacher(teacher: Teacher) {
-        teacherRepository.save(teacher)
-    }
+    fun createTeacher(memberId: Long, name: String, genderType: GenderType?) {
+        val member = tempMemberRepository.findByIdOrElseThrow(memberId)
 
-    @Transactional(readOnly = true)
-    fun findTeachersByConditions(
-        genderType: GenderType?,
-        verified: Boolean?,
-        size: Int?,
-        lastId: Long?,
-        keyword: String?,
-        price: Int?
-    ): List<Teacher> {
-        return teacherRepository.findByConditions(genderType, verified, size, lastId, keyword, price)
-    }
-
-    @Transactional(readOnly = true)
-    fun findTeacherById(id: Long): Teacher {
-        return teacherRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Teacher not found")
+        memberRepository.save(
+            Teacher(
+                id = member.id,
+                identifier = member.identifier,
+                oauthProviderType = member.oauthProviderType,
+                nickname = Nickname(name),
+                genderType = genderType ?: GenderType.OTHER
+            )
+        )
     }
 }

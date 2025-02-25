@@ -8,9 +8,7 @@ import openapi.model.TeacherCreateRequest
 import openapi.model.TeacherDetailResponse
 import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.AuthTokenPayload
-import org.monsing.member.Nickname
 import org.monsing.member.teacher.GenderType
-import org.monsing.member.teacher.Teacher
 import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -31,14 +29,11 @@ class TeacherController(
         authTokenPayload: AuthTokenPayload,
         teacherCreateRequest: TeacherCreateRequest
     ): ResponseEntity<Unit> {
-        val teacher = Teacher(
-            memberId = authTokenPayload.id,
-            nickname = Nickname(teacherCreateRequest.name),
-            genderType = requireNotNull(teacherCreateRequest.gender()) {
-                "GenderType is invalid"
-            }
+        teacherService.createTeacher(
+            authTokenPayload.id,
+            teacherCreateRequest.name,
+            teacherCreateRequest.gender()
         )
-        teacherService.createTeacher(teacher)
 
         return ResponseEntity.ok().build()
     }

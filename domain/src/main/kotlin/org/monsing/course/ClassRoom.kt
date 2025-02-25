@@ -2,7 +2,6 @@ package org.monsing.course
 
 import jakarta.persistence.Entity
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToOne
 import org.monsing.BaseEntity
 import org.monsing.member.Student
 import org.monsing.member.teacher.Teacher

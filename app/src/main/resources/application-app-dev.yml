@@ -13,3 +13,9 @@ jwt:
 
 s3:
   bucket: ENC(GDUOuAxgh483HzqPJNNl4huu/O6rav7+)
+
+livekit:
+  secret:
+    key: ENC(gklqknvi3q4onv2qiovalalmv2n2qivo32nv32qlavksadvasasdiq50q5b0maknilaksv)
+    expire-second: 1800
+  api-key: ENC(WVj0/w+gEONcy2keSS6nvT4s2+2IQAMZn0TwadpuGZHQJAVNyu+baVjLy28u0vL15hrzm6jFcMlKTUP/UxWO9A==)
