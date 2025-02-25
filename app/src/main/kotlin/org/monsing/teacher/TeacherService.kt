@@ -2,7 +2,6 @@ package org.monsing.teacher
 
 import org.monsing.member.MemberRepository
 import org.monsing.member.Nickname
-import org.monsing.member.OauthProviderType
 import org.monsing.member.TempMemberRepository
 import org.monsing.member.teacher.GenderType
 import org.monsing.member.teacher.Teacher
@@ -28,29 +27,6 @@ class TeacherService(
                 nickname = Nickname(name),
                 genderType = genderType ?: GenderType.OTHER
             )
-        )
-    }
-
-    @Transactional(readOnly = true)
-    fun findTeachersByConditions(
-        genderType: GenderType?,
-        verified: Boolean?,
-        size: Int?,
-        lastId: Long?,
-        keyword: String?,
-        price: Int?
-    ): List<Teacher> {
-//        return teacherRepository.findByConditions(genderType, verified, size, lastId, keyword, price)
-        return emptyList()
-    }
-
-    @Transactional(readOnly = true)
-    fun findTeacherById(id: Long): Teacher {
-        return Teacher(
-            identifier = "$id",
-            oauthProviderType = OauthProviderType.KAKAO,
-            nickname = Nickname("teacher"),
-            genderType = GenderType.OTHER
         )
     }
 }
