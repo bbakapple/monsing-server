@@ -6,8 +6,9 @@ import openapi.api.CourseApi
 import openapi.model.CourseCreateRequest
 import openapi.model.CourseResponse
 import openapi.model.CourseUpdateRequest
-import openapi.model.DayOfWeekRequest
+import openapi.model.DayOfWeekDto
 import openapi.model.LessonRegisterRequest
+import openapi.model.LessonResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
@@ -42,7 +43,7 @@ class CourseController(
         return ResponseEntity.ok().build()
     }
 
-    private fun DayOfWeekRequest.dayOfWeek(): DayOfWeek {
+    private fun DayOfWeekDto.dayOfWeek(): DayOfWeek {
         return enumValueOrNull<DayOfWeek>(name.uppercase())
             ?: throw IllegalArgumentException("Invalid day of week")
     }
@@ -97,6 +98,18 @@ class CourseController(
                 duration = it.duration.value,
                 price = it.pricePerLesson.value,
                 minimumLessonCount = it.minimumLessonCount.value
+            )
+        })
+    }
+
+    override fun getLessons(id: Long): ResponseEntity<List<LessonResponse>> {
+        val lessons = courseService.getLessonsByCourseId(id)
+        return ResponseEntity.ok(lessons.map {
+            LessonResponse(
+                id = requireNotNull(it.id),
+                dayOfWeek = DayOfWeekDto.valueOf(it.lessonSchedule.dayOfWeek.name),
+                startTime = it.lessonSchedule.startTime.toString(),
+                isAvailable = it.isAvailable
             )
         })
     }

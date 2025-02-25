@@ -1,6 +1,7 @@
 package org.monsing.course
 
 import org.monsing.member.MemberRepository
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -99,5 +100,10 @@ class CourseService(
     @Transactional(readOnly = true)
     fun getCoursesByTeacherId(teacherId: Long): List<Course> {
         return courseRepository.findAllByTeacherId(teacherId)
+    }
+
+    @Transactional(readOnly = true)
+    fun getLessonsByCourseId(id: Long): List<Lesson> {
+        return courseRepository.findByIdOrElseThrow(id).lessons
     }
 }
