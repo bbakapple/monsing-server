@@ -1,7 +1,7 @@
 package org.monsing.teacher
 
 import openapi.api.TeacherApi
-import openapi.model.CourseResponse
+import openapi.model.PrevCourseResponse
 import openapi.model.ReadReviews200Response
 import openapi.model.ReviewCreateRequest
 import openapi.model.TeacherCreateRequest
@@ -45,20 +45,20 @@ class TeacherController(
     }
 
     override fun readClasses(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int,
         lastId: Int?,
         size: Int?
-    ): ResponseEntity<List<CourseResponse>> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 
     override fun readClassesByDate(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int,
         from: String,
         to: String
-    ): ResponseEntity<List<CourseResponse>> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 

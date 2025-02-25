@@ -213,7 +213,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CourseResponse'
+                  $ref: '#/components/schemas/PrevCourseResponse'
         '400':
           description: 잘못된 요청입니다.
 
@@ -272,7 +272,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CourseResponse'
+                  $ref: '#/components/schemas/PrevCourseResponse'
         '400':
           description: 잘못된 요청입니다.
 
@@ -462,7 +462,7 @@ components:
             $ref: '#/components/schemas/RatingDto'
 
     # 수업 응답
-    CourseResponse:
+    PrevCourseResponse:
       type: object
       properties:
         id:

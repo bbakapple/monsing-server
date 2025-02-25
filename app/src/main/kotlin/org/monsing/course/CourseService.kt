@@ -95,4 +95,9 @@ class CourseService(
 
         course.registerLesson(requireNotNull(student.id), lessonId, lessonCount)
     }
+
+    @Transactional(readOnly = true)
+    fun getCoursesByTeacherId(teacherId: Long): List<Course> {
+        return courseRepository.findAllByTeacherId(teacherId)
+    }
 }

@@ -4,6 +4,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import openapi.api.CourseApi
 import openapi.model.CourseCreateRequest
+import openapi.model.CourseResponse
 import openapi.model.CourseUpdateRequest
 import openapi.model.DayOfWeekRequest
 import openapi.model.LessonRegisterRequest
@@ -82,5 +83,21 @@ class CourseController(
         )
 
         return ResponseEntity.ok().build()
+    }
+
+    override fun getCourses(teacherId: Long): ResponseEntity<List<CourseResponse>> {
+        val courses = courseService.getCoursesByTeacherId(teacherId)
+        return ResponseEntity.ok(courses.map {
+            CourseResponse(
+                id = requireNotNull(it.id),
+                teacherId = it.teacherId,
+                name = it.courseOverview.name,
+                description = it.courseOverview.description,
+                curriculum = it.courseOverview.curriculum,
+                duration = it.duration.value,
+                price = it.pricePerLesson.value,
+                minimumLessonCount = it.minimumLessonCount.value
+            )
+        })
     }
 }

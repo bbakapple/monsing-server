@@ -1,7 +1,7 @@
 package org.monsing.student
 
 import openapi.api.StudentApi
-import openapi.model.CourseResponse
+import openapi.model.PrevCourseResponse
 import openapi.model.StudentCreateRequest
 import openapi.model.StudentResponse
 import openapi.model.StudentUpdateRequest
@@ -25,9 +25,9 @@ class StudentController(
     }
 
     override fun studentsIdCoursesGet(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int
-    ): ResponseEntity<List<CourseResponse>> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 
@@ -42,7 +42,7 @@ class StudentController(
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdNextClassGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<CourseResponse> {
+    override fun studentsIdNextClassGet(tokenPayload: AuthTokenPayload, id: Int): ResponseEntity<PrevCourseResponse> {
         TODO("Not yet implemented")
     }
 
