@@ -8,6 +8,8 @@ import org.monsing.BaseEntity
 @Entity
 class Lesson(
 
+    id: Long? = null,
+
     @Embedded
     val lessonSchedule: LessonSchedule,
 
@@ -16,16 +18,25 @@ class Lesson(
     var lessonRemaining: Int? = null,
 
     @Column(nullable = false)
-    var isSold: Boolean = false
-) : BaseEntity() {
+    var isAvailable: Boolean = true
+) : BaseEntity(id = id) {
 
     fun register(id: Long, lessonCount: Int) {
-        require(isSold.not()) {
-            "Lesson is already sold"
+        require(isAvailable) {
+            "Lesson is not available"
         }
 
         studentId = id
         lessonRemaining = lessonCount
-        isSold = true
+        isAvailable = false
+    }
+
+    fun overlappingWith(lesson: Lesson, duration: Int) {
+        if (lessonSchedule.dayOfWeek == lesson.lessonSchedule.dayOfWeek &&
+            lessonSchedule.startTime > lesson.lessonSchedule.startTime &&
+            lessonSchedule.startTime < lesson.lessonSchedule.startTime.plusMinutes(duration.toLong())
+        ) {
+            isAvailable = false
+        }
     }
 }

@@ -93,12 +93,6 @@ class CourseService(
         val course = courseRepository.findByIdOrNull(courseId)
             ?: throw IllegalArgumentException("Course not found")
 
-        require(course.hasLesserLessonCount(lessonCount)) {
-            "register should be greater than minimum lesson count"
-        }
-
-        val lesson = course.findLessonById(lessonId)
-
-        lesson.register(requireNotNull(student.id), lessonCount)
+        course.registerLesson(requireNotNull(student.id), lessonId, lessonCount)
     }
 }

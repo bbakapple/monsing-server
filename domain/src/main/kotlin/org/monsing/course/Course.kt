@@ -47,13 +47,22 @@ class Course(
         minimumLessonCount?.let { this.minimumLessonCount = CourseMinimumLessonCount(it) }
     }
 
-    fun findLessonById(lessonId: Long): Lesson {
-        return lessons.findLast { it.id == lessonId }
-            ?: throw IllegalArgumentException("Lesson not found")
+    fun registerLesson(studentId: Long, lessonId: Long, lessonCount: Int) {
+        require(minimumLessonCount <= lessonCount) {
+            "Lesson count is lesser than minimum lesson count"
+        }
+        val lesson = findLessonById(lessonId)
+
+        lessons.forEach {
+            it.overlappingWith(lesson, duration.value)
+        }
+
+        lesson.register(studentId, lessonCount)
     }
 
-    fun hasLesserLessonCount(lessonCount: Int): Boolean {
-        return minimumLessonCount <= lessonCount
+    private fun findLessonById(lessonId: Long): Lesson {
+        return lessons.findLast { it.id == lessonId }
+            ?: throw IllegalArgumentException("Lesson not found")
     }
 }
 

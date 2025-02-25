@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import java.time.LocalTime
 
 class CourseTest : StringSpec({
 
@@ -209,7 +210,7 @@ class CourseTest : StringSpec({
         course.minimumLessonCount.value shouldBe 10
     }
 
-    "minimumLessonCount 비교" {
+    "최소 시간보다 적은 수업을 등록할 경우 예외 발생" {
         val course = Course(
             courseOverview = CourseOverview(
                 name = "코틀린 기초",
@@ -220,10 +221,93 @@ class CourseTest : StringSpec({
             duration = CourseDuration(1),
             pricePerLesson = CoursePricePerLesson(10000),
             minimumLessonCount = CourseMinimumLessonCount(10),
+            lessons = listOf(
+                Lesson(
+                    id = 1,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(10, 0),
+                    )
+                ),
+                Lesson(
+                    id = 2,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(12, 0),
+                    )
+                )
+            )
         )
 
-        course.hasLesserLessonCount(9) shouldBe false
-        course.hasLesserLessonCount(10) shouldBe true
-        course.hasLesserLessonCount(11) shouldBe true
+        shouldThrow<IllegalArgumentException> { course.registerLesson(1, 1, 5) }
+        shouldNotThrowAny { course.registerLesson(1, 2, 10) }
+    }
+
+    "시간이 겹치는 레슨에 등록할 수 없다" {
+        val course = Course(
+            courseOverview = CourseOverview(
+                name = "코틀린 기초",
+                description = "코틀린 기초 문법을 배웁니다.",
+                curriculum = "코틀린 기초 문법을 배웁니다.",
+            ),
+            teacherId = 1,
+            duration = CourseDuration(100),
+            pricePerLesson = CoursePricePerLesson(10000),
+            minimumLessonCount = CourseMinimumLessonCount(10),
+            lessons = listOf(
+                Lesson(
+                    id = 1,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(10, 0),
+                    )
+                ),
+                Lesson(
+                    id = 2,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(11, 0),
+                    )
+                )
+            )
+        )
+
+        course.registerLesson(1, 1, 10)
+
+        shouldThrow<IllegalArgumentException> { course.registerLesson(1, 2, 10) }
+    }
+
+    "시간이 겹치지 않는 레슨에 등록할 수 있다" {
+        val course = Course(
+            courseOverview = CourseOverview(
+                name = "코틀린 기초",
+                description = "코틀린 기초 문법을 배웁니다.",
+                curriculum = "코틀린 기초 문법을 배웁니다.",
+            ),
+            teacherId = 1,
+            duration = CourseDuration(120),
+            pricePerLesson = CoursePricePerLesson(10000),
+            minimumLessonCount = CourseMinimumLessonCount(10),
+            lessons = listOf(
+                Lesson(
+                    id = 1,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(10, 0),
+                    )
+                ),
+                Lesson(
+                    id = 2,
+                    lessonSchedule = LessonSchedule(
+                        dayOfWeek = DayOfWeek.MONDAY,
+                        startTime = LocalTime.of(12, 0),
+                    )
+                )
+            )
+        )
+
+        course.registerLesson(1, 1, 10)
+
+        shouldNotThrowAny { course.registerLesson(1, 2, 10) }
     }
 })

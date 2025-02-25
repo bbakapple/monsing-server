@@ -16,13 +16,13 @@ class LessonTest : StringSpec({
 
         lesson.studentId shouldBe 1
         lesson.lessonRemaining shouldBe 1
-        lesson.isSold shouldBe true
+        lesson.isAvailable shouldBe false
     }
 
     "이미 판매된 레슨에 등록할 수 없다" {
         val lesson = Lesson(
             lessonSchedule = LessonSchedule(DayOfWeek.FRIDAY, LocalTime.of(10, 0)),
-            isSold = true
+            isAvailable = false
         )
 
         shouldThrow<IllegalArgumentException> {
