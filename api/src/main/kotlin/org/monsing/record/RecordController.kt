@@ -2,7 +2,7 @@ package org.monsing.record
 
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.record.request.RequestFeedbackRequest
 import org.monsing.record.request.UpdateRecordRequest
 import org.monsing.record.request.UploadRecordRequest
@@ -34,45 +34,65 @@ class RecordController(
     @PostMapping("/records")
     fun uploadRecord(
         @RequestPart file: MultipartFile,
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestBody request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
-        recordService.saveRecord(Record(request.title, tokenPayload.id, key))
+        recordService.saveRecord(Record(title = request.title, studentId = authTokenPayload.id, fileKey = key))
 
         return ResponseEntity.ok(RecordUploadResponse(key))
     }
 
     @Auth
-    @PostMapping("/records/{recordId}/feedback")
+    @PostMapping("/records/{recordId}/feedbacks")
     fun requestFeedback(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: RequestFeedbackRequest
     ): ResponseEntity<Unit> {
-        recordService.requestFeedback(tokenPayload.id, recordId, request.teacherId)
+        recordService.requestFeedback(authTokenPayload.id, recordId, request.teacherId)
         return ResponseEntity.ok().build()
     }
 
     @Auth
-    @PatchMapping("/records/{recordId}/feedback")
+    @PatchMapping("/records/{recordId}/feedbacks")
     fun writeFeedback(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: WriteFeedbackRequest
     ): ResponseEntity<Unit> {
-        recordService.writeFeedback(tokenPayload.id, recordId, request.detail)
+        recordService.writeFeedback(authTokenPayload.id, recordId, request.detail)
         return ResponseEntity.ok().build()
+    }
+
+    @Auth
+    @GetMapping("/feedbacks")
+    fun listFeedbacks(
+        @AuthPayload authTokenPayload: AuthTokenPayload,
+    ): ResponseEntity<List<FeedbackResponse>> {
+        val feedbacks = recordService.findFeedbacksByTeacherId(authTokenPayload.id)
+
+        val response = feedbacks.map {
+            FeedbackResponse(
+                id = requireNotNull(it.id),
+                writerId = it.teacherId,
+                recordId = it.recordId,
+                detail = it.detail,
+                createdAt = it.updatedDate
+            )
+        }
+
+        return ResponseEntity.ok(response)
     }
 
     @Auth
     @GetMapping("/records")
     fun listRecords(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) lastId: Long?
     ): ResponseEntity<List<RecordResponse>> {
-        val records = recordService.findRecordsByMemberId(tokenPayload.id, tokenPayload.role, size, lastId)
+        val records = recordService.findRecordsByMemberId(authTokenPayload.id, size, lastId)
 
         val response = records.map {
             RecordResponse(
@@ -88,20 +108,21 @@ class RecordController(
     @Auth
     @GetMapping("/records/{recordId}")
     fun getRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<RecordResponse> {
-        val record = recordService.findRecordById(recordId, tokenPayload.id, tokenPayload.role)
+        val record = recordService.findRecordById(recordId, authTokenPayload.id)
         val response = RecordResponse(
             requireNotNull(record.id),
             record.fileKey.toUrl(),
             record.createdDate,
             record.feedbacks.map {
                 FeedbackResponse(
-                    requireNotNull(it.id),
-                    it.teacherId,
-                    it.detail,
-                    it.updatedDate
+                    id = requireNotNull(it.id),
+                    writerId = it.teacherId,
+                    recordId = it.recordId,
+                    detail = it.detail,
+                    createdAt = it.updatedDate
                 )
             }
         )
@@ -112,21 +133,21 @@ class RecordController(
     @Auth
     @DeleteMapping("/records/{recordId}")
     fun deleteRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long
     ): ResponseEntity<Unit> {
-        recordService.deleteRecord(recordId, tokenPayload.id)
+        recordService.deleteRecord(recordId, authTokenPayload.id)
         return ResponseEntity.ok().build()
     }
 
     @Auth
     @PatchMapping("/records/{recordId}")
     fun updateRecord(
-        @AuthPayload tokenPayload: TokenPayload,
+        @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable recordId: Long,
         @RequestBody request: UpdateRecordRequest
     ): ResponseEntity<Unit> {
-        recordService.updateRecord(recordId, tokenPayload.id, request.title)
+        recordService.updateRecord(recordId, authTokenPayload.id, request.title)
         return ResponseEntity.ok().build()
     }
 

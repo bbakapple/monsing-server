@@ -14,6 +14,9 @@ class Feedback(
     @Column(nullable = false)
     val teacherId: Long,
 
+    @Column(nullable = false)
+    val recordId: Long,
+
     @Lob
     private var _detail: String? = null,
 

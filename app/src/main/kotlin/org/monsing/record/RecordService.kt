@@ -1,9 +1,10 @@
 package org.monsing.record
 
-import org.monsing.RoleAdaptor
-import org.monsing.auth.jwt.Role
-import org.monsing.member.StudentRepository
+import org.monsing.member.MemberRepository
+import org.monsing.record.feedback.Feedback
+import org.monsing.record.feedback.FeedbackRepository
 import org.monsing.record.feedback.FeedbackTicketRepository
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class RecordService(
     private val recordRepository: RecordRepository,
+    private val feedbackRepository: FeedbackRepository,
     private val feedbackTicketRepository: FeedbackTicketRepository,
-    private val studentRepository: StudentRepository,
-    private val roleAdaptor: RoleAdaptor
+    private val memberRepository: MemberRepository
 ) {
 
     @Transactional
@@ -24,8 +25,8 @@ class RecordService(
     @Transactional
     fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = studentRepository.findByIdOrNull(memberId) ?: throw IllegalArgumentException("Student not found")
-        require(record.studentId == student.id) { "Record does not belong to student" }
+        val student = memberRepository.findStudentById(memberId)
+            ?: throw IllegalArgumentException("Student not found")
 
         val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
             requireNotNull(student.id),
@@ -46,14 +47,16 @@ class RecordService(
     }
 
     @Transactional(readOnly = true)
-    fun findRecordsByMemberId(id: Long, role: Role, size: Int?, lastId: Long?): List<Record> {
-        return roleAdaptor.handleRecord(role) { it.findRecordsByMemberId(id, size, lastId) }
+    fun findRecordsByMemberId(id: Long, size: Int?, lastId: Long?): List<Record> {
+        return recordRepository.findRecordsByMemberIdWithPaging(id, size, lastId)
     }
 
     @Transactional(readOnly = true)
-    fun findRecordById(recordId: Long, memberId: Long, role: Role): Record {
+    fun findRecordById(recordId: Long, memberId: Long): Record {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        roleAdaptor.handleRecord(role) { it.validateRecordOwnership(memberId, record) }
+        val member = memberRepository.findByIdOrElseThrow(memberId)
+
+        require(record.isOwnedBy(member)) { "Record does not belong to member" }
 
         return record
     }
@@ -61,7 +64,7 @@ class RecordService(
     @Transactional
     fun deleteRecord(recordId: Long, id: Long) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = studentRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Student not found")
+        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
             feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacherId)?.increaseAmount()
@@ -72,8 +75,12 @@ class RecordService(
     @Transactional
     fun updateRecord(recordId: Long, id: Long, title: String) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = studentRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("Student not found")
+        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.updateTitle(title)
+    }
+
+    fun findFeedbacksByTeacherId(id: Long): List<Feedback> {
+        return feedbackRepository.findByTeacherId(id)
     }
 }

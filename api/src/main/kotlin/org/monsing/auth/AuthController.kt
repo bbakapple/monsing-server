@@ -4,7 +4,7 @@ import openapi.api.AuthApi
 import openapi.model.OAuthLoginRequest
 import openapi.model.RefreshTokenRequest
 import openapi.model.TokenResponse
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.OauthProviderType
 import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AuthController(private val authService: AuthService) : AuthApi {
-    override fun exit(tokenPayload: TokenPayload): ResponseEntity<Unit> {
+    override fun exit(authTokenPayload: AuthTokenPayload): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -26,7 +26,7 @@ class AuthController(private val authService: AuthService) : AuthApi {
     }
 
     override fun refresh(
-        tokenPayload: TokenPayload,
+        authTokenPayload: AuthTokenPayload,
         refreshTokenRequest: RefreshTokenRequest
     ): ResponseEntity<TokenResponse> {
         val token = authService.refresh(refreshTokenRequest.refreshToken)

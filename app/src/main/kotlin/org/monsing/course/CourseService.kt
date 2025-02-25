@@ -1,8 +1,6 @@
 package org.monsing.course
 
-import org.monsing.auth.jwt.Role
-import org.monsing.member.StudentRepository
-import org.monsing.member.teacher.TeacherRepository
+import org.monsing.member.MemberRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -10,14 +8,12 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CourseService(
     private val courseRepository: CourseRepository,
-    private val teacherRepository: TeacherRepository,
-    private val studentRepository: StudentRepository
+    private val memberRepository: MemberRepository
 ) {
 
     @Transactional
     fun createCourse(
         id: Long,
-        role: Role,
         name: String,
         description: String,
         curriculum: String,
@@ -26,13 +22,9 @@ class CourseService(
         minimumLessonCount: Int,
         lessonSchedules: List<LessonSchedule>
     ) {
-        val teacherId = teacherRepository.findByMemberId(id)
-            ?.id
-            ?: throw IllegalArgumentException("Teacher not found")
 
-        require(role == Role.TEACHER) {
-            "Role is invalid"
-        }
+        val teacher = memberRepository.findTeacherById(id)
+            ?: throw IllegalArgumentException("Teacher not found")
 
         val lessons = lessonSchedules.map {
             Lesson(
@@ -46,7 +38,7 @@ class CourseService(
                 description = description,
                 curriculum = curriculum
             ),
-            teacherId = teacherId,
+            teacherId = requireNotNull(teacher.id),
             duration = CourseDuration(duration),
             pricePerLesson = CoursePricePerLesson(price),
             minimumLessonCount = CourseMinimumLessonCount(minimumLessonCount),
@@ -67,14 +59,14 @@ class CourseService(
         price: Int?,
         minimumLessonCount: Int?
     ) {
-        val teacherId = teacherRepository.findByMemberId(memberId)
-            ?.id
+
+        val teacher = memberRepository.findTeacherById(memberId)
             ?: throw IllegalArgumentException("Teacher not found")
 
         val course = courseRepository.findByIdOrNull(courseId)
             ?: throw IllegalArgumentException("Course not found")
 
-        require(course.teacherId == teacherId) {
+        require(course.teacherId == requireNotNull(teacher.id)) {
             "Teacher is not the owner of the course"
         }
 
@@ -91,12 +83,11 @@ class CourseService(
     @Transactional
     fun registerLesson(
         id: Long,
-        role: Role,
         courseId: Long,
         lessonId: Long,
         lessonCount: Int
     ) {
-        val student = studentRepository.findByMemberId(id)?.id
+        val student = memberRepository.findStudentById(id)
             ?: throw IllegalArgumentException("Student not found")
 
         val course = courseRepository.findByIdOrNull(courseId)
@@ -108,6 +99,6 @@ class CourseService(
 
         val lesson = course.findLessonById(lessonId)
 
-        lesson.register(student, lessonCount)
+        lesson.register(requireNotNull(student.id), lessonCount)
     }
 }

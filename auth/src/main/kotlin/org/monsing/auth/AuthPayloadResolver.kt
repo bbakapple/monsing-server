@@ -1,6 +1,6 @@
 package org.monsing.auth
 
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -13,7 +13,7 @@ class AuthPayloadResolver(
     private val authContext: AuthContext
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return (parameter.parameterType == TokenPayload::class.java)
+        return (parameter.parameterType == AuthTokenPayload::class.java)
                 && parameter.hasParameterAnnotation(AuthPayload::class.java)
     }
 

@@ -1,61 +1,50 @@
 package org.monsing.auth
 
-import org.monsing.auth.jwt.Role
-import org.monsing.auth.jwt.TokenManager
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenManager
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
-import org.monsing.member.Member
-import org.monsing.member.MemberRepository
 import org.monsing.member.OauthProviderType
-import org.monsing.member.StudentRepository
-import org.monsing.member.teacher.TeacherRepository
-import org.monsing.token.Token
+import org.monsing.member.TempMember
+import org.monsing.member.TempMemberRepository
+import org.monsing.token.AuthToken
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AuthService(
-    private val memberRepository: MemberRepository,
-    private val studentRepository: StudentRepository,
-    private val teacherRepository: TeacherRepository,
+    private val tempMemberRepository: TempMemberRepository,
     private val oauthAdaptor: OauthAdaptor,
-    private val tokenManager: TokenManager
+    private val authTokenManager: AuthTokenManager
 ) {
 
     @Transactional
-    fun login(oauthProviderType: OauthProviderType, oauthToken: String): Token {
+    fun login(oauthProviderType: OauthProviderType, oauthToken: String): AuthToken {
         val oauthIdentifier = oauthAdaptor.handle(oauthProviderType, oauthToken)
-        val member = memberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
-            ?: memberRepository.save(Member(oauthIdentifier.id, oauthProviderType))
+        val member = tempMemberRepository.findByIdentifierAndOauthProviderType(oauthIdentifier.id, oauthProviderType)
+            ?: tempMemberRepository.save(
+                TempMember(
+                    identifier = oauthIdentifier.id,
+                    oauthProviderType = oauthProviderType
+                )
+            )
 
         val id = requireNotNull(member.id) {
             "Member id must not be null"
         }
 
-        val role = findRoleByMemberId(id)
-
-        return Token(
-            accessToken = tokenManager.createAccessToken(TokenPayload(id, role)),
-            refreshToken = tokenManager.createRefreshToken(id)
+        return AuthToken(
+            accessToken = authTokenManager.createAccessToken(AuthTokenPayload(id)),
+            refreshToken = authTokenManager.createRefreshToken(id)
         )
     }
 
     @Transactional(readOnly = true)
-    fun refresh(refreshToken: String): Token {
-        val payload = tokenManager.getRefreshPayload(refreshToken)
-        val role = findRoleByMemberId(payload)
+    fun refresh(refreshToken: String): AuthToken {
+        val payload = authTokenManager.getRefreshPayload(refreshToken)
 
-        return Token(
-            accessToken = tokenManager.createAccessToken(TokenPayload(payload, role)),
+        return AuthToken(
+            accessToken = authTokenManager.createAccessToken(AuthTokenPayload(payload)),
             refreshToken = refreshToken
         )
-    }
-
-    private fun findRoleByMemberId(id: Long): Role {
-        return when {
-            studentRepository.existsByMemberId(id) -> Role.STUDENT
-            teacherRepository.existsByMemberId(id) -> Role.TEACHER
-            else -> Role.NONE
-        }
     }
 }

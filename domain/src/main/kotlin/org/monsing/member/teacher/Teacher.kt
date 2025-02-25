@@ -1,19 +1,27 @@
 package org.monsing.member.teacher
 
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
+import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.OneToMany
-import org.monsing.BaseEntity
+import org.monsing.member.Member
 import org.monsing.member.Nickname
+import org.monsing.member.OauthProviderType
 import org.monsing.member.StrongSideType
 
+@DiscriminatorValue("teacher")
 @Entity
 class Teacher(
 
-    val memberId: Long,
+    id: Long? = null,
+
+    identifier: String,
+
+    oauthProviderType: OauthProviderType,
+
+    nickname: Nickname,
 
     val summary: String? = null,
 
@@ -26,9 +34,6 @@ class Teacher(
 
     val verified: Boolean = false,
 
-    @Embedded
-    val nickname: Nickname,
-
     @Column(name = "profile_image")
     val profileImage: String? = null,
 
@@ -40,4 +45,5 @@ class Teacher(
 
     @OneToMany
     val careers: List<Career> = mutableListOf()
-) : BaseEntity()
+
+) : Member(id, identifier, oauthProviderType, nickname)

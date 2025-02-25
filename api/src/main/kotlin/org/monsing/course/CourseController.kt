@@ -7,7 +7,7 @@ import openapi.model.CourseCreateRequest
 import openapi.model.CourseUpdateRequest
 import openapi.model.DayOfWeekRequest
 import openapi.model.LessonRegisterRequest
-import org.monsing.auth.jwt.TokenPayload
+import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.util.enumValueOrNull
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +18,7 @@ class CourseController(
 ) : CourseApi {
 
     override fun createCourse(
-        tokenPayload: TokenPayload,
+        tokenPayload: AuthTokenPayload,
         courseCreateRequest: CourseCreateRequest
     ): ResponseEntity<Unit> {
         val lessonSchedules = courseCreateRequest.lessonSchedule.map {
@@ -29,7 +29,6 @@ class CourseController(
         }
         courseService.createCourse(
             tokenPayload.id,
-            tokenPayload.role,
             courseCreateRequest.name,
             courseCreateRequest.description,
             courseCreateRequest.curriculum,
@@ -52,7 +51,7 @@ class CourseController(
     }
 
     override fun updateCourse(
-        tokenPayload: TokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Long,
         courseUpdateRequest: CourseUpdateRequest
     ): ResponseEntity<Unit> {
@@ -70,14 +69,13 @@ class CourseController(
     }
 
     override fun registerLesson(
-        tokenPayload: TokenPayload,
+        tokenPayload: AuthTokenPayload,
         courseId: Long,
         lessonId: Long,
         lessonRegisterRequest: LessonRegisterRequest
     ): ResponseEntity<Unit> {
         courseService.registerLesson(
             tokenPayload.id,
-            tokenPayload.role,
             courseId,
             lessonId,
             lessonRegisterRequest.lessonCount

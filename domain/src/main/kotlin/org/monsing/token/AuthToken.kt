@@ -1,6 +1,6 @@
 package org.monsing.token
 
-data class Token(
+data class AuthToken(
     val accessToken: String,
     val refreshToken: String
 )
