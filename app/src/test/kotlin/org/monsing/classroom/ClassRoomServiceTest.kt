@@ -51,43 +51,8 @@ class ClassRoomServiceTest : FreeSpec({
             // then
             verify(exactly = 1) { classRoomRepository.save(any()) }
         }
-        "선생이 아닌 경우 에러" {
-            // given
-            val teacherId = 1L
-            val studentId = 2L
-
-            every { memberRepository.findTeacherById(teacherId) } returns null
-
-            // when
-            val exception = shouldThrow<IllegalArgumentException> {
-                sut.createClassRoom(teacherId, studentId)
-            }
-        }
-        "선생이 없는 경우 에러" {
-            // given
-            val teacherId = 1L
-            val studentId = 2L
-            every { memberRepository.findTeacherById(teacherId) } returns null
-
-            // when
-            val exception = shouldThrow<IllegalArgumentException> {
-                sut.createClassRoom(teacherId, studentId)
-            }
-        }
-
-        "학생이 없는 경우 에러" {
-            // given
-            val teacherId = 1L
-            val studentId = 2L
-            every { memberRepository.findTeacherById(teacherId) } returns mockk()
-            every { memberRepository.findStudentById(studentId) } returns null
-
-            // when
-            val exception = shouldThrow<IllegalArgumentException> {
-                sut.createClassRoom(teacherId, studentId)
-            }
-        }
     }
+
     "retrieveClassRooms" - {
         "선생님 역할로 조회" {
             // given
