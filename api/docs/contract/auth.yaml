@@ -72,6 +72,25 @@ paths:
         '400':
           description: 잘못된 요청입니다.
 
+  /my:
+    get:
+      summary: 내 역할 정보 조회
+      description: 내 역할을 조회합니다.
+      operationId: getMyRole
+      tags:
+        - Auth
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleResponse'
+        '400':
+          description: 잘못된 요청입니다.
+
 components:
   securitySchemes:
     BearerAuth:
@@ -120,3 +139,25 @@ components:
         - GOOGLE
         - KAKAO
       description: OAuth 제공자
+
+    RoleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 사용자 ID
+        role:
+          $ref: '#/components/schemas/MemberRole'
+      required:
+        - id
+        - role
+
+    MemberRole:
+      type: string
+      enum:
+        - TEACHER
+        - STUDENT
+        - NONE
+      description: 사용자 역할
+
