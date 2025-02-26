@@ -55,7 +55,7 @@ paths:
         '400':
           description: 잘못된 요청입니다.
   
-  /courses/{id}:
+  /courses/{courseId}:
     patch:
       summary: 수업 수정
       security:
@@ -64,7 +64,7 @@ paths:
       tags:
         - Course
       parameters:
-        - name: id
+        - name: courseId
           in: path
           required: true
           schema:

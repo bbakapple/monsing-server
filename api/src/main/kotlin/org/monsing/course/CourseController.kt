@@ -54,12 +54,12 @@ class CourseController(
 
     override fun updateCourse(
         tokenPayload: AuthTokenPayload,
-        id: Long,
+        courseId: Long,
         courseUpdateRequest: CourseUpdateRequest
     ): ResponseEntity<Unit> {
         courseService.updateCourse(
             tokenPayload.id,
-            id,
+            courseId,
             courseUpdateRequest.name,
             courseUpdateRequest.description,
             courseUpdateRequest.curriculum,
