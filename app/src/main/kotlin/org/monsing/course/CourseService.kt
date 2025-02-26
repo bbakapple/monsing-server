@@ -91,8 +91,7 @@ class CourseService(
         val student = memberRepository.findStudentById(id)
             ?: throw IllegalArgumentException("Student not found")
 
-        val course = courseRepository.findByIdOrNull(courseId)
-            ?: throw IllegalArgumentException("Course not found")
+        val course = courseRepository.findByIdOrElseThrow(courseId)
 
         course.registerLesson(requireNotNull(student.id), lessonId, lessonCount)
     }
