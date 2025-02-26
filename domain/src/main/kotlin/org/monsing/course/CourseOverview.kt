@@ -15,7 +15,11 @@ class CourseOverview(
     var curriculum: String,
 ) {
 
-    fun update(name: String?, description: String?, curriculum: String?) {
+    fun update(
+        name: String? = null,
+        description: String? = null,
+        curriculum: String? = null
+    ) {
         name?.let { this.name = it }
         description?.let { this.description = it }
         curriculum?.let { this.curriculum = it }
