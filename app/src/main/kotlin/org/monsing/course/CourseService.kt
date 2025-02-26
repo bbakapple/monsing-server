@@ -2,7 +2,6 @@ package org.monsing.course
 
 import org.monsing.member.MemberRepository
 import org.monsing.util.findByIdOrElseThrow
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -26,7 +25,6 @@ class CourseService(
     ) {
 
         val teacher = memberRepository.findTeacherById(id)
-            ?: throw IllegalArgumentException("Teacher not found")
 
         val lessons = lessonSchedules.map {
             Lesson(
@@ -63,10 +61,8 @@ class CourseService(
     ) {
 
         val teacher = memberRepository.findTeacherById(memberId)
-            ?: throw IllegalArgumentException("Teacher not found")
 
-        val course = courseRepository.findByIdOrNull(courseId)
-            ?: throw IllegalArgumentException("Course not found")
+        val course = courseRepository.findByIdOrElseThrow(courseId)
 
         require(course.teacherId == requireNotNull(teacher.id)) {
             "Teacher is not the owner of the course"
@@ -90,7 +86,6 @@ class CourseService(
         lessonCount: Int
     ) {
         val student = memberRepository.findStudentById(id)
-            ?: throw IllegalArgumentException("Student not found")
 
         val course = courseRepository.findByIdOrElseThrow(courseId)
 
