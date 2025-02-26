@@ -1,22 +1,20 @@
 package org.monsing.auth.jwt
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
+import io.livekit.server.AccessToken
+import io.livekit.server.RoomJoin
+import io.livekit.server.RoomName
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.Date
-import javax.crypto.SecretKey
 
 @Component
 class LiveKitTokenManager(
-    @Value("\${livekit.api-key}") apiKey: String,
+    @Value("\${livekit.api-key}") private val apiKey: String,
     @Value("\${livekit.secret.expire-second}") private val accessExpireSecond: Long,
-    @Value("\${livekit.secret.key}") tokenSecret: String,
+    @Value("\${livekit.secret.key}") private val tokenSecret: String,
     private val objectMapper: ObjectMapper
 ) {
-    private val apiKey = apiKey
-    private val accessKey: SecretKey = Keys.hmacShaKeyFor(tokenSecret.toByteArray())
 
     fun generateToken(
         name: String,
@@ -24,25 +22,15 @@ class LiveKitTokenManager(
         participantIdentity: String,
     ): String {
         val issuedAt = Date()
-        val expiration = getExpiration(issuedAt, accessExpireSecond)
-        val payload = LiveKitPayload(
-            name = name,
-            identity = participantIdentity,
-            grants = LiveKitPayload.Grants(
-                room = LiveKitPayload.Room(
-                    join = true,
-                    name = roomName
-                )
-            )
+        val liveKitToken = AccessToken(apiKey, tokenSecret)
+        liveKitToken.name = name
+        liveKitToken.expiration = getExpiration(issuedAt, accessExpireSecond)
+        liveKitToken.identity = participantIdentity
+        liveKitToken.addGrants(
+            RoomName(roomName),
+            RoomJoin(true)
         )
-        val subject = objectMapper.writeValueAsString(payload)
-        return Jwts.builder()
-            .issuer(apiKey)
-            .subject(subject)
-            .issuedAt(issuedAt)
-            .expiration(expiration)
-            .signWith(accessKey)
-            .compact()
+        return liveKitToken.toJwt()
     }
 
     private fun getExpiration(issuedAt: Date, expirationSecond: Long): Date {
