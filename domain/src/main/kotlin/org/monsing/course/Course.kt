@@ -1,5 +1,6 @@
 package org.monsing.course
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -24,7 +25,7 @@ class Course(
     @Embedded
     var minimumLessonCount: CourseMinimumLessonCount,
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val lessons: List<Lesson> = mutableListOf()
 ) : BaseEntity() {
 
