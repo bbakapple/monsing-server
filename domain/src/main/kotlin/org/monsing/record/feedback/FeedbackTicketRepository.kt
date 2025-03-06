@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FeedbackTicketRepository : JpaRepository<FeedbackTicket, Long> {
 
-    fun findByStudentIdAndTeacher(studentId: Long, teacher: Teacher): FeedbackTicket?
+    fun findByStudentIdAndTeacherId(studentId: Long, teacherId: Long): FeedbackTicket?
 }

@@ -5,6 +5,7 @@ import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackRepository
 import org.monsing.record.feedback.FeedbackTicketRepository
 import org.monsing.util.findByIdOrElseThrow
+import org.monsing.util.toNonNull
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,9 +31,9 @@ class RecordService(
             ?: throw IllegalArgumentException("Student not found")
         val teacher = memberRepository.findTeacherById(teacherId)
             ?: throw IllegalArgumentException("Teacher not found")
-        val ticket = feedbackTicketRepository.findByStudentIdAndTeacher(
+        val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
             requireNotNull(student.id),
-            teacher
+            teacher.id.toNonNull()
         ) ?: throw IllegalArgumentException("Feedback ticket not found")
 
         ticket.decreaseAmount()
@@ -69,7 +70,7 @@ class RecordService(
         val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
-            feedbackTicketRepository.findByStudentIdAndTeacher(id, it.teacher)?.increaseAmount()
+            feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacher.id.toNonNull())?.increaseAmount()
         }
         recordRepository.delete(record)
     }

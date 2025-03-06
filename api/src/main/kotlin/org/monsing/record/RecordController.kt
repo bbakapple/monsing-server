@@ -1,5 +1,7 @@
 package org.monsing.record
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Schema
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -32,6 +34,7 @@ class RecordController(
 ) {
 
     @Auth
+    @Operation(summary = "Record 파일 업로드")
     @PostMapping("/records")
     fun uploadRecord(
         @RequestPart file: MultipartFile,
@@ -45,6 +48,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "feedback 요청")
     @PostMapping("/records/{recordId}/feedbacks")
     fun requestFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -56,6 +60,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "feedback 작성")
     @PatchMapping("/records/{recordId}/feedbacks")
     fun writeFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -67,6 +72,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "내 feedback 조회")
     @GetMapping("/feedbacks/my")
     fun listFeedbacks(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -87,7 +93,8 @@ class RecordController(
     }
 
     @Auth
-    @GetMapping("/records")
+    @Operation(summary = "내 record 조회")
+    @GetMapping("/records/my")
     fun listRecords(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestParam(required = false) size: Int?,
@@ -107,6 +114,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "record 단건 조회")
     @GetMapping("/records/{recordId}")
     fun getRecord(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -132,6 +140,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "record 삭제")
     @DeleteMapping("/records/{recordId}")
     fun deleteRecord(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -142,6 +151,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "record 수정")
     @PatchMapping("/records/{recordId}")
     fun updateRecord(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -153,6 +163,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "feedback 다건 조회")
     @GetMapping("/feedbacks/tickets")
     fun getAllFeedbacks(): ResponseEntity<List<FeedbackResponse>> {
         val response = recordService.findAllFeedbackDetails().map {

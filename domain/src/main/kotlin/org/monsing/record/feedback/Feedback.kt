@@ -4,6 +4,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
@@ -14,7 +15,7 @@ private const val MAXIMUM_LENGTH = 3000
 @Entity
 class Feedback(
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     val teacher: Teacher,
 
     @Column(nullable = false)
