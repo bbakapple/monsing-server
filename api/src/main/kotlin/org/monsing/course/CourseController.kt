@@ -109,7 +109,7 @@ class CourseController(
                 id = requireNotNull(it.id),
                 dayOfWeek = DayOfWeekDto.valueOf(it.lessonSchedule.dayOfWeek.name),
                 startTime = it.lessonSchedule.startTime.toString(),
-                isAvailable = it.isAvailable
+                isAvailable = it.lessonStatusType.isAvailable()
             )
         })
     }

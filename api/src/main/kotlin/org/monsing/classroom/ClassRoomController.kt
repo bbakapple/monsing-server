@@ -1,10 +1,8 @@
 package org.monsing.classroom
 
 import openapi.api.ClassRoomApi
-import openapi.model.ClassRoomCreateRequest
 import openapi.model.ClassRoomCreateResponse
 import openapi.model.ClassRoomEnterResponse
-import openapi.model.ClassRoomResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -15,13 +13,10 @@ class ClassRoomController(
 ) : ClassRoomApi {
 
     override fun createClassRoom(
-        authTokenPayload: AuthTokenPayload,
-        classRoomCreateRequest: ClassRoomCreateRequest
+        tokenPayload: AuthTokenPayload,
+        lessonId: Long
     ): ResponseEntity<ClassRoomCreateResponse> {
-        val classRoom = classRoomService.createClassRoom(
-            authTokenPayload.id,
-            classRoomCreateRequest.studentId
-        )
+        val classRoom = classRoomService.createClassRoom(tokenPayload.id, lessonId)
 
         return ResponseEntity.ok(
             ClassRoomCreateResponse(
@@ -37,20 +32,6 @@ class ClassRoomController(
             ClassRoomEnterResponse(
                 token = token
             )
-        )
-    }
-
-    override fun retrieveClassRooms(authTokenPayload: AuthTokenPayload): ResponseEntity<List<ClassRoomResponse>> {
-        val classRooms = classRoomService.retrieveClassRooms(authTokenPayload.id)
-
-        return ResponseEntity.ok(
-            classRooms.map {
-                ClassRoomResponse(
-                    classRoomId = requireNotNull(it.id),
-                    studentId = requireNotNull(it.student.id),
-                    status = it.status.name
-                )
-            }
         )
     }
 

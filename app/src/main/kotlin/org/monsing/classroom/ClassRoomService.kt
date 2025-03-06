@@ -3,6 +3,8 @@ package org.monsing.classroom
 import org.monsing.auth.jwt.LiveKitTokenManager
 import org.monsing.course.ClassRoom
 import org.monsing.course.ClassRoomRepository
+import org.monsing.course.ClassRoomStatusType
+import org.monsing.course.LessonRepository
 import org.monsing.member.MemberRepository
 import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
@@ -13,34 +15,46 @@ import org.springframework.transaction.annotation.Transactional
 class ClassRoomService(
     private val classRoomRepository: ClassRoomRepository,
     private val memberRepository: MemberRepository,
+    private val lessonRepository: LessonRepository,
     private val liveKitTokenManager: LiveKitTokenManager,
 ) {
 
     @Transactional
-    fun createClassRoom(memberId: Long, studentId: Long): ClassRoom {
+    fun createClassRoom(memberId: Long, lessonId: Long): ClassRoom {
         val teacher = memberRepository.findTeacherById(memberId)
 
-        val student = memberRepository.findStudentById(studentId)
+        val lesson = lessonRepository.findByTeacherIdAndLessonId(requireNotNull(teacher.id), lessonId)
+            ?: throw IllegalArgumentException("lesson not found")
 
-        return classRoomRepository.save(ClassRoom.create(teacher, student))
-    }
+        val classRooms = classRoomRepository.findByLessonId(lessonId)
 
-    @Transactional
-    fun retrieveClassRooms(id: Long): List<ClassRoom> {
-        return classRoomRepository.findByStudentIdOrTeacherId(id, id)
+        check(classRooms.none { it.status == ClassRoomStatusType.OPEN }) {
+            "Class room already exists"
+        }
+
+        lesson.reduceRemainingCount()
+
+        return classRoomRepository.save(ClassRoom(lessonId))
     }
 
     @Transactional
     fun completeClassRoom(teacherId: Long, classRoomId: Long) {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
-        check(classRoom.teacher.id == teacherId) { "Only teacher can complete a class room" }
+
+        require(lessonRepository.existsByTeacherIdAndLessonId(teacherId, classRoom.lessonId)) {
+            "Lesson not found"
+        }
+
         classRoom.complete()
     }
 
     @Transactional
     fun enterClassRoom(memberId: Long, classRoomId: Long): String {
         val classRoom = classRoomRepository.findByIdOrElseThrow(classRoomId)
-        check(classRoom.student.id == memberId || classRoom.teacher.id == memberId) {
+        val lesson = lessonRepository.findByIdOrElseThrow(classRoom.lessonId)
+        val isExistByTeacherId = lessonRepository.existsByTeacherIdAndLessonId(memberId, classRoom.lessonId)
+
+        check(isExistByTeacherId || lesson.studentId == memberId) {
             "Only student can enter a class room"
         }
 

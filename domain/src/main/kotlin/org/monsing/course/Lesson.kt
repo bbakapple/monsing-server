@@ -18,17 +18,17 @@ class Lesson(
     var lessonRemaining: Int? = null,
 
     @Column(nullable = false)
-    var isAvailable: Boolean = true
+    var lessonStatusType: LessonStatusType = LessonStatusType.AVAILABLE
 ) : BaseEntity(id = id) {
 
     fun register(id: Long, lessonCount: Int) {
-        require(isAvailable) {
+        require(lessonStatusType == LessonStatusType.AVAILABLE) {
             "Lesson is not available"
         }
 
         studentId = id
         lessonRemaining = lessonCount
-        isAvailable = false
+        lessonStatusType = LessonStatusType.RESERVED
     }
 
     fun overlappingWith(lesson: Lesson, duration: Int) {
@@ -36,7 +36,16 @@ class Lesson(
             lessonSchedule.startTime > lesson.lessonSchedule.startTime &&
             lessonSchedule.startTime < lesson.lessonSchedule.startTime.plusMinutes(duration.toLong())
         ) {
-            isAvailable = false
+            lessonStatusType = LessonStatusType.NOT_AVAILABLE
+        }
+    }
+
+    fun reduceRemainingCount() {
+        check(lessonStatusType == LessonStatusType.RESERVED) {
+            "Lesson is not reserved"
+        }
+        check(requireNotNull(lessonRemaining) > 0) {
+            "Lesson count is lesser than 0"
         }
     }
 }
