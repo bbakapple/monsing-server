@@ -15,6 +15,7 @@ class RecordService(
     private val feedbackRepository: FeedbackRepository,
     private val feedbackTicketRepository: FeedbackTicketRepository,
     private val memberRepository: MemberRepository
+
 ) {
 
     @Transactional
@@ -27,20 +28,21 @@ class RecordService(
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
         val student = memberRepository.findStudentById(memberId)
             ?: throw IllegalArgumentException("Student not found")
-
-        val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
+        val teacher = memberRepository.findTeacherById(teacherId)
+            ?: throw IllegalArgumentException("Teacher not found")
+        val ticket = feedbackTicketRepository.findByStudentIdAndTeacher(
             requireNotNull(student.id),
-            teacherId
+            teacher
         ) ?: throw IllegalArgumentException("Feedback ticket not found")
 
         ticket.decreaseAmount()
-        record.requestFeedback(teacherId)
+        record.requestFeedback(teacher)
     }
 
     @Transactional
     fun writeFeedback(writerId: Long, recordId: Long, detail: String) {
         val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val feedback = record.feedbacks.find { it.teacherId == writerId }
+        val feedback = record.feedbacks.find { it.teacher.id == writerId }
             ?: throw IllegalArgumentException("Feedback not found")
 
         feedback.writeFeedback(detail)
@@ -67,7 +69,7 @@ class RecordService(
         val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
-            feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacherId)?.increaseAmount()
+            feedbackTicketRepository.findByStudentIdAndTeacher(id, it.teacher)?.increaseAmount()
         }
         recordRepository.delete(record)
     }
@@ -80,7 +82,18 @@ class RecordService(
         record.updateTitle(title)
     }
 
-    fun findFeedbacksByTeacherId(id: Long): List<Feedback> {
-        return feedbackRepository.findByTeacherId(id)
+    fun findAllFeedbackDetails(): List<Feedback> {
+        return feedbackRepository.findAllFeedbackDetails()
+    }
+
+    fun findFeedbacksByMemberId(id: Long): List<Feedback> {
+        val studentFeedbacks = recordRepository.findByStudentId(id).flatMap { it.feedbacks }
+        if (studentFeedbacks.isNotEmpty()) return studentFeedbacks
+
+        val teacher = memberRepository.findTeacherById(id) ?: throw IllegalArgumentException("Teacher not found")
+        val teacherFeedbacks = feedbackRepository.findByTeacher(teacher)
+        if (teacherFeedbacks.isNotEmpty()) return teacherFeedbacks
+
+        return emptyList()
     }
 }

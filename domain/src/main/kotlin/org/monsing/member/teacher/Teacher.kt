@@ -46,4 +46,14 @@ class Teacher(
     @OneToMany
     val careers: List<Career> = mutableListOf()
 
-) : Member(id, identifier, oauthProviderType, nickname)
+) : Member(id, identifier, oauthProviderType, nickname){
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Teacher) return false
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id?.hashCode() ?: 0
+    }
+}

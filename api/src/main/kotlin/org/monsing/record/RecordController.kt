@@ -10,6 +10,7 @@ import org.monsing.record.request.WriteFeedbackRequest
 import org.monsing.record.response.FeedbackResponse
 import org.monsing.record.response.RecordResponse
 import org.monsing.record.response.RecordUploadResponse
+import org.monsing.util.toNonNull
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -66,16 +67,16 @@ class RecordController(
     }
 
     @Auth
-    @GetMapping("/feedbacks")
+    @GetMapping("/feedbacks/my")
     fun listFeedbacks(
         @AuthPayload authTokenPayload: AuthTokenPayload,
     ): ResponseEntity<List<FeedbackResponse>> {
-        val feedbacks = recordService.findFeedbacksByTeacherId(authTokenPayload.id)
+        val feedbacks = recordService.findFeedbacksByMemberId(authTokenPayload.id)
 
         val response = feedbacks.map {
             FeedbackResponse(
                 id = requireNotNull(it.id),
-                writerId = it.teacherId,
+                writerId = it.teacher.id.toNonNull(),
                 recordId = it.recordId,
                 detail = it.detail,
                 createdAt = it.updatedDate
@@ -119,7 +120,7 @@ class RecordController(
             record.feedbacks.map {
                 FeedbackResponse(
                     id = requireNotNull(it.id),
-                    writerId = it.teacherId,
+                    writerId = it.teacher.id.toNonNull(),
                     recordId = it.recordId,
                     detail = it.detail,
                     createdAt = it.updatedDate
@@ -149,6 +150,22 @@ class RecordController(
     ): ResponseEntity<Unit> {
         recordService.updateRecord(recordId, authTokenPayload.id, request.title)
         return ResponseEntity.ok().build()
+    }
+
+    @Auth
+    @GetMapping("/feedbacks/tickets")
+    fun getAllFeedbacks(): ResponseEntity<List<FeedbackResponse>> {
+        val response = recordService.findAllFeedbackDetails().map {
+            FeedbackResponse(
+                id = requireNotNull(it.id),
+                writerId = it.teacher.id.toNonNull(),
+                recordId = it.recordId,
+                detail = it.detail,
+                createdAt = it.updatedDate
+            )
+        }
+
+        return ResponseEntity.ok(response)
     }
 
     private fun String.toUrl() = "$cloudfrontUrl/$this"

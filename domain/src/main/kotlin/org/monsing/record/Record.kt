@@ -6,6 +6,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
 import org.monsing.BaseEntity
 import org.monsing.member.Member
+import org.monsing.member.teacher.Teacher
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackStatus
 
@@ -35,13 +36,13 @@ class Record(
     val notCompletedFeedBacks
         get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 
-    fun requestFeedback(teacherId: Long) {
-        require(feedbacks.requestedBy(teacherId).not()) { "Feedback already requested" }
-        feedbacks.add(Feedback(recordId = requireNotNull(id), teacherId = teacherId))
+    fun requestFeedback(teacher: Teacher) {
+        require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
+        feedbacks.add(Feedback(recordId = requireNotNull(id), teacher = teacher))
     }
 
-    private fun List<Feedback>.requestedBy(teacherId: Long): Boolean {
-        return any { it.teacherId == teacherId }
+    private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {
+        return any { it.teacher == teacher }
     }
 
     fun updateTitle(title: String) {
@@ -49,6 +50,6 @@ class Record(
     }
 
     fun isOwnedBy(member: Member?): Boolean {
-        return studentId == member?.id || feedbacks.any { it.teacherId == member?.id }
+        return studentId == member?.id || feedbacks.any { it.teacher.id == member?.id }
     }
 }
