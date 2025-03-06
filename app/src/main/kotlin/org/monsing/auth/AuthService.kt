@@ -3,11 +3,13 @@ package org.monsing.auth
 import org.monsing.auth.jwt.AuthTokenManager
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
+import org.monsing.member.Member
 import org.monsing.member.MemberRepository
 import org.monsing.member.OauthProviderType
 import org.monsing.member.TempMember
 import org.monsing.member.TempMemberRepository
 import org.monsing.token.AuthToken
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -52,9 +54,10 @@ class AuthService(
     }
 
     @Transactional(readOnly = true)
-    fun getMemberRole(id: Long): String {
-        return memberRepository.findByIdOrNull(id)?.let {
-            return it.javaClass.simpleName
-        } ?: return "NONE"
+    fun getMember(id: Long): Member? {
+        tempMemberRepository.findByIdOrNull(id)?.let {
+            return null
+        }
+        return memberRepository.findByIdOrElseThrow(id)
     }
 }
