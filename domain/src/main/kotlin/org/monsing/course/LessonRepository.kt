@@ -26,4 +26,5 @@ interface LessonRepository : JpaRepository<Lesson, Long> {
         """
     )
     fun existsByTeacherIdAndLessonId(teacherId: Long, id: Long): Boolean
+    fun findAllByStudentId(id: Long): List<Lesson>
 }

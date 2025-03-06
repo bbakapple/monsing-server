@@ -113,4 +113,18 @@ class CourseController(
             )
         })
     }
+
+    override fun getMyLessons(tokenPayload: AuthTokenPayload): ResponseEntity<List<LessonResponse>> {
+        val lessons = courseService.getLessonsWithOnAirInfoByMemberId(tokenPayload.id)
+
+        return ResponseEntity.ok(lessons.map {
+            LessonResponse(
+                id = requireNotNull(it.lesson.id),
+                dayOfWeek = DayOfWeekDto.valueOf(it.lesson.lessonSchedule.dayOfWeek.name),
+                startTime = it.lesson.lessonSchedule.startTime.toString(),
+                isAvailable = it.lesson.lessonStatusType.isAvailable(),
+                isOnAir = it.isOnAir
+            )
+        })
+    }
 }

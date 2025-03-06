@@ -1,6 +1,7 @@
 package org.monsing.course
 
 import org.monsing.member.MemberRepository
+import org.monsing.member.teacher.Teacher
 import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -9,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CourseService(
     private val courseRepository: CourseRepository,
-    private val memberRepository: MemberRepository
+    private val memberRepository: MemberRepository,
+    private val classRoomRepository: ClassRoomRepository,
+    private val lessonRepository: LessonRepository
 ) {
 
     @Transactional
@@ -100,5 +103,31 @@ class CourseService(
     @Transactional(readOnly = true)
     fun getLessonsByCourseId(id: Long): List<Lesson> {
         return courseRepository.findByIdOrElseThrow(id).lessons
+    }
+
+    fun getLessonsWithOnAirInfoByMemberId(id: Long): List<LessonDto> {
+        val member = memberRepository.findByIdOrElseThrow(id)
+
+        if (member is Teacher) {
+            val lessons = courseRepository.findAllByTeacherId(id)
+                .flatMap { it.lessons }
+                .filter { it.lessonStatusType == LessonStatusType.RESERVED }
+
+            return lessons.map {
+                LessonDto(
+                    it,
+                    classRoomRepository.existsByLessonIdAndStatus(it.id, ClassRoomStatusType.OPEN)
+                )
+            }
+        }
+
+        val lessons = lessonRepository.findAllByStudentId(id)
+
+        return lessons.map {
+            LessonDto(
+                it,
+                classRoomRepository.existsByLessonIdAndStatus(it.id, ClassRoomStatusType.OPEN)
+            )
+        }
     }
 }
