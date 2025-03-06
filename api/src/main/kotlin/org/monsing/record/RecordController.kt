@@ -1,7 +1,6 @@
 package org.monsing.record
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Schema
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -179,5 +178,21 @@ class RecordController(
         return ResponseEntity.ok(response)
     }
 
+    @Auth
+    @Operation(summary = "feedback ticket 생성")
+    @PostMapping("/feedbacks/tickets")
+    fun createFeedbackTicket(
+        @AuthPayload authTokenPayload: AuthTokenPayload,
+        @RequestBody request: FeedbackTicketCreateRequest
+    ): ResponseEntity<Unit> {
+        recordService.createFeedbackTicket(authTokenPayload.id, request.price, request.amount)
+        return ResponseEntity.ok().build()
+    }
+
     private fun String.toUrl() = "$cloudfrontUrl/$this"
 }
+
+data class FeedbackTicketCreateRequest(
+    val amount: Int,
+    val price: Int
+)

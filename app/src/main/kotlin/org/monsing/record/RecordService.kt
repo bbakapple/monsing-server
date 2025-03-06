@@ -3,6 +3,7 @@ package org.monsing.record
 import org.monsing.member.MemberRepository
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackRepository
+import org.monsing.record.feedback.FeedbackTicket
 import org.monsing.record.feedback.FeedbackTicketRepository
 import org.monsing.util.findByIdOrElseThrow
 import org.monsing.util.toNonNull
@@ -31,11 +32,10 @@ class RecordService(
             ?: throw IllegalArgumentException("Student not found")
         val teacher = memberRepository.findTeacherById(teacherId)
             ?: throw IllegalArgumentException("Teacher not found")
-        val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
-            requireNotNull(student.id),
+        val ticket = feedbackTicketRepository.findByTeacherId(
             teacher.id.toNonNull()
         ) ?: throw IllegalArgumentException("Feedback ticket not found")
-
+        ticket.studentId = student.id
         ticket.decreaseAmount()
         record.requestFeedback(teacher)
     }
@@ -96,5 +96,16 @@ class RecordService(
         if (teacherFeedbacks.isNotEmpty()) return teacherFeedbacks
 
         return emptyList()
+    }
+
+    @Transactional
+    fun createFeedbackTicket(id: Long, price: Int, amount: Int) {
+        val feedbackTicket = FeedbackTicket(
+            teacherId = id,
+            studentId = null,
+            price = price,
+            _amount = amount
+        )
+        feedbackTicketRepository.save(feedbackTicket)
     }
 }

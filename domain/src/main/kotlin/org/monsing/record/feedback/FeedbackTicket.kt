@@ -1,5 +1,6 @@
 package org.monsing.record.feedback
 
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import org.monsing.BaseEntity
 
@@ -8,9 +9,12 @@ class FeedbackTicket(
 
     val teacherId: Long,
 
-    val studentId: Long,
+    @Column(nullable = true)
+    var studentId: Long?,
 
     private var _amount: Int,
+
+    val price: Int,
 ) : BaseEntity() {
 
     val amount: Int
