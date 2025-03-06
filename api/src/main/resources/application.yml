@@ -8,7 +8,8 @@ spring:
         - app-dev
         - domain-dev
     active: local
-
+  jpa:
+    open-in-view: false
 management:
   endpoints:
     web:

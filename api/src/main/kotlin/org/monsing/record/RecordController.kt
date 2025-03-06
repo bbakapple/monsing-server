@@ -11,7 +11,6 @@ import org.monsing.record.request.WriteFeedbackRequest
 import org.monsing.record.response.FeedbackResponse
 import org.monsing.record.response.RecordResponse
 import org.monsing.record.response.RecordUploadResponse
-import org.monsing.util.toNonNull
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -81,7 +80,7 @@ class RecordController(
         val response = feedbacks.map {
             FeedbackResponse(
                 id = requireNotNull(it.id),
-                writerId = it.teacher.id.toNonNull(),
+                teacher = it.teacher,
                 recordId = it.recordId,
                 detail = it.detail,
                 createdAt = it.updatedDate
@@ -127,7 +126,7 @@ class RecordController(
             record.feedbacks.map {
                 FeedbackResponse(
                     id = requireNotNull(it.id),
-                    writerId = it.teacher.id.toNonNull(),
+                    teacher = it.teacher,
                     recordId = it.recordId,
                     detail = it.detail,
                     createdAt = it.updatedDate
@@ -168,7 +167,7 @@ class RecordController(
         val response = recordService.findAllFeedbackDetails().map {
             FeedbackResponse(
                 id = requireNotNull(it.id),
-                writerId = it.teacher.id.toNonNull(),
+                teacher = it.teacher,
                 recordId = it.recordId,
                 detail = it.detail,
                 createdAt = it.updatedDate
