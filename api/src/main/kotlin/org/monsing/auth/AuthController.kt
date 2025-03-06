@@ -1,8 +1,10 @@
 package org.monsing.auth
 
 import openapi.api.AuthApi
+import openapi.model.MemberRole
 import openapi.model.OAuthLoginRequest
 import openapi.model.RefreshTokenRequest
+import openapi.model.RoleResponse
 import openapi.model.TokenResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.OauthProviderType
@@ -36,6 +38,16 @@ class AuthController(private val authService: AuthService) : AuthApi {
 
     private fun OAuthLoginRequest.oauthProviderType(): OauthProviderType? {
         return enumValueOrNull<OauthProviderType>(oauthProvider.name.uppercase())
+    }
+
+    override fun getMyRole(tokenPayload: AuthTokenPayload): ResponseEntity<RoleResponse> {
+        val role = authService.getMemberRole(tokenPayload.id)
+
+        return ResponseEntity.ok(
+            RoleResponse(
+                tokenPayload.id, MemberRole.valueOf(role.uppercase())
+            )
+        )
     }
 }
 
