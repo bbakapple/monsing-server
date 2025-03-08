@@ -38,7 +38,7 @@ class Record(
 
     fun requestFeedback(teacher: Teacher) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-        feedbacks.add(Feedback(recordId = requireNotNull(id), teacher = teacher))
+//        feedbacks.add(Feedback(recordId = requireNotNull(id), teacher = teacher))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {

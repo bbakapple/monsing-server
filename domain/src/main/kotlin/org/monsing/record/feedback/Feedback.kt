@@ -25,16 +25,20 @@ class Feedback(
     private var _detail: String? = null,
 
     @Enumerated(EnumType.STRING)
-    var status: FeedbackStatus = FeedbackStatus.REQUESTED
+    var status: FeedbackStatus = FeedbackStatus.REQUESTED,
+
+    var amount : Int
 ) : BaseEntity() {
 
     val detail: String
         get() = _detail ?: ""
 
     fun writeFeedback(detail: String) {
+        require(amount > 0) { "Amount must be greater than 0" }
         require(detail.isNotBlank()) { "Detail must not be blank" }
         require(detail.length <= MAXIMUM_LENGTH) { "Detail must not exceed $MAXIMUM_LENGTH characters" }
         status = status.complete()
         this._detail = detail
+        amount--
     }
 }
