@@ -26,15 +26,14 @@ class AuthTokenManager(
         val parser = Jwts.parser()
             .verifyWith(accessKey)
             .build()
+
         try {
             return parser.parseSignedClaims(token)
                 .payload
                 .subject
                 .let { objectMapper.registerKotlinModule().readValue(it, AuthTokenPayload::class.java) }
         } catch (e: ExpiredJwtException) {
-            throw ExpiredJwtException(e.header, e.claims, e.message)
-        } catch (e: Exception) {
-            throw IllegalArgumentException("${e.javaClass}: ${e.message}")
+            throw TokenExpiredException("${e.message}")
         }
     }
 

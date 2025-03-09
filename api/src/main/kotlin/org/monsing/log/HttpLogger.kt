@@ -53,9 +53,9 @@ class HttpLogger(
 
     fun log() {
         when (metadata.get().status) {
-            HttpStatus.OK.value() -> logger.info(metadata.get().log)
             HttpStatus.BAD_REQUEST.value() -> logger.warning(metadata.get().log)
-            else -> logger.severe(metadata.get().log)
+            HttpStatus.INTERNAL_SERVER_ERROR.value() -> logger.severe(metadata.get().log)
+            else -> logger.info(metadata.get().log)
         }
         metadata.remove()
         metadata.set(LogMetadata(profile = profile))
