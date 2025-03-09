@@ -9,7 +9,6 @@ import org.monsing.member.OauthProviderType
 import org.monsing.member.TempMember
 import org.monsing.member.TempMemberRepository
 import org.monsing.token.AuthToken
-import org.monsing.util.findByIdOrElseThrow
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -55,9 +54,6 @@ class AuthService(
 
     @Transactional(readOnly = true)
     fun getMember(id: Long): Member? {
-        tempMemberRepository.findByIdOrNull(id)?.let {
-            return null
-        }
-        return memberRepository.findByIdOrElseThrow(id)
+        return memberRepository.findByIdOrNull(id)
     }
 }
