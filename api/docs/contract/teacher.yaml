@@ -84,9 +84,9 @@ paths:
 
   /teachers/{id}:
     get:
-      summary: 선생님 상세 정보
-      description: 선생님 ID로 상세 정보 조회
-      operationId: readTeacherDetail
+      summary: 선생님 요약 정보
+      description: 선생님 ID로 요약 정보 조회
+      operationId: getTeacherOverview
       tags:
         - Teacher
       parameters:
@@ -95,6 +95,7 @@ paths:
           required: true
           schema:
             type: integer
+            format: int64
           description: 선생님 ID
       responses:
         '200':
@@ -102,7 +103,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TeacherDetailResponse'
+                $ref: '#/components/schemas/TeacherOverviewResponse'
         '400':
           description: 잘못된 요청
 
@@ -217,25 +218,6 @@ paths:
         '400':
           description: 잘못된 요청입니다.
 
-  /teachers/my:
-    get:
-      summary: 내 정보 조회
-      description: 로그인한 사용자의 선생님 정보를 조회합니다.
-      operationId: readMyInfo
-      tags:
-        - Teacher
-      security:
-        - BearerAuth: [ ]
-      responses:
-        '200':
-          description: 성공적으로 선생님 정보를 조회했습니다.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TeacherDetailResponse'
-        '400':
-          description: 잘못된 요청입니다.
-
   /teachers/{id}/courses:
     get:
       summary: 선생님 강좌 목록 조회
@@ -330,45 +312,26 @@ components:
           description: 선생님 리뷰 수
 
     # 선생님 상세 정보 응답
-    TeacherDetailResponse:
+    TeacherOverviewResponse:
       type: object
       properties:
         id:
           type: integer
+          format: int64
           description: 식별자
         name:
           type: string
           description: 이름
-        experience:
-          type: integer
-          description: 경력
         profileImage:
           type: string
-          format: uri
           description: 프로필 이미지 URL
         summary:
           type: string
           description: 한줄 설명
-        favorite:
-          type: boolean
-          description: 즐겨찾기 여부
         verified:
           type: boolean
           description: 인증 여부
-        rating:
-          type: number
-          format: float
-          description: 평균 점수
-        reviewCount:
-          type: integer
-          description: 리뷰 개수
-        courseCount:
-          type: integer
-          description: 총 강좌 수
-        classCount:
-          type: integer
-          description: 총 수업 횟수
-        detail:
+        description:
           type: string
           description: 상세 설명
         careers:
@@ -380,6 +343,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PortfolioResponse'
+
+      required:
+        - id
+        - name
+        - verified
+        - careers
+        - portfolios
 
     # 경력 응답
     CareerResponse:
@@ -395,7 +365,6 @@ components:
     # 포트폴리오 응답
     PortfolioResponse:
       type: string
-      format: uri
       description: 포트폴리오 URL 리스트 (예, "port.google.com/portport")
 
     # 리뷰 생성 요청

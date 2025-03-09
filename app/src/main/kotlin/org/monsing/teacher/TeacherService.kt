@@ -9,6 +9,7 @@ import org.monsing.util.findByIdOrElseThrow
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Service
 class TeacherService(
     private val memberRepository: MemberRepository,
@@ -27,5 +28,9 @@ class TeacherService(
                 nickname = Nickname(name)
             )
         )
+    }
+
+    fun findTeacherById(id: Long): Teacher {
+        return memberRepository.findTeacherById(id)
     }
 }

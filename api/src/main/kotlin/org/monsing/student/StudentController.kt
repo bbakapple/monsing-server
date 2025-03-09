@@ -24,6 +24,13 @@ class StudentController(
         return ResponseEntity.ok().build()
     }
 
+    override fun studentsPatch(
+        tokenPayload: AuthTokenPayload,
+        studentUpdateRequest: StudentUpdateRequest
+    ): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override fun studentsIdCoursesGet(
         tokenPayload: AuthTokenPayload,
         id: Int
@@ -43,17 +50,6 @@ class StudentController(
     }
 
     override fun studentsIdNextClassGet(tokenPayload: AuthTokenPayload, id: Int): ResponseEntity<PrevCourseResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override fun studentsMyGet(authTokenPayload: AuthTokenPayload): ResponseEntity<StudentResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override fun studentsMyPatch(
-        authTokenPayload: AuthTokenPayload,
-        studentUpdateRequest: StudentUpdateRequest
-    ): ResponseEntity<Unit> {
         TODO("Not yet implemented")
     }
 }

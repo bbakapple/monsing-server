@@ -30,24 +30,6 @@ paths:
         '400':
           description: 잘못된 요청
 
-  /students/my:
-    get:
-      summary: 내 정보 조회
-      description: 내 정보를 조회합니다.
-      tags:
-        - Student
-      security:
-        - BearerAuth: [ ]
-      responses:
-        '200':
-          description: 성공
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StudentResponse'
-        '400':
-          description: 잘못된 요청입니다.
-
     patch:
       summary: 내 정보 수정
       description: 내 정보를 수정합니다.
