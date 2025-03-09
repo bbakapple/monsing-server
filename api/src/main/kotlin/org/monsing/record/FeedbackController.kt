@@ -6,6 +6,8 @@ import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.record.feedback.FeedbackItem
 import org.monsing.record.feedback.FeedbackService
+import org.monsing.record.response.FeedbackResponse
+import org.monsing.util.toNonNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -58,7 +60,41 @@ class FeedbackController(
     ): List<FeedbackItem> {
         return feedbackService.getFeedbackItemsByMemberId(authTokenPayload.id)
     }
+
+    @Auth
+    @Operation(summary = "피드백 요청")
+    @PostMapping("/feedbacks/{feedbackTicketId}")
+    fun requestFeedback(
+        @AuthPayload authTokenPayload: AuthTokenPayload,
+        @PathVariable feedbackTicketId: Long,
+        @RequestBody request: RequestFeedbackRequest
+    ) {
+        feedbackService.requestFeedback(authTokenPayload.id, request.recordId, feedbackTicketId)
+    }
+
+    @Auth
+    @Operation(summary = "내 피드백 조회")
+    @GetMapping("/feedbacks/my")
+    fun listFeedbacks(
+        @AuthPayload authTokenPayload: AuthTokenPayload
+    ): List<FeedbackResponse> {
+        val feedbacks = feedbackService.findFeedbacksByMemberId(authTokenPayload.id)
+
+        return feedbacks.map {
+            FeedbackResponse(
+                id = requireNotNull(it.id),
+                teacher = it.teacher,
+                recordId = it.record.id.toNonNull(),
+                detail = it.detail,
+                createdAt = it.updatedDate
+            )
+        }
+    }
 }
+
+data class RequestFeedbackRequest(
+    val recordId: Long
+)
 
 data class FeedbackTicketPurchaseRequest(
     val amount: Int,

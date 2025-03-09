@@ -36,9 +36,9 @@ class Record(
     val notCompletedFeedBacks
         get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 
-    fun requestFeedback(teacher: Teacher) {
+    fun requestFeedback(teacher: Teacher, record: Record) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-//        feedbacks.add(Feedback(recordId = requireNotNull(id), teacher = teacher))
+        feedbacks.add(Feedback(teacher = teacher, record = record, studentId = studentId))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {

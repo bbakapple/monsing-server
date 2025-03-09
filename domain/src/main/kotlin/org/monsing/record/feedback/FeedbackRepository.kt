@@ -11,4 +11,5 @@ interface FeedbackRepository : JpaRepository<Feedback, Long> {
     fun findByRecordId(id: Long): List<Feedback>
     @Query("SELECT f FROM Feedback f JOIN FETCH f.teacher")
     fun findAllFeedbackDetails() : List<Feedback>
+    fun findByStudentId(studentId: Long): MutableList<Feedback>
 }

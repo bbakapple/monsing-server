@@ -1,7 +1,11 @@
 package org.monsing.record.feedback
 
 import org.monsing.member.MemberRepository
+import org.monsing.member.Student
+import org.monsing.member.teacher.Teacher
+import org.monsing.record.RecordRepository
 import org.monsing.util.findByIdOrElseThrow
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -12,11 +16,11 @@ class FeedbackService(
     private val feedbackTicketRepository: FeedbackTicketRepository,
     private val memberRepository: MemberRepository,
     private val feedbackItemRepository: FeedbackItemRepository,
+    private val recordRepository: RecordRepository
 ) {
 
     fun createFeedbackItem(teacherId: Long, price: Int, description: String, amount: Int) {
         val teacher = memberRepository.findTeacherById(teacherId)
-            ?: throw IllegalArgumentException("Teacher not found")
         val feedbackItem = FeedbackItem(teacher, description, price, amount)
         feedbackItemRepository.save(feedbackItem)
     }
@@ -31,7 +35,6 @@ class FeedbackService(
 
     fun purchaseFeedbackTicket(studentId: Long, amount: Int, itemId: Long) {
         val student = memberRepository.findStudentById(studentId)
-            ?: throw IllegalArgumentException("Student not found")
         val feedbackItem = feedbackItemRepository.findByIdOrElseThrow(itemId)
         val ticket = FeedbackTicket(feedbackItem, student, amount)
         feedbackItem.decreaseAmount(amount)
@@ -39,14 +42,53 @@ class FeedbackService(
     }
 
     fun getFeedbackItemsByMemberId(memberId: Long): List<FeedbackItem> {
-        val teacher = memberRepository.findTeacherById(memberId)
+        val teacher = getTeacherOrNull(memberId)
         if (teacher != null) {
             return feedbackItemRepository.findByTeacher(teacher)
         }
-        val student = memberRepository.findStudentById(memberId) ?: throw IllegalArgumentException("Student not found")
+        val student = getStudentOrNull(memberId)
         if (student != null) {
             return feedbackTicketRepository.findByStudent(student).map { it.feedbackItem }
         }
         throw IllegalArgumentException("Member not found")
+    }
+
+
+    @Transactional
+    fun requestFeedback(memberId: Long, recordId: Long, feedbackTicketId: Long) {
+        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+        val student = memberRepository.findStudentById(memberId)
+        val feedbackTicket = feedbackTicketRepository.findByIdOrElseThrow(feedbackTicketId)
+
+        feedbackTicket.decreaseAmount(1)
+        record.requestFeedback(feedbackTicket.feedbackItem.teacher, record)
+    }
+
+    fun findFeedbacksByMemberId(id: Long): List<Feedback> {
+        val student = getStudentOrNull(id)
+        if (student != null) {
+            return feedbackRepository.findByStudentId(id)
+        }
+        val teacher = getTeacherOrNull(id)
+        if (teacher != null) {
+            return feedbackRepository.findByTeacher(teacher)
+        }
+        throw IllegalArgumentException("Member not found")
+    }
+
+    private fun getStudentOrNull(memberId: Long): Student? {
+        return try {
+            memberRepository.findStudentById(memberId)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+    }
+
+    private fun getTeacherOrNull(memberId: Long): Teacher? {
+        return try {
+            memberRepository.findTeacherById(memberId)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
     }
 }

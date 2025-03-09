@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 interface FeedbackTicketRepository : JpaRepository<FeedbackTicket, Long> {
 
     fun findByStudent(student: Student): List<FeedbackTicket>
+
 }

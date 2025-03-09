@@ -26,21 +26,6 @@ class RecordService(
         return recordRepository.save(record)
     }
 
-//    @Transactional
-//    fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
-//        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-//        val student = memberRepository.findStudentById(memberId)
-//            ?: throw IllegalArgumentException("Student not found")
-//        val teacher = memberRepository.findTeacherById(teacherId)
-//            ?: throw IllegalArgumentException("Teacher not found")
-//        val ticket = feedbackTicketRepository.findByTeacherId(
-//            teacher.id.toNonNull()
-//        ) ?: throw IllegalArgumentException("Feedback ticket not found")
-//        ticket.student = student
-//        ticket.decreaseAmount(1)
-//        record.requestFeedback(teacher)
-//    }
-
     @Transactional
     fun writeFeedback(writerId: Long, recordId: Long, detail: String) {
         val record = recordRepository.findByIdOrElseThrow(recordId)

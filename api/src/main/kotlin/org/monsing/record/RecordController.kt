@@ -5,16 +5,15 @@ import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.record.feedback.FeedbackTicket
-import org.monsing.record.request.RequestFeedbackRequest
 import org.monsing.record.request.UpdateRecordRequest
 import org.monsing.record.request.UploadRecordRequest
 import org.monsing.record.request.WriteFeedbackRequest
 import org.monsing.record.response.FeedbackResponse
 import org.monsing.record.response.RecordResponse
 import org.monsing.record.response.RecordUploadResponse
+import org.monsing.util.toNonNull
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -82,7 +81,7 @@ class RecordController(
             FeedbackResponse(
                 id = requireNotNull(it.id),
                 teacher = it.teacher,
-                recordId = it.recordId,
+                recordId = it.record.id.toNonNull(),
                 detail = it.detail,
                 createdAt = it.updatedDate
             )
@@ -128,7 +127,7 @@ class RecordController(
                 FeedbackResponse(
                     id = requireNotNull(it.id),
                     teacher = it.teacher,
-                    recordId = it.recordId,
+                    recordId = it.record.id.toNonNull(),
                     detail = it.detail,
                     createdAt = it.updatedDate
                 )
@@ -169,7 +168,7 @@ class RecordController(
             FeedbackResponse(
                 id = requireNotNull(it.id),
                 teacher = it.teacher,
-                recordId = it.recordId,
+                recordId = it.record.id.toNonNull(),
                 detail = it.detail,
                 createdAt = it.updatedDate
             )
