@@ -38,7 +38,10 @@ class Teacher(
     val profileImage: String? = null,
 
     @Enumerated(EnumType.STRING)
-    val genderType: GenderType,
+    var genderType: GenderType = GenderType.OTHER,
+
+    @Enumerated(EnumType.STRING)
+    var expertiseType: ExpertiseType = ExpertiseType.NONE,
 
     @OneToMany
     val portfolios: List<Portfolio> = mutableListOf(),

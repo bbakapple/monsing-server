@@ -1,7 +1,7 @@
 package org.monsing.student
 
 import openapi.api.StudentApi
-import openapi.model.CourseResponse
+import openapi.model.PrevCourseResponse
 import openapi.model.StudentCreateRequest
 import openapi.model.StudentResponse
 import openapi.model.StudentUpdateRequest
@@ -24,10 +24,17 @@ class StudentController(
         return ResponseEntity.ok().build()
     }
 
+    override fun studentsPatch(
+        tokenPayload: AuthTokenPayload,
+        studentUpdateRequest: StudentUpdateRequest
+    ): ResponseEntity<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override fun studentsIdCoursesGet(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int
-    ): ResponseEntity<List<CourseResponse>> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 
@@ -42,18 +49,7 @@ class StudentController(
         TODO("Not yet implemented")
     }
 
-    override fun studentsIdNextClassGet(authTokenPayload: AuthTokenPayload, id: Int): ResponseEntity<CourseResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override fun studentsMyGet(authTokenPayload: AuthTokenPayload): ResponseEntity<StudentResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override fun studentsMyPatch(
-        authTokenPayload: AuthTokenPayload,
-        studentUpdateRequest: StudentUpdateRequest
-    ): ResponseEntity<Unit> {
+    override fun studentsIdNextClassGet(tokenPayload: AuthTokenPayload, id: Int): ResponseEntity<PrevCourseResponse> {
         TODO("Not yet implemented")
     }
 }

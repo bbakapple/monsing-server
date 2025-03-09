@@ -5,10 +5,10 @@ spring:
 
 jwt:
   access-token:
-    secret: akdsmksamdkdamkdkmasdkmdakmsdnmbambmb4294g4kokgo4k4g
+    secret: xl32frB+bFvlJ4/lgWRSmCqufDua1fEFuX+XAI7Nki57y8a63RGfCFEfjGwG+ZR352FypLWyoLSVF58JwFQuAg==
     expire-second: 1800
   refresh-token:
-    secret: fkimf224mg42mg24mk4gmvnsnbnaoaofkl23lf3f329m2ollfflf4f4
+    secret: 9FhG6PRid62YTNTg25J75aT++rFnrfSzyuPs+3+sEK6f57AoJrKj6h2G+v4H/njghWg14b26xa71P3nEiVZDqw==
     expire-second: 1296000
 
 livekit:

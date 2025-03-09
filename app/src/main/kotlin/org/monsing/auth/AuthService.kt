@@ -3,6 +3,7 @@ package org.monsing.auth
 import org.monsing.auth.jwt.AuthTokenManager
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.auth.oauthhandler.OauthAdaptor
+import org.monsing.member.Member
 import org.monsing.member.MemberRepository
 import org.monsing.member.OauthProviderType
 import org.monsing.member.TempMember
@@ -52,9 +53,7 @@ class AuthService(
     }
 
     @Transactional(readOnly = true)
-    fun getMemberRole(id: Long): String {
-        return memberRepository.findByIdOrNull(id)?.let {
-            return it.javaClass.simpleName
-        } ?: return "NONE"
+    fun getMember(id: Long): Member? {
+        return memberRepository.findByIdOrNull(id)
     }
 }
