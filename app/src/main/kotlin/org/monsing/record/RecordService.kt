@@ -3,17 +3,22 @@ package org.monsing.record
 import org.monsing.member.MemberRepository
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackRepository
+import org.monsing.record.feedback.FeedbackTicket
 import org.monsing.record.feedback.FeedbackTicketRepository
 import org.monsing.util.findByIdOrElseThrow
+import org.monsing.util.toNonNull
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 @Service
 class RecordService(
     private val recordRepository: RecordRepository,
     private val feedbackRepository: FeedbackRepository,
     private val feedbackTicketRepository: FeedbackTicketRepository,
     private val memberRepository: MemberRepository
+
 ) {
 
     @Transactional
@@ -21,24 +26,25 @@ class RecordService(
         return recordRepository.save(record)
     }
 
-    @Transactional
-    fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
-        val record = recordRepository.findByIdOrElseThrow(recordId)
-        val student = memberRepository.findStudentById(memberId)
-
-        val ticket = feedbackTicketRepository.findByStudentIdAndTeacherId(
-            requireNotNull(student.id),
-            teacherId
-        ) ?: throw IllegalArgumentException("Feedback ticket not found")
-
-        ticket.decreaseAmount()
-        record.requestFeedback(teacherId)
-    }
+//    @Transactional
+//    fun requestFeedback(memberId: Long, recordId: Long, teacherId: Long) {
+//        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+//        val student = memberRepository.findStudentById(memberId)
+//            ?: throw IllegalArgumentException("Student not found")
+//        val teacher = memberRepository.findTeacherById(teacherId)
+//            ?: throw IllegalArgumentException("Teacher not found")
+//        val ticket = feedbackTicketRepository.findByTeacherId(
+//            teacher.id.toNonNull()
+//        ) ?: throw IllegalArgumentException("Feedback ticket not found")
+//        ticket.student = student
+//        ticket.decreaseAmount(1)
+//        record.requestFeedback(teacher)
+//    }
 
     @Transactional
     fun writeFeedback(writerId: Long, recordId: Long, detail: String) {
         val record = recordRepository.findByIdOrElseThrow(recordId)
-        val feedback = record.feedbacks.find { it.teacherId == writerId }
+        val feedback = record.feedbacks.find { it.teacher.id == writerId }
             ?: throw IllegalArgumentException("Feedback not found")
 
         feedback.writeFeedback(detail)
@@ -51,7 +57,7 @@ class RecordService(
 
     @Transactional(readOnly = true)
     fun findRecordById(recordId: Long, memberId: Long): Record {
-        val record = recordRepository.findByIdOrElseThrow(recordId)
+        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
         val member = memberRepository.findByIdOrElseThrow(memberId)
 
         require(record.isOwnedBy(member)) { "Record does not belong to member" }
@@ -59,16 +65,16 @@ class RecordService(
         return record
     }
 
-    @Transactional
-    fun deleteRecord(recordId: Long, id: Long) {
-        val record = recordRepository.findByIdOrElseThrow(recordId)
-        val student = memberRepository.findStudentById(id)
-        require(record.studentId == student.id) { "Record does not belong to student" }
-        record.notCompletedFeedBacks.forEach {
-            feedbackTicketRepository.findByStudentIdAndTeacherId(id, it.teacherId)?.increaseAmount()
-        }
-        recordRepository.delete(record)
-    }
+//    @Transactional
+//    fun deleteRecord(recordId: Long, id: Long) {
+//        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+//        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
+//        require(record.studentId == student.id) { "Record does not belong to student" }
+//        record.notCompletedFeedBacks.forEach {
+//            feedbackTicketRepository.findByStudent(student)?.
+//        }
+//        recordRepository.delete(record)
+//    }
 
     @Transactional
     fun updateRecord(recordId: Long, id: Long, title: String) {
@@ -78,7 +84,22 @@ class RecordService(
         record.updateTitle(title)
     }
 
-    fun findFeedbacksByTeacherId(id: Long): List<Feedback> {
-        return feedbackRepository.findByTeacherId(id)
+    fun findAllFeedbackDetails(): List<Feedback> {
+        return feedbackRepository.findAllFeedbackDetails()
+    }
+
+    fun findFeedbacksByMemberId(id: Long): List<Feedback> {
+        val studentFeedbacks = recordRepository.findByStudentId(id).flatMap { it.feedbacks }
+        if (studentFeedbacks.isNotEmpty()) return studentFeedbacks
+
+        val teacher = memberRepository.findTeacherById(id) ?: throw IllegalArgumentException("Teacher not found")
+        val teacherFeedbacks = feedbackRepository.findByTeacher(teacher)
+        if (teacherFeedbacks.isNotEmpty()) return teacherFeedbacks
+
+        return emptyList()
+    }
+
+    fun findFeedbackTicket(ticketId: Long): FeedbackTicket {
+        return feedbackTicketRepository.findByIdOrElseThrow(ticketId)
     }
 }

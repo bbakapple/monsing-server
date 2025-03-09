@@ -1,8 +1,10 @@
 package org.monsing.record
 
+import io.swagger.v3.oas.annotations.Operation
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
+import org.monsing.record.feedback.FeedbackTicket
 import org.monsing.record.request.RequestFeedbackRequest
 import org.monsing.record.request.UpdateRecordRequest
 import org.monsing.record.request.UploadRecordRequest
@@ -31,6 +33,7 @@ class RecordController(
 ) {
 
     @Auth
+    @Operation(summary = "Record 파일 업로드")
     @PostMapping("/records")
     fun uploadRecord(
         @RequestPart file: MultipartFile,
@@ -42,19 +45,21 @@ class RecordController(
 
         return ResponseEntity.ok(RecordUploadResponse(key))
     }
+//
+//    @Auth
+//    @Operation(summary = "feedback 요청")
+//    @PostMapping("/records/{recordId}/feedbacks")
+//    fun requestFeedback(
+//        @AuthPayload authTokenPayload: AuthTokenPayload,
+//        @PathVariable recordId: Long,
+//        @RequestBody request: RequestFeedbackRequest
+//    ): ResponseEntity<Unit> {
+//        recordService.requestFeedback(authTokenPayload.id, recordId, request.teacherId)
+//        return ResponseEntity.ok().build()
+//    }
 
     @Auth
-    @PostMapping("/records/{recordId}/feedbacks")
-    fun requestFeedback(
-        @AuthPayload authTokenPayload: AuthTokenPayload,
-        @PathVariable recordId: Long,
-        @RequestBody request: RequestFeedbackRequest
-    ): ResponseEntity<Unit> {
-        recordService.requestFeedback(authTokenPayload.id, recordId, request.teacherId)
-        return ResponseEntity.ok().build()
-    }
-
-    @Auth
+    @Operation(summary = "feedback 작성")
     @PatchMapping("/records/{recordId}/feedbacks")
     fun writeFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -66,16 +71,17 @@ class RecordController(
     }
 
     @Auth
-    @GetMapping("/feedbacks")
+    @Operation(summary = "내 feedback 조회")
+    @GetMapping("/feedbacks/my")
     fun listFeedbacks(
         @AuthPayload authTokenPayload: AuthTokenPayload,
     ): ResponseEntity<List<FeedbackResponse>> {
-        val feedbacks = recordService.findFeedbacksByTeacherId(authTokenPayload.id)
+        val feedbacks = recordService.findFeedbacksByMemberId(authTokenPayload.id)
 
         val response = feedbacks.map {
             FeedbackResponse(
                 id = requireNotNull(it.id),
-                writerId = it.teacherId,
+                teacher = it.teacher,
                 recordId = it.recordId,
                 detail = it.detail,
                 createdAt = it.updatedDate
@@ -86,7 +92,8 @@ class RecordController(
     }
 
     @Auth
-    @GetMapping("/records")
+    @Operation(summary = "내 record 조회")
+    @GetMapping("/records/my")
     fun listRecords(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @RequestParam(required = false) size: Int?,
@@ -106,6 +113,7 @@ class RecordController(
     }
 
     @Auth
+    @Operation(summary = "record 단건 조회")
     @GetMapping("/records/{recordId}")
     fun getRecord(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -119,7 +127,7 @@ class RecordController(
             record.feedbacks.map {
                 FeedbackResponse(
                     id = requireNotNull(it.id),
-                    writerId = it.teacherId,
+                    teacher = it.teacher,
                     recordId = it.recordId,
                     detail = it.detail,
                     createdAt = it.updatedDate
@@ -130,17 +138,19 @@ class RecordController(
         return ResponseEntity.ok(response)
     }
 
-    @Auth
-    @DeleteMapping("/records/{recordId}")
-    fun deleteRecord(
-        @AuthPayload authTokenPayload: AuthTokenPayload,
-        @PathVariable recordId: Long
-    ): ResponseEntity<Unit> {
-        recordService.deleteRecord(recordId, authTokenPayload.id)
-        return ResponseEntity.ok().build()
-    }
+//    @Auth
+//    @Operation(summary = "record 삭제")
+//    @DeleteMapping("/records/{recordId}")
+//    fun deleteRecord(
+//        @AuthPayload authTokenPayload: AuthTokenPayload,
+//        @PathVariable recordId: Long
+//    ): ResponseEntity<Unit> {
+//        recordService.deleteRecord(recordId, authTokenPayload.id)
+//        return ResponseEntity.ok().build()
+//    }
 
     @Auth
+    @Operation(summary = "record 수정")
     @PatchMapping("/records/{recordId}")
     fun updateRecord(
         @AuthPayload authTokenPayload: AuthTokenPayload,
@@ -149,6 +159,32 @@ class RecordController(
     ): ResponseEntity<Unit> {
         recordService.updateRecord(recordId, authTokenPayload.id, request.title)
         return ResponseEntity.ok().build()
+    }
+
+    @Auth
+    @Operation(summary = "feedback ticket 다건 조회")
+    @GetMapping("/feedbacks/tickets")
+    fun getAllFeedbacks(): ResponseEntity<List<FeedbackResponse>> {
+        val response = recordService.findAllFeedbackDetails().map {
+            FeedbackResponse(
+                id = requireNotNull(it.id),
+                teacher = it.teacher,
+                recordId = it.recordId,
+                detail = it.detail,
+                createdAt = it.updatedDate
+            )
+        }
+
+        return ResponseEntity.ok(response)
+    }
+
+    @Auth
+    @Operation(summary = "feedback ticket 단건 조회")
+    @GetMapping("/feedbacks/tickets/{ticketId}")
+    fun getFeedbackTicket(
+        @PathVariable ticketId: Long
+    ): ResponseEntity<FeedbackTicket> {
+        return ResponseEntity.ok(recordService.findFeedbackTicket(ticketId))
     }
 
     private fun String.toUrl() = "$cloudfrontUrl/$this"
