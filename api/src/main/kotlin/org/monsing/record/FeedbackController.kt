@@ -63,7 +63,7 @@ class FeedbackController(
 
     @Auth
     @Operation(summary = "피드백 요청")
-    @PostMapping("/feedbacks/{feedbackTicketId}")
+    @PostMapping("/{feedbackTicketId}")
     fun requestFeedback(
         @AuthPayload authTokenPayload: AuthTokenPayload,
         @PathVariable feedbackTicketId: Long,
@@ -74,7 +74,7 @@ class FeedbackController(
 
     @Auth
     @Operation(summary = "내 피드백 조회")
-    @GetMapping("/feedbacks/my")
+    @GetMapping("/my")
     fun listFeedbacks(
         @AuthPayload authTokenPayload: AuthTokenPayload
     ): List<FeedbackResponse> {
