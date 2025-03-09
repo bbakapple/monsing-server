@@ -8,11 +8,13 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MemberRepository : JpaRepository<Member, Long> {
 
-    fun findTeacherById(id: Long): Teacher? {
+    fun findTeacherById(id: Long): Teacher {
         return findByIdOrNull(id) as? Teacher
+            ?: throw IllegalArgumentException("Teacher not found")
     }
 
-    fun findStudentById(id: Long): Student? {
+    fun findStudentById(id: Long): Student {
         return findByIdOrNull(id) as? Student
+            ?: throw IllegalArgumentException("Student not found")
     }
 }

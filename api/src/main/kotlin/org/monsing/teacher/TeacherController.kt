@@ -1,11 +1,12 @@
 package org.monsing.teacher
 
 import openapi.api.TeacherApi
-import openapi.model.CourseResponse
+import openapi.model.CareerResponse
+import openapi.model.PrevCourseResponse
 import openapi.model.ReadReviews200Response
 import openapi.model.ReviewCreateRequest
 import openapi.model.TeacherCreateRequest
-import openapi.model.TeacherDetailResponse
+import openapi.model.TeacherOverviewResponse
 import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.teacher.GenderType
@@ -44,33 +45,42 @@ class TeacherController(
         )
     }
 
+    override fun getTeacherOverview(id: Long): ResponseEntity<TeacherOverviewResponse> {
+        val teacher = teacherService.findTeacherById(id)
+
+        val response = TeacherOverviewResponse(
+            id = requireNotNull(teacher.id),
+            name = teacher.nickname.value,
+            verified = teacher.verified,
+            careers = teacher.careers.map { CareerResponse(it.detail, it.period) },
+            portfolios = teacher.portfolios.map { it.url },
+            profileImage = teacher.profileImage,
+            summary = teacher.summary,
+            description = teacher.description
+        )
+
+        return ResponseEntity.ok(response)
+    }
+
     override fun readClasses(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int,
         lastId: Int?,
         size: Int?
-    ): ResponseEntity<List<CourseResponse>> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 
     override fun readClassesByDate(
-        authTokenPayload: AuthTokenPayload,
+        tokenPayload: AuthTokenPayload,
         id: Int,
         from: String,
         to: String
-    ): ResponseEntity<List<CourseResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun readMyInfo(authTokenPayload: AuthTokenPayload): ResponseEntity<TeacherDetailResponse> {
+    ): ResponseEntity<List<PrevCourseResponse>> {
         TODO("Not yet implemented")
     }
 
     override fun readReviews(id: Int, lastId: Int?, size: Int?): ResponseEntity<ReadReviews200Response> {
-        TODO("Not yet implemented")
-    }
-
-    override fun readTeacherDetail(id: Int): ResponseEntity<TeacherDetailResponse> {
         TODO("Not yet implemented")
     }
 
