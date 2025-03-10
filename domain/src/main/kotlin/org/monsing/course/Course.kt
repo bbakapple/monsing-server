@@ -2,6 +2,7 @@ package org.monsing.course
 
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.OneToMany
@@ -67,6 +68,7 @@ class Course(
     }
 }
 
+@Embeddable
 class CourseMinimumLessonCount(
 
     @Column(name = "minimum_lesson_count", nullable = false)
@@ -83,6 +85,7 @@ class CourseMinimumLessonCount(
     }
 }
 
+@Embeddable
 class CoursePricePerLesson(
 
     @Column(name = "price_per_lesson", nullable = false)
@@ -96,6 +99,7 @@ class CoursePricePerLesson(
     }
 }
 
+@Embeddable
 class CourseDuration(
 
     @Column(name = "duration", nullable = false)
