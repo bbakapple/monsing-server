@@ -9,6 +9,7 @@ import org.monsing.member.Member
 import org.monsing.member.teacher.Teacher
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackStatus
+import org.monsing.record.feedback.FeedbackTicket
 
 @Entity
 class Record(
@@ -25,6 +26,7 @@ class Record(
 
     @OneToMany
     val feedbacks: MutableList<Feedback> = mutableListOf()
+
 ) : BaseEntity(id = id) {
 
     @Embedded

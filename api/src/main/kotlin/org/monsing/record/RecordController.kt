@@ -14,6 +14,7 @@ import org.monsing.record.response.RecordUploadResponse
 import org.monsing.util.toNonNull
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -70,27 +71,6 @@ class RecordController(
     }
 
     @Auth
-    @Operation(summary = "내 feedback 조회")
-    @GetMapping("/feedbacks/my")
-    fun listFeedbacks(
-        @AuthPayload authTokenPayload: AuthTokenPayload,
-    ): ResponseEntity<List<FeedbackResponse>> {
-        val feedbacks = recordService.findFeedbacksByMemberId(authTokenPayload.id)
-
-        val response = feedbacks.map {
-            FeedbackResponse(
-                id = requireNotNull(it.id),
-                teacher = it.teacher,
-                recordId = it.record.id.toNonNull(),
-                detail = it.detail,
-                createdAt = it.updatedDate
-            )
-        }
-
-        return ResponseEntity.ok(response)
-    }
-
-    @Auth
     @Operation(summary = "내 record 조회")
     @GetMapping("/records/my")
     fun listRecords(
@@ -137,16 +117,16 @@ class RecordController(
         return ResponseEntity.ok(response)
     }
 
-//    @Auth
-//    @Operation(summary = "record 삭제")
-//    @DeleteMapping("/records/{recordId}")
-//    fun deleteRecord(
-//        @AuthPayload authTokenPayload: AuthTokenPayload,
-//        @PathVariable recordId: Long
-//    ): ResponseEntity<Unit> {
-//        recordService.deleteRecord(recordId, authTokenPayload.id)
-//        return ResponseEntity.ok().build()
-//    }
+    @Auth
+    @Operation(summary = "record 삭제")
+    @DeleteMapping("/records/{recordId}")
+    fun deleteRecord(
+        @AuthPayload authTokenPayload: AuthTokenPayload,
+        @PathVariable recordId: Long
+    ): ResponseEntity<Unit> {
+        recordService.deleteRecord(recordId, authTokenPayload.id)
+        return ResponseEntity.ok().build()
+    }
 
     @Auth
     @Operation(summary = "record 수정")
