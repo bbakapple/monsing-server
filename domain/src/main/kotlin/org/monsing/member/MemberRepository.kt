@@ -17,4 +17,8 @@ interface MemberRepository : JpaRepository<Member, Long> {
         return findByIdOrNull(id) as? Student
             ?: throw IllegalArgumentException("Student not found")
     }
+
+    fun findAllTeachers(): List<Teacher> {
+        return findAll().filterIsInstance<Teacher>()
+    }
 }

@@ -7,7 +7,6 @@ import openapi.model.ReadReviews200Response
 import openapi.model.ReviewCreateRequest
 import openapi.model.TeacherCreateRequest
 import openapi.model.TeacherOverviewResponse
-import openapi.model.TeacherResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.monsing.member.teacher.GenderType
 import org.monsing.util.enumValueOrNull
@@ -84,14 +83,22 @@ class TeacherController(
         TODO("Not yet implemented")
     }
 
-    override fun readTeachers(
-        lastId: Int?,
-        size: Int?,
-        gender: String?,
-        maxPrice: Int?,
-        verified: Boolean?,
-        query: String?
-    ): ResponseEntity<TeacherResponse> {
-        TODO("Not yet implemented")
+    override fun readTeachers(): ResponseEntity<List<TeacherOverviewResponse>> {
+        val teachers = teacherService.findAllTeachers()
+
+        return ResponseEntity.ok(
+            teachers.map {
+                TeacherOverviewResponse(
+                    id = it.id!!,
+                    name = it.nickname.value,
+                    verified = it.verified,
+                    careers = it.careers.map { career -> CareerResponse(career.detail, career.period) },
+                    portfolios = it.portfolios.map { portfolio -> portfolio.url },
+                    profileImage = it.profileImage,
+                    summary = it.summary,
+                    description = it.description
+                )
+            }
+        )
     }
 }

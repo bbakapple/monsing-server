@@ -33,4 +33,8 @@ class TeacherService(
     fun findTeacherById(id: Long): Teacher {
         return memberRepository.findTeacherById(id)
     }
+
+    fun findAllTeachers(): List<Teacher> {
+        return memberRepository.findAllTeachers()
+    }
 }

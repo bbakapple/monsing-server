@@ -225,14 +225,14 @@ class CourseTest : StringSpec({
                 Lesson(
                     id = 1,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(10, 0),
                     )
                 ),
                 Lesson(
                     id = 2,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(12, 0),
                     )
                 )
@@ -258,14 +258,14 @@ class CourseTest : StringSpec({
                 Lesson(
                     id = 1,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(10, 0),
                     )
                 ),
                 Lesson(
                     id = 2,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(11, 0),
                     )
                 )
@@ -292,14 +292,14 @@ class CourseTest : StringSpec({
                 Lesson(
                     id = 1,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(10, 0),
                     )
                 ),
                 Lesson(
                     id = 2,
                     lessonSchedule = LessonSchedule(
-                        dayOfWeek = DayOfWeek.MONDAY,
+                        dayOfWeek = DayOfWeek.MON,
                         startTime = LocalTime.of(12, 0),
                     )
                 )
