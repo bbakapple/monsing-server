@@ -42,15 +42,15 @@ class FeedbackService(
     }
 
     fun getFeedbackItemsByMemberId(memberId: Long): List<FeedbackItem> {
-        val teacher = getTeacherOrNull(memberId)
-        if (teacher != null) {
-            return feedbackItemRepository.findByTeacher(teacher)
+        val member = memberRepository.findByIdOrElseThrow(memberId)
+
+        return if (member is Teacher) {
+            feedbackItemRepository.findByTeacher(member)
+        } else if (member is Student) {
+            feedbackTicketRepository.findByStudent(member).map { it.feedbackItem }
+        } else {
+            throw IllegalArgumentException("Member not found")
         }
-        val student = getStudentOrNull(memberId)
-        if (student != null) {
-            return feedbackTicketRepository.findByStudent(student).map { it.feedbackItem }
-        }
-        throw IllegalArgumentException("Member not found")
     }
 
 
@@ -65,30 +65,14 @@ class FeedbackService(
     }
 
     fun findFeedbacksByMemberId(id: Long): List<Feedback> {
-        val student = getStudentOrNull(id)
-        if (student != null) {
-            return feedbackRepository.findByStudentId(id)
-        }
-        val teacher = getTeacherOrNull(id)
-        if (teacher != null) {
-            return feedbackRepository.findByTeacher(teacher)
-        }
-        throw IllegalArgumentException("Member not found")
-    }
+        val member = memberRepository.findByIdOrElseThrow(id)
 
-    private fun getStudentOrNull(memberId: Long): Student? {
-        return try {
-            memberRepository.findStudentById(memberId)
-        } catch (e: IllegalArgumentException) {
-            null
-        }
-    }
-
-    private fun getTeacherOrNull(memberId: Long): Teacher? {
-        return try {
-            memberRepository.findTeacherById(memberId)
-        } catch (e: IllegalArgumentException) {
-            null
+        return if (member is Student) {
+            feedbackRepository.findByStudentId(id)
+        } else if (member is Teacher) {
+            feedbackRepository.findByTeacher(member)
+        } else {
+            throw IllegalArgumentException("Member not found")
         }
     }
 }
