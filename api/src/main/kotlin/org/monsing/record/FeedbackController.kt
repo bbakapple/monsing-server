@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
+import org.monsing.member.teacher.ExpertiseType
+import org.monsing.member.teacher.GenderType
 import org.monsing.record.feedback.FeedbackItem
 import org.monsing.record.feedback.FeedbackService
 import org.monsing.record.response.FeedbackResponse
@@ -40,8 +42,10 @@ class FeedbackController(
 
     @Operation(summary = "피드백 다건 조회")
     @GetMapping("/items")
-    fun getFeedbackItems(): List<FeedbackItem> {
-        return feedbackService.getFeedbackItems()
+    fun getFeedbackItems(): List<FeedbackItemResponse> {
+        val feedbackItems = feedbackService.getFeedbackItems()
+
+        return feedbackItems.toResponse()
     }
 
     @Auth
@@ -59,8 +63,10 @@ class FeedbackController(
     @GetMapping("/items/my")
     fun getMyFeedbackItems(
         @AuthPayload authTokenPayload: AuthTokenPayload
-    ): List<FeedbackItem> {
-        return feedbackService.getFeedbackItemsByMemberId(authTokenPayload.id)
+    ): List<FeedbackItemResponse> {
+        val feedbackItems = feedbackService.getFeedbackItemsByMemberId(authTokenPayload.id)
+
+        return feedbackItems.toResponse()
     }
 
     @Auth
@@ -92,7 +98,43 @@ class FeedbackController(
             )
         }
     }
+
+    private fun List<FeedbackItem>.toResponse(): List<FeedbackItemResponse> {
+        return this.map {
+            FeedbackItemResponse(
+                teacher = TeacherResponse(
+                    id = it.teacher.id.toNonNull(),
+                    name = it.teacher.nickname.value,
+                    profileImageUrl = it.teacher.profileImage,
+                    verified = it.teacher.verified,
+                    description = it.teacher.description,
+                    genderType = it.teacher.genderType,
+                    expertiseType = it.teacher.expertiseType
+                ),
+                description = it.description,
+                price = it.price,
+                amount = it.amount
+            )
+        }
+    }
 }
+
+data class FeedbackItemResponse(
+    val teacher: TeacherResponse,
+    val description: String,
+    val price: Int,
+    var amount: Int,
+)
+
+class TeacherResponse(
+    val id: Long,
+    val name: String,
+    val profileImageUrl: String?,
+    val verified: Boolean,
+    val description: String?,
+    val genderType: GenderType,
+    val expertiseType: ExpertiseType,
+)
 
 data class RequestFeedbackRequest(
     val recordId: Long
