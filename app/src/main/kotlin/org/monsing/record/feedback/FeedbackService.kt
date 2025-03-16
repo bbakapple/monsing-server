@@ -67,7 +67,7 @@ class FeedbackService(
         val feedbackTicket = feedbackTicketRepository.findByIdOrElseThrow(feedbackTicketId)
 
         feedbackTicket.decreaseAmount(1)
-        record.requestFeedback(feedbackTicket.feedbackItem.teacher, record)
+        record.requestFeedback(feedbackTicket.feedbackItem.teacher)
     }
 
     fun findFeedbacksByMemberId(id: Long): List<Feedback> {

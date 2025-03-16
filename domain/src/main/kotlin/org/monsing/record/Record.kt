@@ -1,5 +1,6 @@
 package org.monsing.record
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -9,7 +10,7 @@ import org.monsing.member.Member
 import org.monsing.member.teacher.Teacher
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackStatus
-import org.monsing.record.feedback.FeedbackTicket
+import org.monsing.util.toNonNull
 
 @Entity
 class Record(
@@ -24,7 +25,7 @@ class Record(
     @Column(nullable = false)
     val fileKey: String,
 
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     val feedbacks: MutableList<Feedback> = mutableListOf()
 
 ) : BaseEntity(id = id) {
@@ -38,9 +39,9 @@ class Record(
     val notCompletedFeedBacks
         get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 
-    fun requestFeedback(teacher: Teacher, record: Record) {
+    fun requestFeedback(teacher: Teacher) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-        feedbacks.add(Feedback(teacher = teacher, record = record, studentId = studentId))
+        feedbacks.add(Feedback(teacher = teacher, recordId = this.id.toNonNull()))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {

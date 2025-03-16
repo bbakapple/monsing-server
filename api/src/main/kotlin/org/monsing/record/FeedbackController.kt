@@ -97,7 +97,7 @@ class FeedbackController(
             FeedbackResponse(
                 id = requireNotNull(it.id),
                 teacher = it.teacher,
-                recordId = it.record.id.toNonNull(),
+                recordId = it.recordId.toNonNull(),
                 detail = it.detail,
                 createdAt = it.updatedDate
             )

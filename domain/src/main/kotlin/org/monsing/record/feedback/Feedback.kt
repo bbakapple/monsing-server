@@ -1,6 +1,5 @@
 package org.monsing.record.feedback
 
-import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -9,7 +8,6 @@ import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
 import org.monsing.member.teacher.Teacher
-import org.monsing.record.Record
 
 private const val MAXIMUM_LENGTH = 3000
 
@@ -19,12 +17,7 @@ class Feedback(
     @JoinColumn(nullable = false)
     val teacher: Teacher,
 
-    @ManyToOne
-    @JoinColumn
-    val record: Record,
-
-    @Column(nullable = false)
-    val studentId: Long,
+    val recordId: Long,
 
     @Lob
     private var _detail: String? = null,
@@ -32,14 +25,6 @@ class Feedback(
     @Enumerated(EnumType.STRING)
     var status: FeedbackStatus = FeedbackStatus.REQUESTED,
 ) : BaseEntity() {
-
-    constructor(teacher: Teacher, record: Record, studentId: Long) : this(
-        teacher,
-        record,
-        studentId,
-        null,
-        FeedbackStatus.REQUESTED
-    )
 
     val detail: String
         get() = _detail ?: ""
