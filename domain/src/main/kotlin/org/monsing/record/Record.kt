@@ -41,7 +41,7 @@ class Record(
 
     fun requestFeedback(teacher: Teacher) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-        feedbacks.add(Feedback(teacher = teacher, recordId = this.id.toNonNull()))
+        feedbacks.add(Feedback(teacher = teacher, recordId = this.id.toNonNull(), studentId = studentId))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {
