@@ -6,7 +6,6 @@ import org.monsing.record.feedback.FeedbackRepository
 import org.monsing.record.feedback.FeedbackTicket
 import org.monsing.record.feedback.FeedbackTicketRepository
 import org.monsing.util.findByIdOrElseThrow
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -41,7 +40,7 @@ class RecordService(
 
     @Transactional(readOnly = true)
     fun findRecordById(recordId: Long, memberId: Long): Record {
-        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
+        val record = recordRepository.findByIdOrElseThrow(recordId)
         val member = memberRepository.findByIdOrElseThrow(memberId)
 
         require(record.isOwnedBy(member)) { "Record does not belong to member" }
@@ -51,8 +50,8 @@ class RecordService(
 
     @Transactional
     fun deleteRecord(recordId: Long, id: Long) {
-        val record = recordRepository.findByIdOrNull(recordId) ?: throw IllegalArgumentException("Record not found")
-        val student = memberRepository.findStudentById(id) ?: throw IllegalArgumentException("Student not found")
+        val record = recordRepository.findByIdOrElseThrow(recordId)
+        val student = memberRepository.findStudentById(id)
         require(record.studentId == student.id) { "Record does not belong to student" }
         record.notCompletedFeedBacks.forEach {
             feedbackTicketRepository.findByStudent(student).forEach { ticket ->

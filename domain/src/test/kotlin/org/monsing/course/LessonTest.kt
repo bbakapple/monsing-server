@@ -9,7 +9,7 @@ class LessonTest : StringSpec({
 
     "레슨 등록" {
         val lesson = Lesson(
-            lessonSchedule = LessonSchedule(DayOfWeek.FRIDAY, LocalTime.of(10, 0)),
+            lessonSchedule = LessonSchedule(DayOfWeek.FRI, LocalTime.of(10, 0)),
         )
 
         lesson.register(1, 1)
@@ -21,7 +21,7 @@ class LessonTest : StringSpec({
 
     "이미 판매된 레슨에 등록할 수 없다" {
         val lesson = Lesson(
-            lessonSchedule = LessonSchedule(DayOfWeek.FRIDAY, LocalTime.of(10, 0)),
+            lessonSchedule = LessonSchedule(DayOfWeek.FRI, LocalTime.of(10, 0)),
             lessonStatusType = LessonStatusType.RESERVED
         )
 
