@@ -102,6 +102,7 @@ class FeedbackController(
     private fun List<FeedbackItem>.toResponse(): List<FeedbackItemResponse> {
         return this.map {
             FeedbackItemResponse(
+                id = it.id.toNonNull(),
                 teacher = TeacherResponse(
                     id = it.teacher.id.toNonNull(),
                     name = it.teacher.nickname.value,
@@ -120,6 +121,7 @@ class FeedbackController(
 }
 
 data class FeedbackItemResponse(
+    val id: Long,
     val teacher: TeacherResponse,
     val description: String,
     val price: Int,
