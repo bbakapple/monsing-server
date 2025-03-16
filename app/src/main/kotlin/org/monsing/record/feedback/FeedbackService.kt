@@ -29,8 +29,14 @@ class FeedbackService(
         return feedbackItemRepository.findByIdOrElseThrow(itemId)
     }
 
-    fun getFeedbackItems(): List<FeedbackItem> {
-        return feedbackItemRepository.findAll()
+    fun getFeedbackItemsByTeacherId(teacherId: Long?): List<FeedbackItem> {
+        val feedbackItems = feedbackItemRepository.findAll()
+
+        return if (teacherId != null) {
+            feedbackItems.filter { it.teacher.id == teacherId }
+        } else {
+            feedbackItems
+        }
     }
 
     fun purchaseFeedbackTicket(studentId: Long, amount: Int, itemId: Long) {
