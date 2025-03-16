@@ -41,9 +41,15 @@ class RecordController(
         @RequestPart(value = "request") request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
-        recordService.saveRecord(Record(title = request.title, studentId = authTokenPayload.id, fileKey = key))
+        val record = recordService.saveRecord(
+            Record(
+                title = request.title,
+                studentId = authTokenPayload.id,
+                fileKey = key
+            )
+        )
 
-        return ResponseEntity.ok(RecordUploadResponse(key))
+        return ResponseEntity.ok(RecordUploadResponse(record.id.toNonNull()))
     }
 //
 //    @Auth
