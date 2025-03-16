@@ -1,9 +1,11 @@
 package org.monsing.record
 
 import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 
 private const val MAXIMUM_TITLE_LENGTH = 30
 
+@Embeddable
 class RecordTitle(
     @Column(nullable = false, name = "title")
     val value: String
