@@ -36,9 +36,9 @@ class RecordController(
     @Operation(summary = "Record 파일 업로드")
     @PostMapping("/records")
     fun uploadRecord(
-        @RequestPart file: MultipartFile,
+        @RequestPart(value = "file") file: MultipartFile,
         @AuthPayload authTokenPayload: AuthTokenPayload,
-        @RequestPart request: UploadRecordRequest
+        @RequestPart(value = "request") request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
         recordService.saveRecord(Record(title = request.title, studentId = authTokenPayload.id, fileKey = key))
