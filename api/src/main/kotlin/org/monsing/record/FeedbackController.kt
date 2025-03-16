@@ -36,8 +36,10 @@ class FeedbackController(
     @GetMapping("/items/{itemId}")
     fun getFeedbackItem(
         @PathVariable itemId: Long
-    ): FeedbackItem {
-        return feedbackService.getFeedbackItem(itemId)
+    ): FeedbackItemResponse {
+        val feedbackItem = feedbackService.getFeedbackItem(itemId)
+
+        return feedbackItem.toResponse()
     }
 
     @Operation(summary = "피드백 다건 조회")
@@ -100,23 +102,27 @@ class FeedbackController(
     }
 
     private fun List<FeedbackItem>.toResponse(): List<FeedbackItemResponse> {
-        return this.map {
-            FeedbackItemResponse(
-                id = it.id.toNonNull(),
-                teacher = TeacherResponse(
-                    id = it.teacher.id.toNonNull(),
-                    name = it.teacher.nickname.value,
-                    profileImageUrl = it.teacher.profileImage,
-                    verified = it.teacher.verified,
-                    description = it.teacher.description,
-                    genderType = it.teacher.genderType,
-                    expertiseType = it.teacher.expertiseType
-                ),
-                description = it.description,
-                price = it.price,
-                amount = it.amount
-            )
+        return this.map { feedbackItem ->
+            feedbackItem.toResponse()
         }
+    }
+
+    private fun FeedbackItem.toResponse(): FeedbackItemResponse {
+        return FeedbackItemResponse(
+            id = this.id.toNonNull(),
+            teacher = TeacherResponse(
+                id = this.teacher.id.toNonNull(),
+                name = this.teacher.nickname.value,
+                profileImageUrl = this.teacher.profileImage,
+                verified = this.teacher.verified,
+                description = this.teacher.description,
+                genderType = this.teacher.genderType,
+                expertiseType = this.teacher.expertiseType
+            ),
+            description = this.description,
+            price = this.price,
+            amount = this.amount
+        )
     }
 }
 
