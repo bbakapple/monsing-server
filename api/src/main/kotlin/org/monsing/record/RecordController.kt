@@ -38,7 +38,7 @@ class RecordController(
     fun uploadRecord(
         @RequestPart file: MultipartFile,
         @AuthPayload authTokenPayload: AuthTokenPayload,
-        @RequestBody request: UploadRecordRequest
+        @RequestPart request: UploadRecordRequest
     ): ResponseEntity<RecordUploadResponse> {
         val key = recordUploader.uploadRecord(file)
         recordService.saveRecord(Record(title = request.title, studentId = authTokenPayload.id, fileKey = key))
