@@ -2,9 +2,6 @@ package org.monsing.teacher
 
 import openapi.api.TeacherApi
 import openapi.model.CareerResponse
-import openapi.model.PrevCourseResponse
-import openapi.model.ReadReviews200Response
-import openapi.model.ReviewCreateRequest
 import openapi.model.TeacherCreateRequest
 import openapi.model.TeacherOverviewResponse
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -17,13 +14,6 @@ import org.springframework.web.bind.annotation.RestController
 class TeacherController(
     private val teacherService: TeacherService
 ) : TeacherApi {
-    override fun createReview(
-        authTokenPayload: AuthTokenPayload,
-        id: Int,
-        reviewCreateRequest: ReviewCreateRequest
-    ): ResponseEntity<Unit> {
-        TODO("Not yet implemented")
-    }
 
     override fun createTeacher(
         authTokenPayload: AuthTokenPayload,
@@ -59,28 +49,6 @@ class TeacherController(
         )
 
         return ResponseEntity.ok(response)
-    }
-
-    override fun readClasses(
-        tokenPayload: AuthTokenPayload,
-        id: Int,
-        lastId: Int?,
-        size: Int?
-    ): ResponseEntity<List<PrevCourseResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun readClassesByDate(
-        tokenPayload: AuthTokenPayload,
-        id: Int,
-        from: String,
-        to: String
-    ): ResponseEntity<List<PrevCourseResponse>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun readReviews(id: Int, lastId: Int?, size: Int?): ResponseEntity<ReadReviews200Response> {
-        TODO("Not yet implemented")
     }
 
     override fun readTeachers(): ResponseEntity<List<TeacherOverviewResponse>> {
