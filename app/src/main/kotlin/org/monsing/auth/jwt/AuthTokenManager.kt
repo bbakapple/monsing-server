@@ -73,8 +73,8 @@ class AuthTokenManager(
                 .payload
                 .subject
                 .toLong()
-        } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid token")
+        } catch (e: ExpiredJwtException) {
+            throw TokenExpiredException("${e.message}")
         }
     }
 }

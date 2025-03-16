@@ -9,6 +9,7 @@ import org.monsing.member.Member
 import org.monsing.member.teacher.Teacher
 import org.monsing.record.feedback.Feedback
 import org.monsing.record.feedback.FeedbackStatus
+import org.monsing.record.feedback.FeedbackTicket
 
 @Entity
 class Record(
@@ -25,6 +26,7 @@ class Record(
 
     @OneToMany
     val feedbacks: MutableList<Feedback> = mutableListOf()
+
 ) : BaseEntity(id = id) {
 
     @Embedded
@@ -36,9 +38,9 @@ class Record(
     val notCompletedFeedBacks
         get() = feedbacks.filter { it.status != FeedbackStatus.COMPLETED }
 
-    fun requestFeedback(teacher: Teacher) {
+    fun requestFeedback(teacher: Teacher, record: Record) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-//        feedbacks.add(Feedback(recordId = requireNotNull(id), teacher = teacher))
+        feedbacks.add(Feedback(teacher = teacher, record = record, studentId = studentId))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {

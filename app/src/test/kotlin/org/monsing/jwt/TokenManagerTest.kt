@@ -1,12 +1,13 @@
 package org.monsing.jwt
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.jsonwebtoken.ExpiredJwtException
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.assertions.throwables.shouldThrowAny
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import org.monsing.auth.jwt.AuthTokenManager
 import org.monsing.auth.jwt.AuthTokenPayload
+import org.monsing.auth.jwt.TokenExpiredException
 
 class TokenManagerTest : StringSpec({
 
@@ -28,7 +29,7 @@ class TokenManagerTest : StringSpec({
 
         val token = authTokenManager.createRefreshToken(1L)
 
-        shouldThrow<IllegalArgumentException> {
+        shouldThrowAny {
             authTokenManager.getPayLoad(token)
         }
     }
@@ -40,9 +41,9 @@ class TokenManagerTest : StringSpec({
 
         val token = authTokenManager.createAccessToken(AuthTokenPayload(1L))
 
-        shouldThrow<IllegalArgumentException> {
+        shouldThrowAny {
             authTokenManager.getRefreshPayload(token)
-        }.message shouldBe "Invalid token"
+        }
     }
 
     "만료된 토큰을 디코딩할 수 없음" {
@@ -53,7 +54,7 @@ class TokenManagerTest : StringSpec({
 
         Thread.sleep(1000)
 
-        shouldThrow<ExpiredJwtException> {
+        shouldThrow<TokenExpiredException> {
             authTokenManager.getPayLoad(token)
         }
     }

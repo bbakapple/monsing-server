@@ -9,6 +9,7 @@ import jakarta.persistence.Lob
 import jakarta.persistence.ManyToOne
 import org.monsing.BaseEntity
 import org.monsing.member.teacher.Teacher
+import org.monsing.record.Record
 
 private const val MAXIMUM_LENGTH = 3000
 
@@ -18,27 +19,35 @@ class Feedback(
     @JoinColumn(nullable = false)
     val teacher: Teacher,
 
+    @ManyToOne
+    @JoinColumn
+    val record: Record,
+
     @Column(nullable = false)
-    val recordId: Long,
+    val studentId: Long,
 
     @Lob
     private var _detail: String? = null,
 
     @Enumerated(EnumType.STRING)
     var status: FeedbackStatus = FeedbackStatus.REQUESTED,
-
-    var amount : Int
 ) : BaseEntity() {
+
+    constructor(teacher: Teacher, record: Record, studentId: Long) : this(
+        teacher,
+        record,
+        studentId,
+        null,
+        FeedbackStatus.REQUESTED
+    )
 
     val detail: String
         get() = _detail ?: ""
 
     fun writeFeedback(detail: String) {
-        require(amount > 0) { "Amount must be greater than 0" }
         require(detail.isNotBlank()) { "Detail must not be blank" }
         require(detail.length <= MAXIMUM_LENGTH) { "Detail must not exceed $MAXIMUM_LENGTH characters" }
         status = status.complete()
         this._detail = detail
-        amount--
     }
 }
