@@ -104,7 +104,7 @@ import org.monsing.auth.jwt.AuthTokenPayload
         consumes = [{{#consumes}}"{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}}]{{/hasConsumes}}{{/singleContentTypes}}
         )
         {{#reactive}}{{^isArray}}suspend {{/isArray}}{{/reactive}}fun {{operationId}}(
-        {{#hasAuthMethods}}@AuthPayload tokenPayload: AuthTokenPayload,{{/hasAuthMethods}}
+        {{#hasAuthMethods}}@Parameter(hidden = true) @AuthPayload tokenPayload: AuthTokenPayload,{{/hasAuthMethods}}
         {{#allParams}}
             {{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{^-last}},{{/-last}}
         {{/allParams}}
