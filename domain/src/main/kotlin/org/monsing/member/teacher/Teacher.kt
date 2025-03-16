@@ -5,7 +5,9 @@ import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
+import org.hibernate.annotations.BatchSize
 import org.monsing.member.Member
 import org.monsing.member.Nickname
 import org.monsing.member.OauthProviderType
@@ -43,13 +45,15 @@ class Teacher(
     @Enumerated(EnumType.STRING)
     var expertiseType: ExpertiseType = ExpertiseType.NONE,
 
-    @OneToMany
+    @BatchSize(size = 5)
+    @OneToMany(fetch = FetchType.EAGER)
     val portfolios: List<Portfolio> = mutableListOf(),
 
-    @OneToMany
+    @BatchSize(size = 5)
+    @OneToMany(fetch = FetchType.EAGER)
     val careers: List<Career> = mutableListOf()
 
-) : Member(id, identifier, oauthProviderType, nickname){
+) : Member(id, identifier, oauthProviderType, nickname) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Teacher) return false
