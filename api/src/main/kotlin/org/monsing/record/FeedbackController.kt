@@ -72,7 +72,7 @@ class FeedbackController(
     ): List<FeedbackItemResponse> {
         val feedbackItems = feedbackService.getFeedbackItemsByMemberId(authTokenPayload.id)
 
-        return feedbackItems.map { it.toMyResponse() }
+        return feedbackItems.toResponse()
     }
 
     @Auth
@@ -114,24 +114,6 @@ class FeedbackController(
         return this.map { feedbackItem ->
             feedbackItem.toResponse()
         }
-    }
-
-    private fun FeedbackItem.toMyResponse(): FeedbackItemResponse{
-        return FeedbackItemResponse(
-            id = this.id.toNonNull(),
-            teacher = TeacherResponse(
-                id = this.teacher.id.toNonNull(),
-                name = this.teacher.nickname.value,
-                profileImageUrl = this.teacher.profileImage,
-                verified = this.teacher.verified,
-                description = this.teacher.description,
-                genderType = this.teacher.genderType,
-                expertiseType = this.teacher.expertiseType
-            ),
-            description = this.description,
-            price = this.price,
-            amount = this.feedbackTickets.size
-        )
     }
 
     private fun FeedbackItem.toResponse(): FeedbackItemResponse {
