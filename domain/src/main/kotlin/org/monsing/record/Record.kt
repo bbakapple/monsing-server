@@ -4,7 +4,9 @@ import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
+import org.hibernate.annotations.BatchSize
 import org.monsing.BaseEntity
 import org.monsing.member.Member
 import org.monsing.member.teacher.Teacher
@@ -25,7 +27,8 @@ class Record(
     @Column(nullable = false)
     val fileKey: String,
 
-    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE])
+    @BatchSize(size = 10)
+    @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
     val feedbacks: MutableList<Feedback> = mutableListOf()
 
 ) : BaseEntity(id = id) {
@@ -41,7 +44,7 @@ class Record(
 
     fun requestFeedback(teacher: Teacher) {
         require(feedbacks.requestedBy(teacher).not()) { "Feedback already requested" }
-        feedbacks.add(Feedback(teacher = teacher, recordId = this.id.toNonNull(), studentId = studentId))
+        feedbacks.add(Feedback(teacher = teacher, recordId = this.id.toNonNull()))
     }
 
     private fun List<Feedback>.requestedBy(teacher: Teacher): Boolean {

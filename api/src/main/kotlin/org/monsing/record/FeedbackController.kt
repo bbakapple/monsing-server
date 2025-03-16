@@ -9,6 +9,7 @@ import org.monsing.member.teacher.GenderType
 import org.monsing.record.feedback.FeedbackItem
 import org.monsing.record.feedback.FeedbackService
 import org.monsing.record.response.FeedbackResponse
+import org.monsing.record.response.StudentInfoResponse
 import org.monsing.util.toNonNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -95,11 +96,16 @@ class FeedbackController(
 
         return feedbacks.map {
             FeedbackResponse(
-                id = requireNotNull(it.id),
-                teacher = it.teacher,
-                recordId = it.recordId.toNonNull(),
-                detail = it.detail,
-                createdAt = it.updatedDate
+                id = requireNotNull(it.feedback.id),
+                teacher = it.feedback.teacher,
+                student = StudentInfoResponse(
+                    id = it.student.id.toNonNull(),
+                    name = it.student.nickname.value,
+                    profileImageUrl = it.student.profileImage
+                ),
+                recordId = it.feedback.recordId.toNonNull(),
+                detail = it.feedback.detail,
+                createdAt = it.feedback.updatedDate,
             )
         }
     }

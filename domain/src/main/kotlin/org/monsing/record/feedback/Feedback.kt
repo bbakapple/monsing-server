@@ -19,8 +19,6 @@ class Feedback(
 
     val recordId: Long,
 
-    val studentId: Long,
-
     @Lob
     private var _detail: String? = null,
 

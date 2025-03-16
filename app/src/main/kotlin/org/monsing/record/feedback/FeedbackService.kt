@@ -70,15 +70,27 @@ class FeedbackService(
         record.requestFeedback(feedbackTicket.feedbackItem.teacher)
     }
 
-    fun findFeedbacksByMemberId(id: Long): List<Feedback> {
+    fun findFeedbacksByMemberId(id: Long): List<FeedbackDto> {
         val member = memberRepository.findByIdOrElseThrow(id)
 
-        return if (member is Student) {
-            feedbackRepository.findByStudentId(id)
+        if (member is Student) {
+            return recordRepository.findByStudentId(id).flatMap { record ->
+                record.feedbacks.map { FeedbackDto(it, member) }
+            }
         } else if (member is Teacher) {
-            feedbackRepository.findByTeacher(member)
+            val feedbacks = feedbackRepository.findByTeacher(member)
+            return feedbacks.map {
+                FeedbackDto(
+                    it, memberRepository.findStudentByRecordId(it.recordId)
+                )
+            }
         } else {
             throw IllegalArgumentException("Member not found")
         }
     }
 }
+
+data class FeedbackDto(
+    val feedback: Feedback,
+    val student: Student
+)

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 interface FeedbackRepository : JpaRepository<Feedback, Long> {
     fun findByTeacher(id: Teacher): List<Feedback>
     fun findByRecordId(id: Long): List<Feedback>
+
     @Query("SELECT f FROM Feedback f JOIN FETCH f.teacher")
-    fun findAllFeedbackDetails() : List<Feedback>
-    fun findByStudentId(studentId: Long): MutableList<Feedback>
+    fun findAllFeedbackDetails(): List<Feedback>
 }
