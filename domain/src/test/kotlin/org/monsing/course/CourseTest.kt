@@ -274,7 +274,7 @@ class CourseTest : StringSpec({
 
         course.registerLesson(1, 1, 10)
 
-        shouldThrow<IllegalArgumentException> { course.registerLesson(1, 2, 10) }
+        shouldThrow<IllegalStateException> { course.registerLesson(1, 2, 10) }
     }
 
     "시간이 겹치지 않는 레슨에 등록할 수 있다" {

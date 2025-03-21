@@ -36,7 +36,9 @@ class Lesson(
             lessonSchedule.startTime >= lesson.lessonSchedule.startTime &&
             lessonSchedule.startTime < lesson.lessonSchedule.startTime.plusMinutes(duration.toLong())
         ) {
-            lessonStatusType = LessonStatusType.NOT_AVAILABLE
+            if (lessonStatusType.isAvailable()) {
+                lessonStatusType = LessonStatusType.NOT_AVAILABLE
+            }
         }
     }
 

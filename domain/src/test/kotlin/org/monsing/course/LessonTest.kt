@@ -25,7 +25,7 @@ class LessonTest : StringSpec({
             lessonStatusType = LessonStatusType.RESERVED
         )
 
-        shouldThrow<IllegalArgumentException> {
+        shouldThrow<IllegalStateException> {
             lesson.register(1, 1)
         }
     }
