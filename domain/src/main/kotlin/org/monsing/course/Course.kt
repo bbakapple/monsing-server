@@ -33,6 +33,17 @@ class Course(
     val lessons: List<Lesson> = mutableListOf()
 ) : BaseEntity() {
 
+    init {
+        val origin = lessons.size
+        val distinct = lessons.map { it.lessonSchedule }
+            .distinct()
+            .size
+
+        require(origin == distinct) {
+            "Lesson schedule must be unique"
+        }
+    }
+
     val courseDuration
         get() = duration.value
 
