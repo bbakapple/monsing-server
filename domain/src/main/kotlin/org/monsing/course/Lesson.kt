@@ -22,7 +22,7 @@ class Lesson(
 ) : BaseEntity(id = id) {
 
     fun register(id: Long, lessonCount: Int) {
-        require(lessonStatusType == LessonStatusType.AVAILABLE) {
+        check(lessonStatusType.isAvailable()) {
             "Lesson is not available"
         }
 
@@ -33,7 +33,7 @@ class Lesson(
 
     fun overlappingWith(lesson: Lesson, duration: Int) {
         if (lessonSchedule.dayOfWeek == lesson.lessonSchedule.dayOfWeek &&
-            lessonSchedule.startTime > lesson.lessonSchedule.startTime &&
+            lessonSchedule.startTime >= lesson.lessonSchedule.startTime &&
             lessonSchedule.startTime < lesson.lessonSchedule.startTime.plusMinutes(duration.toLong())
         ) {
             lessonStatusType = LessonStatusType.NOT_AVAILABLE

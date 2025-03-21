@@ -89,10 +89,14 @@ class CourseService(
         lessonCount: Int
     ) {
         val student = memberRepository.findStudentById(id)
-
         val course = courseRepository.findByIdOrElseThrow(courseId)
-
         course.registerLesson(requireNotNull(student.id), lessonId, lessonCount)
+
+        val registeredLesson = course.findLessonById(lessonId)
+
+        val allCourses = courseRepository.findAllByTeacherId(course.teacherId)
+        allCourses.flatMap { it.lessons }
+            .forEach { it.overlappingWith(registeredLesson, course.courseDuration) }
     }
 
     @Transactional(readOnly = true)

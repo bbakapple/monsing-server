@@ -33,6 +33,9 @@ class Course(
     val lessons: List<Lesson> = mutableListOf()
 ) : BaseEntity() {
 
+    val courseDuration
+        get() = duration.value
+
     fun update(
         name: String?,
         description: String?,
@@ -56,16 +59,12 @@ class Course(
         require(minimumLessonCount <= lessonCount) {
             "Lesson count is lesser than minimum lesson count"
         }
+
         val lesson = findLessonById(lessonId)
-
-        lessons.forEach {
-            it.overlappingWith(lesson, duration.value)
-        }
-
         lesson.register(studentId, lessonCount)
     }
 
-    private fun findLessonById(lessonId: Long): Lesson {
+    fun findLessonById(lessonId: Long): Lesson {
         return lessons.findLast { it.id == lessonId }
             ?: throw IllegalArgumentException("Lesson not found")
     }
