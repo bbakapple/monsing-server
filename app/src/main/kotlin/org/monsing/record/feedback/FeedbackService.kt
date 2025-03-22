@@ -39,12 +39,25 @@ class FeedbackService(
         }
     }
 
+    @Transactional
     fun purchaseFeedbackTicket(studentId: Long, amount: Int, itemId: Long) {
         val student = memberRepository.findStudentById(studentId)
         val feedbackItem = feedbackItemRepository.findByIdOrElseThrow(itemId)
-        val ticket = FeedbackTicket(feedbackItem, student, amount)
+        
+        // 학생이 이미 해당 피드백 아이템의 티켓을 가지고 있는지 확인
+        val existingTicket = feedbackTicketRepository.findByStudentAndFeedbackItem(student, feedbackItem)
+        
+        if (existingTicket != null) {
+            // 기존 티켓이 있다면 수량을 증가시킴
+            existingTicket.increaseAmount(amount)
+        } else {
+            // 기존 티켓이 없다면 새로 생성
+            val ticket = FeedbackTicket(feedbackItem, student, amount)
+            feedbackTicketRepository.save(ticket)
+        }
+        
+        // 피드백 아이템의 재고 감소
         feedbackItem.decreaseAmount(amount)
-        feedbackTicketRepository.save(ticket)
     }
 
     fun getFeedbackItemsByMemberId(memberId: Long): List<FeedbackItem> {
@@ -58,7 +71,27 @@ class FeedbackService(
             throw IllegalArgumentException("Member not found")
         }
     }
+    
+    fun getRemainingTicketsMapByMemberId(memberId: Long, itemIds: List<Long>): Map<Long, Int> {
+        if (itemIds.isEmpty() || !isStudent(memberId)) {
+            return emptyMap()
+        }
+        
+        return getRemainingTicketCountsByItemIds(memberId, itemIds)
+    }
 
+    fun isStudent(memberId: Long): Boolean {
+        val member = memberRepository.findByIdOrElseThrow(memberId)
+        return member is Student
+    }
+
+    fun getRemainingTicketCountsByItemIds(studentId: Long, itemIds: List<Long>): Map<Long, Int> {
+        val remainingTickets = feedbackTicketRepository.findRemainingTicketCountsByStudentIdAndItemIds(
+            studentId,
+            itemIds
+        )
+        return remainingTickets.associate { it.getItemId() to it.getRemainingAmount() }
+    }
 
     @Transactional
     fun requestFeedback(memberId: Long, recordId: Long, feedbackTicketId: Long) {

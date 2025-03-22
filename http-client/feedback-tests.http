@@ -1,0 +1,72 @@
+### 환경 변수 설정
+@baseUrl = http://localhost:8080
+
+# 아래 토큰은 예시이며, 실제 실행 시 콘솔에 출력된 토큰으로 대체해야 합니다.
+# 애플리케이션 시작 시 콘솔에 출력되는 "===== 테스트 계정 정보 =====" 섹션에서 토큰을 확인하세요.
+@teacherToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJpZFwiOjF9IiwiaWF0IjoxNzQyNjEwMzMzLCJleHAiOjE3NDI2MTIxMzN9.vhtsveieRCUO0X71tH9TARXQaPJkiZfgKY97CnlkbYUll8leXokaKbzAnFkSa1ffWXXs2IJ7TNWtpXFYsCCFmw
+@studentToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJpZFwiOjJ9IiwiaWF0IjoxNzQyNjEwMzMzLCJleHAiOjE3NDI2MTIxMzN9.Dh-CuBHY9BFn_XMwbCU7uIqLZ64NNiYF8YmPqnXw6ereYNQhWgkD5lg7u-0Tm8lVR0rPE4lIPLVGKXE7Y9E3pA
+
+### 3. 피드백 상품 생성 (선생님 계정)
+POST {{baseUrl}}/feedbacks/items
+Authorization: Bearer {{teacherToken}}
+Content-Type: application/json
+
+{
+  "amount": 10,
+  "price": 15000,
+  "description": "테스트 피드백 상품"
+}
+
+### 4. 모든 피드백 상품 조회
+GET {{baseUrl}}/feedbacks/items
+
+### 5. 선생님의 피드백 상품 조회
+# 참고: 선생님 ID는 실제 생성된 ID로 대체해야 합니다.
+GET {{baseUrl}}/feedbacks/items?teacherId=1
+
+### 6. 내 피드백 상품 조회 (선생님)
+GET {{baseUrl}}/feedbacks/items/my
+Authorization: Bearer {{teacherToken}}
+
+### 7. 특정 피드백 상품 조회
+# 참고: 아이템 ID는 실제 생성된 ID로 대체해야 합니다.
+GET {{baseUrl}}/feedbacks/items/1
+
+### 8. 피드백 티켓 구매 (학생 계정)
+POST {{baseUrl}}/feedbacks/tickets
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "amount": 3,
+  "itemId": 1
+}
+
+### 9. 같은 피드백 티켓 추가 구매 (학생)
+POST {{baseUrl}}/feedbacks/tickets
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "amount": 2,
+  "itemId": 1
+}
+
+### 10. 내 피드백 상품 조회 (학생)
+# remainingTickets가 5(3+2)인지 확인
+GET {{baseUrl}}/feedbacks/items/my
+Authorization: Bearer {{studentToken}}
+
+### 11. 피드백 요청 (학생)
+# 참고: feedbackTicketId와 recordId는 실제 값으로 대체해야 합니다.
+POST {{baseUrl}}/feedbacks/1
+Authorization: Bearer {{studentToken}}
+Content-Type: application/json
+
+{
+  "recordId": 1
+}
+
+### 12. 내 피드백 조회
+GET {{baseUrl}}/feedbacks/my
+Authorization: Bearer {{studentToken}}

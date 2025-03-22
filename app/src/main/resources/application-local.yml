@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# JWT 설정
+jwt:
+  access-token:
+    secret: testSecretKeyForLocalDevelopmentDoNotUseInProduction1234567890
+    expire-second: 864000  # 10일
+  refresh-token:
+    secret: refreshSecretKeyForLocalDevelopmentDoNotUseInProduction1234567890
+    expire-second: 2592000  # 30일
+
+# 로그 레벨 설정
+logging:
+  level:
+    org.monsing: DEBUG
+    org.hibernate.SQL: DEBUG

@@ -69,10 +69,23 @@ class FeedbackController(
     @GetMapping("/items/my")
     fun getMyFeedbackItems(
         @AuthPayload authTokenPayload: AuthTokenPayload
-    ): List<FeedbackItemResponse> {
+    ): List<MyFeedbackItemResponse> {
         val feedbackItems = feedbackService.getFeedbackItemsByMemberId(authTokenPayload.id)
+        
+        val itemIds = feedbackItems.mapNotNull { it.id }
+        val remainingTicketsMap = feedbackService.getRemainingTicketsMapByMemberId(authTokenPayload.id, itemIds)
 
-        return feedbackItems.toResponse()
+        return feedbackItems.map { item ->
+            val baseResponse = item.toResponse()
+            MyFeedbackItemResponse(
+                id = baseResponse.id,
+                teacher = baseResponse.teacher,
+                description = baseResponse.description,
+                price = baseResponse.price,
+                amount = baseResponse.amount,
+                remainingTickets = remainingTicketsMap[item.id.toNonNull()]
+            )
+        }
     }
 
     @Auth
@@ -140,7 +153,16 @@ data class FeedbackItemResponse(
     val teacher: TeacherResponse,
     val description: String,
     val price: Int,
-    var amount: Int,
+    var amount: Int
+)
+
+data class MyFeedbackItemResponse(
+    val id: Long,
+    val teacher: TeacherResponse,
+    val description: String,
+    val price: Int,
+    val amount: Int,
+    val remainingTickets: Int?
 )
 
 class TeacherResponse(
