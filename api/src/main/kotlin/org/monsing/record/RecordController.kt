@@ -45,7 +45,8 @@ class RecordController(
             Record(
                 title = request.title,
                 studentId = authTokenPayload.id,
-                fileKey = key
+                fileKey = key.key,
+                url = key.url
             )
         )
 

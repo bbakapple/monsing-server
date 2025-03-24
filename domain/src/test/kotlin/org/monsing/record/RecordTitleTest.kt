@@ -21,7 +21,7 @@ class RecordTitleTest : StringSpec({
 
     "녹음 제목을 공백으로 만들 수 없다" {
         shouldThrow<IllegalArgumentException> {
-            Record(title = "  ", studentId = 1, fileKey = "key")
+            Record(title = "  ", studentId = 1, fileKey = "key", url = "url")
         }
     }
 

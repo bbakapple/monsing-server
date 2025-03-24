@@ -35,4 +35,9 @@ class FeedbackTicket(
     fun increaseAmount() {
         _amount++
     }
+    
+    fun increaseAmount(additionalAmount: Int) {
+        require(additionalAmount > 0) { "Additional amount must be greater than 0" }
+        _amount += additionalAmount
+    }
 }

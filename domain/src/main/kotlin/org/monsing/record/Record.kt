@@ -27,6 +27,9 @@ class Record(
     @Column(nullable = false)
     val fileKey: String,
 
+    @Column(nullable = false)
+    val url: String,
+
     @BatchSize(size = 10)
     @OneToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.EAGER)
     val feedbacks: MutableList<Feedback> = mutableListOf()

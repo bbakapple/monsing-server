@@ -1,0 +1,34 @@
+### 파일 업로드 테스트
+@baseUrl = http://localhost:8080
+@studentToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJpZFwiOjJ9IiwiaWF0IjoxNzQyODA2Mjk4LCJleHAiOjE3NDI4MDgwOTh9.zSXVD1qzH7qNals5np1aB8IvRwiYs9p-BDYrcdjmolizOhe7UTq2DQkdysbKYVWnpQTCf7wwpCn8qcmK16tZzg
+
+### S3 Health Check
+GET {{baseUrl}}/api/health/s3
+Content-Type: application/json
+
+### Record 파일 업로드
+POST {{baseUrl}}/records
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer {{studentToken}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test_record.mp3"
+Content-Type: audio/mpeg
+
+< ./test_record.mp3
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="request"
+Content-Type: application/json
+
+{
+  "title": "test"
+}
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### 내 Record 목록 조회
+GET {{baseUrl}}/records/my
+Authorization: Bearer {{studentToken}}
+
+### Record 단건 조회
+GET {{baseUrl}}/records/1
+Authorization: Bearer {{studentToken}}
