@@ -21,8 +21,9 @@ class ClassRoomService(
     @Transactional
     fun completeClassRoom(teacherId: Long, lessonId: Long) {
         val lesson = lessonRepository.findByIdOrElseThrow(lessonId)
+        val teacher = memberRepository.findTeacherById(teacherId)
         require(lessonRepository.existsByTeacherIdAndLessonId(teacherId, lessonId)) {
-            "Lesson not found"
+            "lesson is not matched"
         }
 
         lesson.completeClassRoom()
