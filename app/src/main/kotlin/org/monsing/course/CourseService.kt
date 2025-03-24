@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional
 class CourseService(
     private val courseRepository: CourseRepository,
     private val memberRepository: MemberRepository,
-    private val classRoomRepository: ClassRoomRepository,
     private val lessonRepository: LessonRepository
 ) {
 
@@ -105,7 +104,7 @@ class CourseService(
         return courseRepository.findByIdOrElseThrow(id).lessons
     }
 
-    fun getLessonsWithOnAirInfoByMemberId(id: Long): List<LessonDto> {
+    fun getLessonsWithOnAirInfoByMemberId(id: Long): List<Lesson> {
         val member = memberRepository.findByIdOrElseThrow(id)
 
         if (member is Teacher) {
@@ -113,21 +112,11 @@ class CourseService(
                 .flatMap { it.lessons }
                 .filter { it.lessonStatusType == LessonStatusType.RESERVED }
 
-            return lessons.map {
-                LessonDto(
-                    it,
-                    classRoomRepository.existsByLessonIdAndStatus(it.id, ClassRoomStatusType.OPEN)
-                )
-            }
+            return lessons
         }
 
         val lessons = lessonRepository.findAllByStudentId(id)
 
-        return lessons.map {
-            LessonDto(
-                it,
-                classRoomRepository.existsByLessonIdAndStatus(it.id, ClassRoomStatusType.OPEN)
-            )
-        }
+        return lessons
     }
 }
