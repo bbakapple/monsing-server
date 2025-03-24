@@ -25,8 +25,13 @@ jwt:
     secret: refreshSecretKeyForLocalDevelopmentDoNotUseInProduction1234567890
     expire-second: 2592000  # 30일
 
+# S3 설정 (LocalStack)
+s3:
+  bucket: local-bucket-name
+
 # 로그 레벨 설정
 logging:
   level:
     org.monsing: DEBUG
     org.hibernate.SQL: DEBUG
+    software.amazon.awssdk: INFO  # AWS SDK 로깅 추가
