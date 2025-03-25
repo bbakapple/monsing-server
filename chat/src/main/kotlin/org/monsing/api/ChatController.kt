@@ -1,5 +1,6 @@
 package org.monsing.api
 
+import io.swagger.v3.oas.annotations.Hidden
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ChatController(private val chatService: ChatService) {
 
+    @Hidden
     @PostMapping("/relay")
     fun relayMessage(
         @RequestBody message: Message,
