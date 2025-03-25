@@ -14,6 +14,10 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
         mongoTemplate.save(memberChat)
     }
 
+    fun save(memberChats: List<MemberChat>) {
+        mongoTemplate.save(memberChats)
+    }
+
     fun deleteByChatIdAndMemberId(chatId: String, memberId: Long) {
         val query = Query().addCriteria(
             (MemberChat::chatId isEqualTo chatId)
@@ -70,4 +74,29 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
             Chat::class.java
         )
     }
+
+    fun findChatBetweenTwoMembers(member1Id: Long, member2Id: Long): Chat? {
+        val member1ChatIds = findChatIdsByMemberId(member1Id)
+        val member2ChatIds = findChatIdsByMemberId(member2Id)
+
+        val commonChatIds = member1ChatIds.intersect(member2ChatIds)
+
+        if (commonChatIds.isEmpty()) {
+            return null
+        }
+
+        return mongoTemplate.findOne(
+            Query().addCriteria(
+                Chat::id inValues commonChatIds
+            ),
+            Chat::class.java
+        )
+    }
+
+    private fun findChatIdsByMemberId(memberId: Long) = mongoTemplate.find(
+        Query().addCriteria(
+            MemberChat::memberId isEqualTo memberId
+        ),
+        MemberChat::class.java
+    ).map { it.chatId }
 }

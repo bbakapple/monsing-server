@@ -37,18 +37,19 @@ class ChatService(
         //TODO: Implement this method
     }
 
-    fun createChat(vararg memberId: Long): String {
-        val chat = memberChatRepository.saveChat(Chat())
+    fun createChat(receiverId: Long, senderId: Long): String {
+        val chat = memberChatRepository.findChatBetweenTwoMembers(receiverId, senderId)
+            ?: memberChatRepository.saveChat(Chat())
         val chatId = chat.id
 
-        memberId.forEach {
-            joinChat(chatId, it)
-        }
+        joinChat(chatId, receiverId, senderId)
+
         return chatId
     }
 
-    fun joinChat(chatId: String, memberId: Long) {
-        memberChatRepository.save(MemberChat(chatId = chatId, memberId = memberId))
+    fun joinChat(chatId: String, vararg memberIds: Long) {
+        val memberChats = memberIds.map { MemberChat(chatId = chatId, memberId = it) }
+        memberChatRepository.save(memberChats)
     }
 
     fun leaveChat(chatId: String, memberId: Long) {
