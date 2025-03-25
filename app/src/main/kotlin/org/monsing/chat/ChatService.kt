@@ -72,18 +72,21 @@ class ChatService(
 
     fun handleMessage(senderId: Long, message: WebSocketMessage<*>) {
         val dto = objectMapper.readValue(message.payload as String, MessageDto::class.java)
-
         val msg = Message(chatId = dto.chatId, senderId = senderId, content = dto.content)
+
+        val receivers = memberChatRepository.findReceiverIdByChatId(msg.chatId, senderId)
+            .filter { blockRepository.existsByBlockerIdAndBlockedId(it, senderId).not() }
+
+        if (receivers.isEmpty()) {
+            return
+        }
 
         messageRepository.save(msg)
 
-        sendMessage(msg)
+        sendMessage(msg, receivers)
     }
 
-    private fun sendMessage(message: Message) {
-        val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
-            .filter { blockRepository.existsByBlockerIdAndBlockedId(it, message.senderId).not() }
-
+    private fun sendMessage(message: Message, receivers: List<Long>) {
         for (receiver in receivers) {
             val localSessions = localSessionStorage.getSessionByMemberId(receiver)
 
