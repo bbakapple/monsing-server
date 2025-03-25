@@ -7,6 +7,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.chat.session.LocalSessionStorage
+import org.monsing.member.block.BlockRepository
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -20,6 +21,7 @@ class ChatService(
     private val globalServerIdStorage: GlobalServerIdStorage,
     private val memberChatRepository: MemberChatRepository,
     private val messageRepository: MessageRepository,
+    private val blockRepository: BlockRepository,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -80,6 +82,7 @@ class ChatService(
 
     private fun sendMessage(message: Message) {
         val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
+            .filter { blockRepository.existsByBlockerIdAndBlockedId(it, message.senderId).not() }
 
         for (receiver in receivers) {
             val localSessions = localSessionStorage.getSessionByMemberId(receiver)
