@@ -10,6 +10,7 @@ dependencies {
     implementation(project(path = ":app"))
     implementation(project(path = ":domain"))
     implementation(project(path = ":auth"))
+    implementation(project(path = ":common"))
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0") // Swagger
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.15.2")) // 원하는 Jackson 버전으로 변경

@@ -1,0 +1,13 @@
+dependencies {
+    api project(':domain')
+    
+    // Spring Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Jackson for JSON
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    
+    // Jakarta EE
+    implementation 'jakarta.servlet:jakarta.servlet-api'
+} 

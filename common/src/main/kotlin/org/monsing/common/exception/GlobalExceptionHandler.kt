@@ -1,7 +1,8 @@
-package org.monsing
+package org.monsing.common.exception
 
+import org.monsing.token.TokenExpiredException
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -14,8 +15,8 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST).body(e.message)
     }
 
-    @ExceptionHandler
-    fun handleException(e: Exception): ResponseEntity<String> {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.message)
+    @ExceptionHandler(TokenExpiredException::class)
+    fun handleExpiredJwtException(e: TokenExpiredException): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.message)
     }
-}
+} 

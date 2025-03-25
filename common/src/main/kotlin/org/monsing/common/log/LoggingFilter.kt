@@ -1,4 +1,4 @@
-package org.monsing.log
+package org.monsing.common.log
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -21,11 +21,20 @@ class LoggingFilter(
         val wrappedRequest = ContentCachingRequestWrapper(request)
         val wrappedResponse = ContentCachingResponseWrapper(response)
 
+        // 필터 체인 실행
         filterChain.doFilter(wrappedRequest, wrappedResponse)
 
+        // 필터 체인이 실행된 후에 요청 정보와 응답 정보를 설정
+        // 이 시점에서는 요청 본문이 이미 읽혀서 캐싱되어 있음
         httpLogger.setRequest(wrappedRequest)
         httpLogger.setResponse(wrappedResponse)
-        wrappedResponse.copyBodyToResponse()
+
+        // 응답 본문 복사
+        if (!wrappedResponse.isCommitted) {
+            wrappedResponse.copyBodyToResponse()
+        }
+
+        // 로깅 수행
         httpLogger.log()
     }
-}
+} 
