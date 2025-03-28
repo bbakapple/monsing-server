@@ -1,5 +1,7 @@
 package org.monsing.api
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -32,9 +34,9 @@ class ChatController(private val chatService: ChatService) {
     fun createChat(
         @RequestBody request: CreateChatRequest,
         @AuthPayload authTokenPayload: AuthTokenPayload
-    ): ResponseEntity<Unit> {
-        chatService.createChat(request.memberId, authTokenPayload.id)
-        return ResponseEntity.ok().build()
+    ): ResponseEntity<ChatCreatedResponse> {
+        val id = chatService.createChat(request.memberId, authTokenPayload.id)
+        return ResponseEntity.ok(ChatCreatedResponse(id))
     }
 
     @Auth
@@ -76,3 +78,8 @@ class ChatController(private val chatService: ChatService) {
         return ResponseEntity.ok(response)
     }
 }
+
+data class ChatCreatedResponse @JsonCreator constructor(
+    @JsonProperty("id")
+    val id: String
+)
