@@ -1,7 +1,6 @@
 package org.monsing.classroom
 
 import openapi.api.ClassRoomApi
-import openapi.model.ClassRoomCreateResponse
 import openapi.model.ClassRoomEnterResponse
 import org.monsing.auth.jwt.AuthTokenPayload
 import org.springframework.http.ResponseEntity
@@ -12,21 +11,11 @@ class ClassRoomController(
     private val classRoomService: ClassRoomService
 ) : ClassRoomApi {
 
-    override fun createClassRoom(
-        tokenPayload: AuthTokenPayload,
+    override fun enterClassRoom(
+        authTokenPayload: AuthTokenPayload,
         lessonId: Long
-    ): ResponseEntity<ClassRoomCreateResponse> {
-        val classRoom = classRoomService.createClassRoom(tokenPayload.id, lessonId)
-
-        return ResponseEntity.ok(
-            ClassRoomCreateResponse(
-                classRoomId = requireNotNull(classRoom.id)
-            )
-        )
-    }
-
-    override fun enterClassRoom(authTokenPayload: AuthTokenPayload, id: Long): ResponseEntity<ClassRoomEnterResponse> {
-        val token = classRoomService.enterClassRoom(authTokenPayload.id, id)
+    ): ResponseEntity<ClassRoomEnterResponse> {
+        val token = classRoomService.enterClassRoom(authTokenPayload.id, lessonId)
 
         return ResponseEntity.ok(
             ClassRoomEnterResponse(
@@ -35,8 +24,8 @@ class ClassRoomController(
         )
     }
 
-    override fun completeClassRoom(authTokenPayload: AuthTokenPayload, id: Long): ResponseEntity<Unit> {
-        classRoomService.completeClassRoom(authTokenPayload.id, id)
+    override fun completeClassRoom(authTokenPayload: AuthTokenPayload, lessonId: Long): ResponseEntity<Unit> {
+        classRoomService.completeClassRoom(authTokenPayload.id, lessonId)
         return ResponseEntity.ok().build()
     }
 }

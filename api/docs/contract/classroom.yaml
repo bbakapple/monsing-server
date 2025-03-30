@@ -9,33 +9,8 @@ servers:
     description: Local server
 
 paths:
-  /lessons/{lessonId}/class-rooms:
-    post:
-      summary: 방 생성
-      security:
-        - BearerAuth: [ ]
-      operationId: createClassRoom
-      tags:
-        - ClassRoom
-      parameters:
-        - name: lessonId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-          description: 수업 ID
-      responses:
-        '200':
-          description: 성공
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ClassRoomCreateResponse'
-        '400':
-          description: 잘못된 요청
 
-  /class-rooms/{id}:COMPLETE:
+  /lessons/{lessonId}/class-room:COMPLETE:
     post:
       summary: 수업 완료
       security:
@@ -45,7 +20,7 @@ paths:
       tags:
         - ClassRoom
       parameters:
-        - name: id
+        - name: lessonId
           in: path
           required: true
           schema:
@@ -61,7 +36,8 @@ paths:
           description: 해당 ID의 수업을 찾을 수 없습니다.
         '500':
           description: 서버 오류
-  /class-rooms/{id}:ENTER:
+
+  /lessons/{lessonId}/class-room:ENTER:
     post:
       summary: 수업 입장
       security:
@@ -71,7 +47,7 @@ paths:
       tags:
         - ClassRoom
       parameters:
-        - name: id
+        - name: lessonId
           in: path
           required: true
           schema:
