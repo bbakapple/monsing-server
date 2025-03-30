@@ -1,22 +1,24 @@
 package org.monsing.member
 
 import org.monsing.member.teacher.Teacher
+import org.monsing.util.findByIdOrElseThrow
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
 interface MemberRepository : JpaRepository<Member, Long> {
 
     fun findTeacherById(id: Long): Teacher {
-        return findByIdOrNull(id) as? Teacher
-            ?: throw IllegalArgumentException("Teacher not found")
+        val member = findByIdOrElseThrow(id)
+        return member as? Teacher
+            ?: throw IllegalArgumentException("Not a teacher member")
     }
 
     fun findStudentById(id: Long): Student {
-        return findByIdOrNull(id) as? Student
-            ?: throw IllegalArgumentException("Student not found")
+        val member = findByIdOrElseThrow(id)
+        return member as? Student
+            ?: throw IllegalArgumentException("Not a student member")
     }
 
     fun findAllTeachers(): List<Teacher> {

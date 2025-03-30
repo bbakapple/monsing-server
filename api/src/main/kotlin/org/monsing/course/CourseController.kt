@@ -119,11 +119,11 @@ class CourseController(
 
         return ResponseEntity.ok(lessons.map {
             LessonResponse(
-                id = requireNotNull(it.lesson.id),
-                dayOfWeek = DayOfWeekDto.valueOf(it.lesson.lessonSchedule.dayOfWeek.name),
-                startTime = it.lesson.lessonSchedule.startTime.toString(),
-                isAvailable = it.lesson.lessonStatusType.isAvailable(),
-                isOnAir = it.isOnAir
+                id = requireNotNull(it.id),
+                dayOfWeek = DayOfWeekDto.valueOf(it.lessonSchedule.dayOfWeek.name),
+                startTime = it.lessonSchedule.startTime.toString(),
+                isAvailable = it.lessonStatusType.isAvailable(),
+                isOnAir = it.classRoomStatusType == ClassRoomStatusType.OPEN
             )
         })
     }
