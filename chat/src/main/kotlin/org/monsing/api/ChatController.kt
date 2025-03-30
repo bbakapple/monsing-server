@@ -66,12 +66,13 @@ class ChatController(private val chatService: ChatService) {
         @AuthPayload authTokenPayload: AuthTokenPayload
     ): ResponseEntity<List<ChatThumbnailResponse>> {
         val response = chatService.findChatByMemberId(authTokenPayload.id).map {
-            val lastMessage = chatService.findLastMessageByChatId(it.id)
+            val thumbnail = chatService.findChatThumbnail(it.id, authTokenPayload.id)
             ChatThumbnailResponse(
                 it.id,
-                lastMessage?.senderId,
-                lastMessage?.content,
-                lastMessage?.createdAt
+                thumbnail.opponentId,
+                thumbnail.message?.senderId,
+                thumbnail.message?.content,
+                thumbnail.message?.createdAt
             )
         }
 
