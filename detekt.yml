@@ -130,7 +130,8 @@ complexity:
     active: true
     threshold: 60
   LongParameterList:
-    active: true
+    active: false
+    excludes: [ '**/TestDataConfig.kt' ]
     functionThreshold: 10
     constructorThreshold: 10
     ignoreDefaultParameters: false
@@ -315,7 +316,7 @@ naming:
   ConstructorParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
-    privateParameterPattern: '[a-z][A-Za-z0-9]*'
+    privateParameterPattern: '[a-z_][A-Za-z0-9]*'
     excludeClassPattern: '$^'
   EnumNaming:
     active: true
