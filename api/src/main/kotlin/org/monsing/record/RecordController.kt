@@ -90,7 +90,7 @@ class RecordController(
         val response = records.map {
             RecordResponse(
                 id = requireNotNull(it.id),
-                url = it.fileKey.toUrl(),
+                url = it.url,
                 createdAt = it.createdDate
             )
         }
@@ -108,7 +108,7 @@ class RecordController(
         val record = recordService.findRecordById(recordId, authTokenPayload.id)
         val response = RecordResponse(
             requireNotNull(record.id),
-            record.fileKey.toUrl(),
+            record.url,
             record.createdDate,
             record.feedbacks.map {
                 FeedbackResponse(

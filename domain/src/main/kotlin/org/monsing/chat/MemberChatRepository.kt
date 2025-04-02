@@ -99,4 +99,16 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
         ),
         MemberChat::class.java
     ).map { it.chatId }
+
+    fun findOpponentId(chatId: String, memberId: Long): Long {
+        val query = Query().addCriteria(
+            (MemberChat::chatId isEqualTo chatId)
+                .andOperator(MemberChat::memberId ne memberId)
+        )
+
+        return mongoTemplate.findOne(
+            query,
+            MemberChat::class.java,
+        )?.memberId ?: throw IllegalArgumentException("Opponent not found")
+    }
 }

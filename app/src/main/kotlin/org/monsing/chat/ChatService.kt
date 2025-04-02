@@ -139,10 +139,23 @@ class ChatService(
         return memberChatRepository.findChatByMemberId(memberId)
     }
 
-    fun findLastMessageByChatId(chatId: String): Message? {
-        return messageRepository.findLastMessageByChatId(chatId)
+    fun findChatThumbnail(chatId: String, memberId: Long): ThumbnailDto {
+        val opp = memberChatRepository.findOpponentId(chatId, memberId)
+        val lastMessage = messageRepository.findLastMessageByChatId(chatId)
+
+        return ThumbnailDto(
+            chatId = chatId,
+            opponentId = opp,
+            message = lastMessage
+        )
     }
 
     private fun Message.toPayload() = TextMessage(objectMapper.writeValueAsString(this))
     private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }
+
+data class ThumbnailDto(
+    val chatId: String,
+    val opponentId: Long,
+    val message: Message?
+)

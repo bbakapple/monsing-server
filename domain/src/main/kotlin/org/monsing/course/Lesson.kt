@@ -18,8 +18,14 @@ class Lesson(
     var lessonRemaining: Int? = null,
 
     @Column(nullable = false)
-    var lessonStatusType: LessonStatusType = LessonStatusType.AVAILABLE
+    var lessonStatusType: LessonStatusType = LessonStatusType.AVAILABLE,
+
+    @Column(nullable = false)
+    var classRoomStatusType: ClassRoomStatusType = ClassRoomStatusType.CLOSED
 ) : BaseEntity(id = id) {
+
+    val existsRemainingLessonCount
+        get() = (lessonRemaining ?: 0) > 0
 
     fun register(id: Long, lessonCount: Int) {
         check(lessonStatusType.isAvailable()) {
@@ -42,12 +48,25 @@ class Lesson(
         }
     }
 
-    fun reduceRemainingCount() {
+    fun openClassRoom() {
+        classRoomStatusType = ClassRoomStatusType.OPEN
+    }
+
+    fun completeClassRoom() {
+        check(classRoomStatusType == ClassRoomStatusType.OPEN) {
+            "ClassRoom is not opened"
+        }
+        classRoomStatusType = ClassRoomStatusType.CLOSED
+        reduceRemainingCount()
+    }
+
+    private fun reduceRemainingCount() {
         check(lessonStatusType == LessonStatusType.RESERVED) {
             "Lesson is not reserved"
         }
         check(requireNotNull(lessonRemaining) > 0) {
             "Lesson count is lesser than 0"
         }
+        lessonRemaining = lessonRemaining?.minus(1)
     }
 }

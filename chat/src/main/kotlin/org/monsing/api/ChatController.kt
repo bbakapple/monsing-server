@@ -1,6 +1,8 @@
 package org.monsing.api
 
 import io.swagger.v3.oas.annotations.Hidden
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.monsing.auth.Auth
 import org.monsing.auth.AuthPayload
 import org.monsing.auth.jwt.AuthTokenPayload
@@ -34,9 +36,9 @@ class ChatController(private val chatService: ChatService) {
     fun createChat(
         @RequestBody request: CreateChatRequest,
         @AuthPayload authTokenPayload: AuthTokenPayload
-    ): ResponseEntity<Unit> {
-        chatService.createChat(request.memberId, authTokenPayload.id)
-        return ResponseEntity.ok().build()
+    ): ResponseEntity<ChatCreatedResponse> {
+        val id = chatService.createChat(request.memberId, authTokenPayload.id)
+        return ResponseEntity.ok(ChatCreatedResponse(id))
     }
 
     @Auth
@@ -66,15 +68,21 @@ class ChatController(private val chatService: ChatService) {
         @AuthPayload authTokenPayload: AuthTokenPayload
     ): ResponseEntity<List<ChatThumbnailResponse>> {
         val response = chatService.findChatByMemberId(authTokenPayload.id).map {
-            val lastMessage = chatService.findLastMessageByChatId(it.id)
+            val thumbnail = chatService.findChatThumbnail(it.id, authTokenPayload.id)
             ChatThumbnailResponse(
                 it.id,
-                lastMessage?.senderId,
-                lastMessage?.content,
-                lastMessage?.createdAt
+                thumbnail.opponentId,
+                thumbnail.message?.senderId,
+                thumbnail.message?.content,
+                thumbnail.message?.createdAt
             )
         }
 
         return ResponseEntity.ok(response)
     }
 }
+
+data class ChatCreatedResponse @JsonCreator constructor(
+    @JsonProperty("id")
+    val id: String
+)
