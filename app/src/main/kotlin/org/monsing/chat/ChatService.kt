@@ -172,6 +172,7 @@ class ChatService(
         return ThumbnailDto(
             chatId = chatId,
             opponentId = opp,
+            unreadMessageCount = unReadCountRepository.get(chatId, memberId),
             message = lastMessage
         )
     }
@@ -188,5 +189,6 @@ data class MessageWithReadStatus(
 data class ThumbnailDto(
     val chatId: String,
     val opponentId: Long,
+    val unreadMessageCount: Int,
     val message: Message?
 )
