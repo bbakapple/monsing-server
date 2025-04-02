@@ -25,6 +25,7 @@ class TeacherService(
                 id = member.id,
                 identifier = member.identifier,
                 oauthProviderType = member.oauthProviderType,
+                genderType = genderType ?: GenderType.OTHER,
                 nickname = Nickname(name)
             )
         )

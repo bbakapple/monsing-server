@@ -172,6 +172,4 @@ class RecordController(
     ): ResponseEntity<FeedbackTicket> {
         return ResponseEntity.ok(recordService.findFeedbackTicket(ticketId))
     }
-
-    private fun String.toUrl() = "$cloudfrontUrl/$this"
 }
