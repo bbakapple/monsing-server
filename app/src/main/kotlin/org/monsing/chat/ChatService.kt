@@ -84,6 +84,9 @@ class ChatService(
         }
 
         messageRepository.save(msg)
+        receivers.forEach {
+            unReadCountRepository.increment(msg.chatId, it)
+        }
 
         sendMessage(msg, receivers)
     }
