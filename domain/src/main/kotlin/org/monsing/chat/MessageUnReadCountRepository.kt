@@ -2,7 +2,9 @@ package org.monsing.chat
 
 import org.monsing.config.toObject
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.stereotype.Repository
 
+@Repository
 class MessageUnReadCountRepository(
     private val redisTemplate: RedisTemplate<String, Any>
 ) {

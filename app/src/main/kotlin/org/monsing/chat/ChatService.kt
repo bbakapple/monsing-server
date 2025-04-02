@@ -22,6 +22,7 @@ class ChatService(
     private val globalServerIdStorage: GlobalServerIdStorage,
     private val memberChatRepository: MemberChatRepository,
     private val messageRepository: MessageRepository,
+    private val unReadCountRepository: MessageUnReadCountRepository,
     private val blockRepository: BlockRepository,
     private val objectMapper: ObjectMapper
 ) {
@@ -131,6 +132,7 @@ class ChatService(
     fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<MessageWithReadStatus> {
         val messages = getSimpleMessages(chatId, lastId, size, memberId)
         val lastReadMessageId = getLastReadMessageId(chatId, memberId)
+        unReadCountRepository.remove(chatId, memberId)
 
         messages.last().id.toNonNull().let {
             memberChatRepository.saveLastReadMessageId(chatId, memberId, it)
