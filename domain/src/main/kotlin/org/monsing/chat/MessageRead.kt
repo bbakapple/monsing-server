@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.core.mapping.Document
 class MessageRead(
     val chatId: String,
     val memberId: Long,
-    val messageId: String
+    var messageId: String
 )

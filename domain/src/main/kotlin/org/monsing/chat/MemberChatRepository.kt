@@ -131,4 +131,24 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
             MessageRead::class.java
         )?.messageId
     }
+
+    fun saveLastReadMessageId(chatId: String, memberId: Long, messageId: String) {
+        val query = Query().addCriteria(
+            (MessageRead::chatId isEqualTo chatId)
+                .andOperator(MessageRead::memberId isEqualTo memberId)
+        )
+
+        val messageRead = mongoTemplate.findOne(
+            query,
+            MessageRead::class.java,
+        ) ?: MessageRead(
+            chatId = chatId,
+            memberId = memberId,
+            messageId = messageId
+        )
+
+        messageRead.messageId = messageId
+
+        mongoTemplate.save(messageRead)
+    }
 }
