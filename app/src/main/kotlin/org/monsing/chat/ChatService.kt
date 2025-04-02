@@ -8,6 +8,7 @@ import java.net.http.HttpResponse
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.chat.session.LocalSessionStorage
 import org.monsing.member.block.BlockRepository
+import org.monsing.util.toNonNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -127,7 +128,24 @@ class ChatService(
         )
     }
 
-    fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
+    fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<MessageWithReadStatus> {
+        val messages = getSimpleMessages(chatId, lastId, size, memberId)
+
+        val lastReadMessageId = getLastReadMessageId(chatId, memberId)
+
+        return messages.map {
+            MessageWithReadStatus(
+                message = it,
+                isRead = it.id.toNonNull() <= (lastReadMessageId ?: "")
+            )
+        }
+    }
+
+    fun getLastReadMessageId(chatId: String, memberId: Long): String? {
+        return memberChatRepository.findLastReadMessageId(chatId, memberId)
+    }
+
+    fun getSimpleMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
         val isExists = memberChatRepository.existByChatId(chatId, memberId)
         require(isExists) {
             throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
@@ -153,6 +171,11 @@ class ChatService(
     private fun Message.toPayload() = TextMessage(objectMapper.writeValueAsString(this))
     private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }
+
+data class MessageWithReadStatus(
+    val message: Message,
+    val isRead: Boolean
+)
 
 data class ThumbnailDto(
     val chatId: String,

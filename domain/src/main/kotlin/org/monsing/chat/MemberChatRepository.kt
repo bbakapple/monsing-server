@@ -111,4 +111,24 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
             MemberChat::class.java,
         )?.memberId ?: throw IllegalArgumentException("Opponent not found")
     }
+
+    fun findLastReadMessageId(chatId: String, memberId: Long): String? {
+        val query = Query().addCriteria(
+            (MemberChat::chatId isEqualTo chatId)
+                .andOperator(MemberChat::memberId ne memberId)
+        )
+
+        val opponentId = mongoTemplate.findOne(
+            query,
+            MemberChat::class.java,
+        )?.memberId
+
+        return mongoTemplate.findOne(
+            Query().addCriteria(
+                (MessageRead::chatId isEqualTo chatId)
+                    .andOperator(MessageRead::memberId isEqualTo opponentId)
+            ),
+            MessageRead::class.java
+        )?.messageId
+    }
 }
