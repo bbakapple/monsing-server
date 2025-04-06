@@ -16,6 +16,6 @@ s3:
 
 livekit:
   secret:
-    key: ENC(ieLT6uq3nLSVVnQpagsplaU+9iIK2VMLZd71vvdvJQyHQcyWioa1ZgIu12B/i2SEbE8Y2wOF1U2DfHUBk2hvCHFGIw1iChS2edp3HdmAa/g=)
+    key: ENC(JQ8tmpEasStxFJIeRnCzEs0YepcibLcG1BNNqwA3F9sAnQFsMNWuVf7W8UM6I863RPqb4ZzlcfQ=)
     expire-second: 1800
-  api-key: ENC(WVj0/w+gEONcy2keSS6nvT4s2+2IQAMZn0TwadpuGZHQJAVNyu+baVjLy28u0vL15hrzm6jFcMlKTUP/UxWO9A==)
+  api-key: ENC(VM0s15IoNxizBsPmtSbTWzUeGBVUIiTp)
