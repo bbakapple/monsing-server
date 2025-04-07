@@ -7,10 +7,10 @@ spring:
     mongodb:
       username:
       password:
-      uri: ENC(7YAJhJsXKqT+/hTD7P224Tlp842wJnp0flpTDqbyrQrLUg//DtSRZQ==)
+      uri: ENC(VKRPOiYulFZ82pVeBUAhId1AIlymfJayEyjiLQY2ijGJi9E0LlSGqQ==)
 
     redis:
-      host: ENC(yRPbfmLXHWkUeF+8FCzhVQ/TxmGsj7Wm)
+      host: ENC(uYqaGXQm9IZ8SUFYVAO6i8l6jslWmtdC)
       port: ENC(AmGJ5jY3T+1qsG97auYUeA==)
       username:
       password:
