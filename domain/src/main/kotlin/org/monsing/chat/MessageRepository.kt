@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.query.lt
 import org.springframework.stereotype.Component
 
 private const val DEFAULT_SIZE = 10
-private const val MAXIMUM_ID = "99999999999999999999"
+const val MAXIMUM_ID = "99999999999999999999"
 
 @Component
 class MessageRepository(

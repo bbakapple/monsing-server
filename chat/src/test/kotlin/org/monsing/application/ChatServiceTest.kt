@@ -14,8 +14,10 @@ import org.monsing.chat.MemberChatRepository
 import org.monsing.chat.Message
 import org.monsing.chat.MessageDto
 import org.monsing.chat.MessageRepository
+import org.monsing.chat.MessageUnReadCountRepository
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.chat.session.LocalSessionStorage
+import org.monsing.member.block.BlockRepository
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 
@@ -37,13 +39,18 @@ class ChatServiceTest {
         every { readValue(any(String::class), any<Class<*>>()) } returns MessageDto("1", "Hello")
     }
 
+    private val blockRepository = mockk<BlockRepository>(relaxed = true)
+    private val unReadCountRepository = mockk<MessageUnReadCountRepository>(relaxed = true)
+
     private val chatService = spyk<ChatService>(
         objToCopy = ChatService(
-            localSessionStorage,
-            globalSessionStorage,
-            memberChatRepository,
-            messageRepository,
-            objectMapper
+            localSessionStorage = localSessionStorage,
+            globalServerIdStorage = globalSessionStorage,
+            memberChatRepository = memberChatRepository,
+            messageRepository = messageRepository,
+            blockRepository = blockRepository,
+            unReadCountRepository = unReadCountRepository,
+            objectMapper = objectMapper
         ),
 
         recordPrivateCalls = true
@@ -100,7 +107,7 @@ class ChatServiceTest {
         every {
             localSessionStorage.getSessionByMemberId(receiverId)
         } returns setOf(mockk<WebSocketSession>(relaxed = true))
-        
+
         // when
         chatService.handleMessage(receiverId, TextMessage(""))
 

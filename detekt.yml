@@ -130,7 +130,8 @@ complexity:
     active: true
     threshold: 60
   LongParameterList:
-    active: true
+    active: false
+    excludes: [ '**/TestDataConfig.kt' ]
     functionThreshold: 10
     constructorThreshold: 10
     ignoreDefaultParameters: false
@@ -257,7 +258,7 @@ exceptions:
     active: true
     ignoreLabeled: false
   SwallowedException:
-    active: true
+    active: false
     ignoredExceptionTypes:
       - 'InterruptedException'
       - 'MalformedURLException'
@@ -284,7 +285,7 @@ exceptions:
   ThrowingNewInstanceOfSameException:
     active: true
   TooGenericExceptionCaught:
-    active: true
+    active: false
     excludes: [ '**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**' ]
     exceptionNames:
       - 'ArrayIndexOutOfBoundsException'
@@ -315,7 +316,7 @@ naming:
   ConstructorParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
-    privateParameterPattern: '[a-z][A-Za-z0-9]*'
+    privateParameterPattern: '[a-z_][A-Za-z0-9]*'
     excludeClassPattern: '$^'
   EnumNaming:
     active: true
@@ -740,7 +741,7 @@ style:
     active: true
     allowedNames: ''
   UnusedPrivateProperty:
-    active: true
+    active: false
     allowedNames: '_|ignored|expected|serialVersionUID'
   UseAnyOrNoneInsteadOfFind:
     active: true

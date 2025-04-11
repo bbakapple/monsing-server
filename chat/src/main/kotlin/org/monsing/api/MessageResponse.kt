@@ -6,5 +6,6 @@ data class MessageResponse(
     val id: String,
     val senderId: Long,
     val content: String,
-    val createdAt: LocalDateTime
+    val createdAt: LocalDateTime,
+    val isRead: Boolean
 )

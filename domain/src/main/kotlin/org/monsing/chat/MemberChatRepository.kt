@@ -14,6 +14,10 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
         mongoTemplate.save(memberChat)
     }
 
+    fun save(memberChats: List<MemberChat>) {
+        mongoTemplate.save(memberChats)
+    }
+
     fun deleteByChatIdAndMemberId(chatId: String, memberId: Long) {
         val query = Query().addCriteria(
             (MemberChat::chatId isEqualTo chatId)
@@ -71,6 +75,31 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
         )
     }
 
+    fun findChatBetweenTwoMembers(member1Id: Long, member2Id: Long): Chat? {
+        val member1ChatIds = findChatIdsByMemberId(member1Id)
+        val member2ChatIds = findChatIdsByMemberId(member2Id)
+
+        val commonChatIds = member1ChatIds.intersect(member2ChatIds)
+
+        if (commonChatIds.isEmpty()) {
+            return null
+        }
+
+        return mongoTemplate.findOne(
+            Query().addCriteria(
+                Chat::id inValues commonChatIds
+            ),
+            Chat::class.java
+        )
+    }
+
+    private fun findChatIdsByMemberId(memberId: Long) = mongoTemplate.find(
+        Query().addCriteria(
+            MemberChat::memberId isEqualTo memberId
+        ),
+        MemberChat::class.java
+    ).map { it.chatId }
+
     fun findOpponentId(chatId: String, memberId: Long): Long {
         val query = Query().addCriteria(
             (MemberChat::chatId isEqualTo chatId)
@@ -81,5 +110,45 @@ class MemberChatRepository(private val mongoTemplate: MongoTemplate) {
             query,
             MemberChat::class.java,
         )?.memberId ?: throw IllegalArgumentException("Opponent not found")
+    }
+
+    fun findLastReadMessageId(chatId: String, memberId: Long): String? {
+        val query = Query().addCriteria(
+            (MemberChat::chatId isEqualTo chatId)
+                .andOperator(MemberChat::memberId ne memberId)
+        )
+
+        val opponentId = mongoTemplate.findOne(
+            query,
+            MemberChat::class.java,
+        )?.memberId
+
+        return mongoTemplate.findOne(
+            Query().addCriteria(
+                (MessageRead::chatId isEqualTo chatId)
+                    .andOperator(MessageRead::memberId isEqualTo opponentId)
+            ),
+            MessageRead::class.java
+        )?.messageId
+    }
+
+    fun saveLastReadMessageId(chatId: String, memberId: Long, messageId: String) {
+        val query = Query().addCriteria(
+            (MessageRead::chatId isEqualTo chatId)
+                .andOperator(MessageRead::memberId isEqualTo memberId)
+        )
+
+        val messageRead = mongoTemplate.findOne(
+            query,
+            MessageRead::class.java,
+        ) ?: MessageRead(
+            chatId = chatId,
+            memberId = memberId,
+            messageId = messageId
+        )
+
+        messageRead.messageId = messageId
+
+        mongoTemplate.save(messageRead)
     }
 }

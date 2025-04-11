@@ -7,6 +7,8 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import org.monsing.chat.session.GlobalServerIdStorage
 import org.monsing.chat.session.LocalSessionStorage
+import org.monsing.member.block.BlockRepository
+import org.monsing.util.toNonNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -20,6 +22,8 @@ class ChatService(
     private val globalServerIdStorage: GlobalServerIdStorage,
     private val memberChatRepository: MemberChatRepository,
     private val messageRepository: MessageRepository,
+    private val unReadCountRepository: MessageUnReadCountRepository,
+    private val blockRepository: BlockRepository,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -37,18 +41,19 @@ class ChatService(
         //TODO: Implement this method
     }
 
-    fun createChat(vararg memberId: Long): String {
-        val chat = memberChatRepository.saveChat(Chat())
+    fun createChat(receiverId: Long, senderId: Long): String {
+        val chat = memberChatRepository.findChatBetweenTwoMembers(receiverId, senderId)
+            ?: memberChatRepository.saveChat(Chat())
         val chatId = chat.id
 
-        memberId.forEach {
-            joinChat(chatId, it)
-        }
+        joinChat(chatId, receiverId, senderId)
+
         return chatId
     }
 
-    fun joinChat(chatId: String, memberId: Long) {
-        memberChatRepository.save(MemberChat(chatId = chatId, memberId = memberId))
+    fun joinChat(chatId: String, vararg memberIds: Long) {
+        val memberChats = memberIds.map { MemberChat(chatId = chatId, memberId = it) }
+        memberChatRepository.save(memberChats)
     }
 
     fun leaveChat(chatId: String, memberId: Long) {
@@ -69,17 +74,24 @@ class ChatService(
 
     fun handleMessage(senderId: Long, message: WebSocketMessage<*>) {
         val dto = objectMapper.readValue(message.payload as String, MessageDto::class.java)
-
         val msg = Message(chatId = dto.chatId, senderId = senderId, content = dto.content)
 
-        messageRepository.save(msg)
+        val receivers = memberChatRepository.findReceiverIdByChatId(msg.chatId, senderId)
+            .filter { blockRepository.existsByBlockerIdAndBlockedId(it, senderId).not() }
 
-        sendMessage(msg)
+        if (receivers.isEmpty()) {
+            return
+        }
+
+        messageRepository.save(msg)
+        receivers.forEach {
+            unReadCountRepository.increment(msg.chatId, it)
+        }
+
+        sendMessage(msg, receivers)
     }
 
-    private fun sendMessage(message: Message) {
-        val receivers = memberChatRepository.findReceiverIdByChatId(message.chatId, message.senderId)
-
+    private fun sendMessage(message: Message, receivers: List<Long>) {
         for (receiver in receivers) {
             val localSessions = localSessionStorage.getSessionByMemberId(receiver)
 
@@ -120,7 +132,28 @@ class ChatService(
         )
     }
 
-    fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
+    fun getMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<MessageWithReadStatus> {
+        val messages = getSimpleMessages(chatId, lastId, size, memberId)
+        val lastReadMessageId = getLastReadMessageId(chatId, memberId)
+        unReadCountRepository.remove(chatId, memberId)
+
+        messages.last().id.toNonNull().let {
+            memberChatRepository.saveLastReadMessageId(chatId, memberId, it)
+        }
+
+        return messages.map {
+            MessageWithReadStatus(
+                message = it,
+                isRead = it.id.toNonNull() <= (lastReadMessageId ?: "")
+            )
+        }
+    }
+
+    fun getLastReadMessageId(chatId: String, memberId: Long): String? {
+        return memberChatRepository.findLastReadMessageId(chatId, memberId)
+    }
+
+    fun getSimpleMessages(chatId: String, lastId: String?, size: Int?, memberId: Long): List<Message> {
         val isExists = memberChatRepository.existByChatId(chatId, memberId)
         require(isExists) {
             throw IllegalArgumentException("채팅방에 참여하지 않은 사용자입니다.")
@@ -139,6 +172,7 @@ class ChatService(
         return ThumbnailDto(
             chatId = chatId,
             opponentId = opp,
+            unreadMessageCount = unReadCountRepository.get(chatId, memberId),
             message = lastMessage
         )
     }
@@ -147,8 +181,14 @@ class ChatService(
     private fun WebSocketSession.serverAddress() = localAddress.toString().removePrefix("/")
 }
 
+data class MessageWithReadStatus(
+    val message: Message,
+    val isRead: Boolean
+)
+
 data class ThumbnailDto(
     val chatId: String,
     val opponentId: Long,
+    val unreadMessageCount: Int,
     val message: Message?
 )
