@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import org.monsing.auth.jwt.AuthTokenManager
 import org.monsing.auth.jwt.AuthTokenPayload
-import org.monsing.auth.jwt.TokenExpiredException
+import org.monsing.token.TokenExpiredException
 
 class TokenManagerTest : StringSpec({
 

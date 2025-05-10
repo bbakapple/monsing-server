@@ -1,3 +1,3 @@
-package org.monsing.auth.jwt
+package org.monsing.token
 
 class TokenExpiredException(m: String) : RuntimeException(m)
